@@ -1,0 +1,63 @@
+2024-11-28 15:56:21,065 [INFO] Starting bot...
+2024-11-28 15:56:21,065 [INFO] logging in using static token
+2024-11-28 15:56:21,851 [INFO] Shard ID None has connected to Gateway (Session ID: ccb0c0615c295567b794224101e25b12).
+2024-11-28 15:56:23,855 [INFO] Bot logged in as SE_Summarize_Bot (ID: 1311783916516020324)
+2024-11-28 15:56:23,855 [INFO] Connected to 1 guilds
+2024-11-28 15:56:23,855 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 15:56:28,630 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-28 15:56:28,753 [INFO] Fetched 9 messages for summarization
+2024-11-28 15:56:28,754 [ERROR] Error in summarize command: 
+
+You tried to access openai.Completion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 64, in summarize
+    response = openai.Completion.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/openai/lib/_old_api.py", line 39, in __call__
+    raise APIRemovedInV1(symbol=self._symbol)
+openai.lib._old_api.APIRemovedInV1: 
+
+You tried to access openai.Completion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2024-11-28 15:57:17,201 [INFO] Starting bot...
+2024-11-28 15:57:17,201 [INFO] logging in using static token
+2024-11-28 15:57:17,913 [INFO] Shard ID None has connected to Gateway (Session ID: 215adf8f6370ded37ccaa970808a0d7b).
+2024-11-28 15:57:19,917 [INFO] Bot logged in as SE_Summarize_Bot (ID: 1311783916516020324)
+2024-11-28 15:57:19,918 [INFO] Connected to 1 guilds
+2024-11-28 15:57:19,918 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 15:57:36,846 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-28 15:57:37,045 [INFO] Fetched 13 messages for summarization
+2024-11-28 15:57:38,433 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 15:57:38,442 [INFO] OpenAI API response received in 1.40 seconds
+2024-11-28 15:57:38,689 [INFO] Summary successfully sent to channel
+2024-11-28 16:09:31,891 [INFO] Starting bot...
+2024-11-28 16:09:31,891 [INFO] logging in using static token
+2024-11-28 16:09:32,456 [INFO] Shard ID None has connected to Gateway (Session ID: 29d25a3c6a47d70e050ae0bec3447d66).
+2024-11-28 16:09:34,461 [INFO] Bot logged in as SE_Summarize_Bot (ID: 1311783916516020324)
+2024-11-28 16:09:34,461 [INFO] Connected to 1 guilds
+2024-11-28 16:09:34,462 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 16:09:34,647 [INFO] Slash commands synced: 1
+2024-11-28 16:10:45,360 [INFO] Starting bot...
+2024-11-28 16:10:45,360 [INFO] logging in using static token
+2024-11-28 16:10:45,935 [INFO] Shard ID None has connected to Gateway (Session ID: c30ae93f66b95dc491fc41562e6efaca).
+2024-11-28 16:10:47,966 [INFO] Bot logged in as SE_Summarize_Bot (ID: 1311783916516020324)
+2024-11-28 16:10:47,967 [INFO] Connected to 1 guilds
+2024-11-28 16:10:47,967 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 16:10:48,191 [INFO] Slash commands synced: 1
+2024-11-28 16:12:14,347 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-28 16:12:14,926 [INFO] Fetched 18 messages for summarization
+2024-11-28 16:12:15,925 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 16:12:15,934 [INFO] OpenAI API response received in 1.01 seconds
+2024-11-28 16:12:16,164 [INFO] Summary successfully sent to channel
