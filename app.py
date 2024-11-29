@@ -22,6 +22,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger('discord_bot')
 
+
 # Load .env file
 load_dotenv()
 
