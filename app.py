@@ -95,7 +95,8 @@ async def summarize(interaction: discord.Interaction):
 @bot.tree.command(name="sumvideo", description="Summarizes a YouTube video")
 async def sumvideo(interaction: discord.Interaction, url: str):
     try:
-        await interaction.response.defer()
+        # Defer the response with ephemeral=True to prevent timeout
+        await interaction.response.defer(ephemeral=False, thinking=True)
         
         youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
         match = re.search(youtube_regex, url)
@@ -107,38 +108,62 @@ async def sumvideo(interaction: discord.Interaction, url: str):
         video_id = match.group(1)
         
         try:
-            # Try English transcript first
-            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
+            # First try English
+            try:
+                transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
+            except (TranscriptsDisabled, NoTranscriptFound):
+                # If English fails, get available transcripts and use the first one
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                transcript = transcript_list.find_generated_transcript(['en', 'es', 'fr', 'de', 'it', 'pt'])
+                if not transcript:
+                    # If no generated transcript, get any manual transcript and translate it
+                    transcript = transcript_list.find_manually_created_transcript()
+                transcript = transcript.translate('en').fetch()
+
             full_text = " ".join([entry['text'] for entry in transcript])
             
-        except (TranscriptsDisabled, NoTranscriptFound):
-            await interaction.followup.send("❌ No English transcript available for this video.")
-            return
+            if len(full_text) > 4000:
+                full_text = full_text[:4000] + "..."
+            
+            # Rest of your summary code...
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": """Analyze the content in this structured format:
+                    1. CORE CONCEPT (2-3 sentences)
+                    2. BREAKDOWN (key points)
+                    3. IMPLICATIONS
+                    4. CRITICAL ANALYSIS
+                    5. FUTURE OUTLOOK
+                    
+                    Keep each section brief and concise."""},
+                    {"role": "user", "content": f"Analyze this video transcript:\n{full_text}"}
+                ],
+                max_tokens=500,  # Reduced tokens for shorter response
+                temperature=0.7
+            )
+            
+            analysis = response.choices[0].message.content.strip()
+            
+            # Split long messages
+            if len(analysis) > 1900:
+                parts = [analysis[i:i+1900] for i in range(0, len(analysis), 1900)]
+                for i, part in enumerate(parts):
+                    if i == 0:
+                        await interaction.followup.send(f"Analysis Part {i+1}/{len(parts)}:\n\n{part}")
+                    else:
+                        await interaction.followup.send(f"Part {i+1}/{len(parts)}:\n\n{part}")
+            else:
+                await interaction.followup.send(analysis)
+            
         except Exception as e:
             logger.error(f'Transcript error: {str(e)}')
-            await interaction.followup.send("❌ Failed to fetch video transcript.")
+            await interaction.followup.send("❌ No transcript available for this video.")
             return
-
-        if len(full_text) > 4000:
-            full_text = full_text[:4000] + "..."
-        
-        # Updated prompt for structured summary
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a skilled content analyzer. Provide a structured summary with the following sections:\n- Main Topic\n- Key Points (3-4 bullet points)\n- Key Takeaways"},
-                {"role": "user", "content": f"Analyze this video transcript and provide a structured summary:\n{full_text}"}
-            ],
-            max_tokens=400,
-            temperature=0.7
-        )
-        
-        summary = response.choices[0].message.content.strip()
-        await interaction.followup.send(f"{interaction.user.mention}, here's a structured summary of the video:\n\n{summary}")
-        
+            
     except Exception as e:
         logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
-        await interaction.followup.send(f"Sorry {interaction.user.mention}, an error occurred: {str(e)}")
+        await interaction.followup.send(f"Sorry, an error occurred: {str(e)}")
 
 @bot.tree.command(name="detailvideo", description="Provides an in-depth analysis with personalized impact assessment")
 async def detailvideo(interaction: discord.Interaction, url: str):

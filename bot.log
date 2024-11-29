@@ -332,3 +332,68 @@ Traceback (most recent call last):
 discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
 2024-11-28 23:29:58,079 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2024-11-28 23:30:10,702 [INFO] logging in using static token
+2024-11-28 23:38:35,579 [INFO] Starting bot...
+2024-11-28 23:38:35,579 [INFO] logging in using static token
+2024-11-28 23:38:36,239 [INFO] Shard ID None has connected to Gateway (Session ID: 9f95653a18bec016ee71942debb6c739).
+2024-11-28 23:38:38,265 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:38:38,265 [INFO] Connected to 2 guilds
+2024-11-28 23:38:38,440 [INFO] Slash commands synced successfully
+2024-11-28 23:38:38,441 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:38:38,441 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:38:42,622 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:39:37,722 [INFO] logging in using static token
+2024-11-28 23:39:39,796 [INFO] Starting bot...
+2024-11-28 23:39:39,796 [INFO] logging in using static token
+2024-11-28 23:39:40,417 [INFO] Shard ID None has connected to Gateway (Session ID: e20920a4c8b3dbf0e5f54652aebe56ad).
+2024-11-28 23:39:42,434 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:39:42,434 [INFO] Connected to 2 guilds
+2024-11-28 23:39:42,640 [INFO] Slash commands synced successfully
+2024-11-28 23:39:42,641 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:39:42,641 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:39:51,529 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:39:51,751 [ERROR] Transcript error: 400 Bad Request (error code: 50035): Invalid Form Body
+In content: Must be 2000 or fewer in length.
+2024-11-28 23:39:54,429 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 98, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:39:57,620 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 98, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:39:59,302 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 98, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:40:09,072 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-28 23:40:09,475 [INFO] Fetched 20 messages for summarization
+2024-11-28 23:40:10,700 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:40:41,269 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:40:41,435 [ERROR] Transcript error: 400 Bad Request (error code: 50035): Invalid Form Body
+In content: Must be 2000 or fewer in length.
+2024-11-28 23:41:23,900 [INFO] logging in using static token
+2024-11-28 23:41:27,189 [INFO] Starting bot...
+2024-11-28 23:41:27,189 [INFO] logging in using static token
+2024-11-28 23:41:27,733 [INFO] Shard ID None has connected to Gateway (Session ID: 3d8896f1d4e4442ff215b82d0d3688fd).
+2024-11-28 23:41:29,740 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:41:29,741 [INFO] Connected to 2 guilds
+2024-11-28 23:41:29,923 [INFO] Slash commands synced successfully
+2024-11-28 23:41:29,923 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:41:29,923 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:41:36,262 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:41:48,793 [INFO] logging in using static token
