@@ -208,3 +208,127 @@ discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
 2024-11-28 23:16:16,912 [INFO] SumVideo command received from elohiminty
 2024-11-28 23:16:21,923 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2024-11-28 23:16:30,644 [INFO] logging in using static token
+2024-11-28 23:25:53,286 [INFO] Starting bot...
+2024-11-28 23:25:53,287 [INFO] logging in using static token
+2024-11-28 23:25:54,052 [INFO] Shard ID None has connected to Gateway (Session ID: 5e0c1ab0499dd8add909c1e6865004bd).
+2024-11-28 23:25:56,059 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:25:56,059 [INFO] Connected to 2 guilds
+2024-11-28 23:25:56,290 [INFO] Slash commands synced successfully
+2024-11-28 23:25:56,291 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:25:56,291 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:25:57,853 [INFO] SumVideo command received from elohiminty
+2024-11-28 23:26:02,428 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:26:06,961 [INFO] logging in using static token
+2024-11-28 23:26:19,654 [INFO] Starting bot...
+2024-11-28 23:26:19,654 [INFO] logging in using static token
+2024-11-28 23:26:20,221 [INFO] Shard ID None has connected to Gateway (Session ID: fe1d7f3512bafeaef58eee9d8f7f378b).
+2024-11-28 23:26:22,037 [INFO] SumVideo command received from elohiminty
+2024-11-28 23:26:22,141 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 98, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:26:22,244 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:26:22,244 [INFO] Connected to 2 guilds
+2024-11-28 23:26:56,234 [INFO] Slash commands synced successfully
+2024-11-28 23:26:56,235 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:26:56,235 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:28:23,731 [INFO] logging in using static token
+2024-11-28 23:28:25,003 [INFO] Starting bot...
+2024-11-28 23:28:25,003 [INFO] logging in using static token
+2024-11-28 23:28:25,601 [INFO] Shard ID None has connected to Gateway (Session ID: 7701137d98f84df94588b37fbea63c27).
+2024-11-28 23:28:31,347 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:28:31,361 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:28:31,361 [INFO] Connected to 2 guilds
+2024-11-28 23:28:31,602 [INFO] Slash commands synced successfully
+2024-11-28 23:28:31,602 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:28:31,602 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:29:07,989 [INFO] DetailVideo command received from elohiminty
+2024-11-28 23:29:08,146 [ERROR] Error in detailvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 147, in detailvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:12,257 [INFO] DetailVideo command received from elohiminty
+2024-11-28 23:29:12,344 [ERROR] Error in detailvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 147, in detailvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:23,344 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 97, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:37,407 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 97, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:39,430 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 97, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:41,882 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 97, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:44,715 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 97, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:48,941 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 97, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:51,686 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 97, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:29:58,079 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:30:10,702 [INFO] logging in using static token

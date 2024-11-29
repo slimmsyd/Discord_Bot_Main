@@ -7,6 +7,7 @@ import logging
 from datetime import datetime
 import azure.functions as func
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
 import re
 
 
@@ -90,14 +91,11 @@ async def summarize(interaction: discord.Interaction):
         logger.error(f'Error in summarize command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, I couldn't summarize the messages. Error: {str(e)}")
 
-@bot.tree.command(name="sumvideo", description="Provides a quick, structured summary of a YouTube video")
+@bot.tree.command(name="sumvideo", description="Summarizes a YouTube video")
 async def sumvideo(interaction: discord.Interaction, url: str):
-    logger.info(f'SumVideo command received from {interaction.user}')
-    
     try:
         await interaction.response.defer()
         
-        # Extract video ID and get transcript (existing code)
         youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
         match = re.search(youtube_regex, url)
         
@@ -108,35 +106,40 @@ async def sumvideo(interaction: discord.Interaction, url: str):
         video_id = match.group(1)
         
         try:
-            transcript = YouTubeTranscriptApi.get_transcript(video_id)
+            # Try English transcript first
+            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
             full_text = " ".join([entry['text'] for entry in transcript])
             
-            if len(full_text) > 4000:
-                full_text = full_text[:4000] + "..."
-            
-            # Updated prompt for structured summary
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a skilled content analyzer. Provide a structured summary with the following sections:\n- Main Topic\n- Key Points (3-4 bullet points)\n- Key Takeaways"},
-                    {"role": "user", "content": f"Analyze this video transcript and provide a structured summary:\n{full_text}"}
-                ],
-                max_tokens=400,
-                temperature=0.7
-            )
-            
-            summary = response.choices[0].message.content.strip()
-            await interaction.followup.send(f"{interaction.user.mention}, here's a structured summary of the video:\n\n{summary}")
-            
+        except (TranscriptsDisabled, NoTranscriptFound):
+            await interaction.followup.send("❌ No English transcript available for this video.")
+            return
         except Exception as e:
-            logger.error(f'Error processing transcript: {str(e)}')
-            await interaction.followup.send(f"Sorry, I couldn't process the video transcript. Error: {str(e)}")
-            
+            logger.error(f'Transcript error: {str(e)}')
+            await interaction.followup.send("❌ Failed to fetch video transcript.")
+            return
+
+        if len(full_text) > 4000:
+            full_text = full_text[:4000] + "..."
+        
+        # Updated prompt for structured summary
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a skilled content analyzer. Provide a structured summary with the following sections:\n- Main Topic\n- Key Points (3-4 bullet points)\n- Key Takeaways"},
+                {"role": "user", "content": f"Analyze this video transcript and provide a structured summary:\n{full_text}"}
+            ],
+            max_tokens=400,
+            temperature=0.7
+        )
+        
+        summary = response.choices[0].message.content.strip()
+        await interaction.followup.send(f"{interaction.user.mention}, here's a structured summary of the video:\n\n{summary}")
+        
     except Exception as e:
         logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, an error occurred: {str(e)}")
 
-@bot.tree.command(name="detailvideo", description="Provides an in-depth analysis of a YouTube video")
+@bot.tree.command(name="detailvideo", description="Provides an in-depth analysis with personalized impact assessment")
 async def detailvideo(interaction: discord.Interaction, url: str):
     logger.info(f'DetailVideo command received from {interaction.user}')
     
@@ -161,19 +164,33 @@ async def detailvideo(interaction: discord.Interaction, url: str):
             
             # Detailed analysis prompt
             response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-å",
                 messages=[
-                    {"role": "system", "content": """You are an expert content analyzer. Provide a comprehensive analysis with these sections:
+                    {"role": "system", "content": """You are an expert content analyzer with deep understanding of American society in 2024. 
+                    Provide a comprehensive analysis with these sections:
                     1. Executive Summary (2-3 sentences)
                     2. Main Topics Covered (bullet points)
                     3. Key Arguments & Evidence
                     4. Notable Quotes or Statistics
                     5. Potential Counterarguments or Limitations
                     6. Practical Applications
-                    7. Related Topics for Further Research"""},
+                    7. How This Affects You (2024 American Context):
+                       - Personal Impact
+                       - Community Impact
+                       - Action Steps
+                       Consider current factors like:
+                       - Post-election climate
+                       - Economic conditions
+                       - Social dynamics
+                       - Technology trends
+                       - Policy implications
+                    8. Related Topics for Further Research
+                    
+                    Make the "How This Affects You" section particularly engaging and actionable, 
+                    considering the current political, economic, and social climate in America."""},
                     {"role": "user", "content": f"Provide a detailed analysis of this video transcript:\n{full_text}"}
                 ],
-                max_tokens=800,
+                max_tokens=1000,
                 temperature=0.7
             )
             
