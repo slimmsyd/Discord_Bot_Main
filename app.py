@@ -75,7 +75,7 @@ async def summarize(interaction: discord.Interaction):
         # OpenAI API call
         start_time = datetime.now()
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that summarizes conversations."},
                 {"role": "user", "content": f"Please summarize this conversation:\n{thread_content}"}
@@ -94,10 +94,12 @@ async def summarize(interaction: discord.Interaction):
 
 @bot.tree.command(name="sumvideo", description="Summarizes a YouTube video")
 async def sumvideo(interaction: discord.Interaction, url: str):
+    if interaction.response.is_done():
+        await interaction.followup.send("Processing your request...", wait=True)
+    else:
+        await interaction.response.defer(thinking=True)
+    
     try:
-        # Defer the response with ephemeral=True to prevent timeout
-        await interaction.response.defer(ephemeral=False, thinking=True)
-        
         youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
         match = re.search(youtube_regex, url)
         
@@ -127,7 +129,7 @@ async def sumvideo(interaction: discord.Interaction, url: str):
             
             # Rest of your summary code...
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": """Analyze the content in this structured format:
                     1. CORE CONCEPT (2-3 sentences)
@@ -139,31 +141,23 @@ async def sumvideo(interaction: discord.Interaction, url: str):
                     Keep each section brief and concise."""},
                     {"role": "user", "content": f"Analyze this video transcript:\n{full_text}"}
                 ],
-                max_tokens=500,  # Reduced tokens for shorter response
+                max_tokens=300,  # Reduced for more concise response
                 temperature=0.7
             )
             
             analysis = response.choices[0].message.content.strip()
-            
-            # Split long messages
-            if len(analysis) > 1900:
-                parts = [analysis[i:i+1900] for i in range(0, len(analysis), 1900)]
-                for i, part in enumerate(parts):
-                    if i == 0:
-                        await interaction.followup.send(f"Analysis Part {i+1}/{len(parts)}:\n\n{part}")
-                    else:
-                        await interaction.followup.send(f"Part {i+1}/{len(parts)}:\n\n{part}")
-            else:
-                await interaction.followup.send(analysis)
+            await interaction.followup.send(analysis)
             
         except Exception as e:
             logger.error(f'Transcript error: {str(e)}')
             await interaction.followup.send("❌ No transcript available for this video.")
-            return
             
     except Exception as e:
         logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
-        await interaction.followup.send(f"Sorry, an error occurred: {str(e)}")
+        try:
+            await interaction.followup.send(f"Sorry, an error occurred: {str(e)}")
+        except:
+            await interaction.channel.send(f"Sorry, an error occurred: {str(e)}")
 
 @bot.tree.command(name="detailvideo", description="Provides an in-depth analysis with personalized impact assessment")
 async def detailvideo(interaction: discord.Interaction, url: str):
