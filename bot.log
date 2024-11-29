@@ -150,3 +150,61 @@ Traceback (most recent call last):
 discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
 2024-11-28 22:45:06,003 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2024-11-28 22:45:17,793 [INFO] logging in using static token
+2024-11-28 23:03:21,198 [INFO] SumVideo command received from elohiminty in He's/general
+2024-11-28 23:03:23,859 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:06:07,500 [INFO] SumVideo command received from elohiminty in Street Economics HQ/🗼-crypto
+2024-11-28 23:06:10,178 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:10:32,623 [INFO] Starting bot...
+2024-11-28 23:10:32,623 [INFO] logging in using static token
+2024-11-28 23:10:33,278 [INFO] Shard ID None has connected to Gateway (Session ID: c875840d79e49874837343cbd1a7093b).
+2024-11-28 23:10:35,286 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:10:35,286 [INFO] Connected to 2 guilds
+2024-11-28 23:10:35,692 [INFO] Slash commands synced successfully
+2024-11-28 23:10:35,692 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:10:35,692 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:10:53,647 [INFO] logging in using static token
+2024-11-28 23:11:29,069 [INFO] SumVideo command received from elohiminty in He's/general
+2024-11-28 23:11:29,237 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 98, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:11:45,157 [INFO] SumVideo command received from elohiminty in He's/general
+2024-11-28 23:11:45,292 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 98, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 23:11:59,101 [INFO] logging in using static token
+2024-11-28 23:12:02,054 [INFO] Starting bot...
+2024-11-28 23:12:02,054 [INFO] logging in using static token
+2024-11-28 23:12:02,696 [INFO] Shard ID None has connected to Gateway (Session ID: 67ea3af4f0d3c9098744a16f37c144dc).
+2024-11-28 23:12:04,708 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:12:04,709 [INFO] Connected to 2 guilds
+2024-11-28 23:12:04,937 [INFO] Slash commands synced successfully
+2024-11-28 23:12:04,938 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:12:04,938 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:12:05,978 [INFO] SumVideo command received from elohiminty
+2024-11-28 23:12:10,827 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:14:49,591 [INFO] logging in using static token
+2024-11-28 23:15:12,390 [INFO] Starting bot...
+2024-11-28 23:15:12,390 [INFO] logging in using static token
+2024-11-28 23:15:13,039 [INFO] Shard ID None has connected to Gateway (Session ID: b446a13e0f692be2b52b9e195ce85315).
+2024-11-28 23:15:15,057 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 23:15:15,058 [INFO] Connected to 2 guilds
+2024-11-28 23:15:15,222 [INFO] Slash commands synced successfully
+2024-11-28 23:15:15,222 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 23:15:15,222 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 23:15:42,693 [INFO] DetailVideo command received from elohiminty
+2024-11-28 23:15:47,607 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:16:16,912 [INFO] SumVideo command received from elohiminty
+2024-11-28 23:16:21,923 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:16:30,644 [INFO] logging in using static token

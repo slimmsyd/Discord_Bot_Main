@@ -90,15 +90,14 @@ async def summarize(interaction: discord.Interaction):
         logger.error(f'Error in summarize command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, I couldn't summarize the messages. Error: {str(e)}")
 
-@bot.tree.command(name="sumvideo", description="Summarizes a YouTube video from the message URL")
+@bot.tree.command(name="sumvideo", description="Provides a quick, structured summary of a YouTube video")
 async def sumvideo(interaction: discord.Interaction, url: str):
-    logger.info(f'SumVideo command received from {interaction.user} in {interaction.guild.name}/{interaction.channel.name}')
+    logger.info(f'SumVideo command received from {interaction.user}')
     
     try:
-        # Defer the response since this might take time
         await interaction.response.defer()
         
-        # Extract YouTube video ID using regex
+        # Extract video ID and get transcript (existing code)
         youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
         match = re.search(youtube_regex, url)
         
@@ -108,36 +107,95 @@ async def sumvideo(interaction: discord.Interaction, url: str):
             
         video_id = match.group(1)
         
-        # Fetch transcript
         try:
             transcript = YouTubeTranscriptApi.get_transcript(video_id)
             full_text = " ".join([entry['text'] for entry in transcript])
             
-            # Split text into chunks if it's too long (OpenAI has token limits)
-            max_chunk_length = 4000  # Adjust based on your needs
-            if len(full_text) > max_chunk_length:
-                full_text = full_text[:max_chunk_length] + "..."
+            if len(full_text) > 4000:
+                full_text = full_text[:4000] + "..."
             
-            # Get summary from OpenAI
+            # Updated prompt for structured summary
             response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant that summarizes YouTube video transcripts."},
-                    {"role": "user", "content": f"Please provide a concise summary of this video transcript:\n{full_text}"}
+                    {"role": "system", "content": "You are a skilled content analyzer. Provide a structured summary with the following sections:\n- Main Topic\n- Key Points (3-4 bullet points)\n- Key Takeaways"},
+                    {"role": "user", "content": f"Analyze this video transcript and provide a structured summary:\n{full_text}"}
                 ],
-                max_tokens=300,
+                max_tokens=400,
                 temperature=0.7
             )
             
             summary = response.choices[0].message.content.strip()
-            await interaction.followup.send(f"{interaction.user.mention}, here's a summary of the video:\n{summary}")
+            await interaction.followup.send(f"{interaction.user.mention}, here's a structured summary of the video:\n\n{summary}")
             
         except Exception as e:
-            logger.error(f'Error fetching/processing transcript: {str(e)}')
+            logger.error(f'Error processing transcript: {str(e)}')
             await interaction.followup.send(f"Sorry, I couldn't process the video transcript. Error: {str(e)}")
             
     except Exception as e:
         logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Sorry {interaction.user.mention}, an error occurred: {str(e)}")
+
+@bot.tree.command(name="detailvideo", description="Provides an in-depth analysis of a YouTube video")
+async def detailvideo(interaction: discord.Interaction, url: str):
+    logger.info(f'DetailVideo command received from {interaction.user}')
+    
+    try:
+        await interaction.response.defer()
+        
+        youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
+        match = re.search(youtube_regex, url)
+        
+        if not match:
+            await interaction.followup.send("Please provide a valid YouTube URL.")
+            return
+            
+        video_id = match.group(1)
+        
+        try:
+            transcript = YouTubeTranscriptApi.get_transcript(video_id)
+            full_text = " ".join([entry['text'] for entry in transcript])
+            
+            if len(full_text) > 4000:
+                full_text = full_text[:4000] + "..."
+            
+            # Detailed analysis prompt
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": """You are an expert content analyzer. Provide a comprehensive analysis with these sections:
+                    1. Executive Summary (2-3 sentences)
+                    2. Main Topics Covered (bullet points)
+                    3. Key Arguments & Evidence
+                    4. Notable Quotes or Statistics
+                    5. Potential Counterarguments or Limitations
+                    6. Practical Applications
+                    7. Related Topics for Further Research"""},
+                    {"role": "user", "content": f"Provide a detailed analysis of this video transcript:\n{full_text}"}
+                ],
+                max_tokens=800,
+                temperature=0.7
+            )
+            
+            analysis = response.choices[0].message.content.strip()
+            
+            # Split message if it's too long for Discord
+            if len(analysis) > 1900:  # Discord has a 2000 character limit
+                parts = [analysis[i:i+1900] for i in range(0, len(analysis), 1900)]
+                for i, part in enumerate(parts):
+                    if i == 0:
+                        await interaction.followup.send(f"{interaction.user.mention}, here's a detailed analysis of the video (Part {i+1}/{len(parts)}):\n\n{part}")
+                    else:
+                        await interaction.followup.send(f"(Part {i+1}/{len(parts)}):\n\n{part}")
+            else:
+                await interaction.followup.send(f"{interaction.user.mention}, here's a detailed analysis of the video:\n\n{analysis}")
+            
+        except Exception as e:
+            logger.error(f'Error processing transcript: {str(e)}')
+            await interaction.followup.send(f"Sorry, I couldn't process the video transcript. Error: {str(e)}")
+            
+    except Exception as e:
+        logger.error(f'Error in detailvideo command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, an error occurred: {str(e)}")
 
 @bot.event
