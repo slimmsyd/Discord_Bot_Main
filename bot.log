@@ -96,3 +96,57 @@ AttributeError: 'NoneType' object has no attribute 'reference'
 2024-11-28 22:28:40,155 [INFO] Connected to guild: He's (ID: 1311794114198503444)
 2024-11-28 22:29:00,443 [INFO] SumVideo command received from elohiminty in He's/general
 2024-11-28 22:29:02,821 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 22:40:51,283 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-28 22:40:51,751 [INFO] Fetched 20 messages for summarization
+2024-11-28 22:40:52,781 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 22:43:39,141 [INFO] Starting bot...
+2024-11-28 22:43:39,141 [INFO] logging in using static token
+2024-11-28 22:43:39,691 [INFO] Shard ID None has connected to Gateway (Session ID: f6254a7ff76e5d388e06dec49ff195cc).
+2024-11-28 22:43:41,720 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 22:43:41,720 [INFO] Connected to 2 guilds
+2024-11-28 22:43:41,910 [INFO] Slash commands synced: 2
+2024-11-28 22:43:41,911 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 22:43:41,911 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 22:43:46,576 [ERROR] Command error: Command "sumvideo" is not found
+NoneType: None
+2024-11-28 22:43:46,578 [ERROR] Command error: Command "sumvideo" is not found
+NoneType: None
+2024-11-28 22:43:49,560 [ERROR] Command error: Command "sumvide" is not found
+NoneType: None
+2024-11-28 22:43:49,563 [ERROR] Command error: Command "sumvide" is not found
+NoneType: None
+2024-11-28 22:43:58,644 [INFO] logging in using static token
+2024-11-28 22:44:02,830 [INFO] Starting bot...
+2024-11-28 22:44:02,830 [INFO] logging in using static token
+2024-11-28 22:44:03,379 [INFO] Shard ID None has connected to Gateway (Session ID: cdc618c1d68eb35ce773e402fff6c868).
+2024-11-28 22:44:05,447 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 22:44:05,448 [INFO] Connected to 2 guilds
+2024-11-28 22:44:36,945 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-28 22:44:36,948 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-28 22:44:37,104 [ERROR] Error in summarize command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 64, in summarize
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 22:44:37,344 [INFO] Fetched 20 messages for summarization
+2024-11-28 22:44:38,285 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 22:44:41,926 [INFO] Slash commands synced successfully
+2024-11-28 22:44:41,927 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 22:44:41,927 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 22:45:03,465 [INFO] SumVideo command received from elohiminty in He's/general
+2024-11-28 22:45:03,465 [INFO] SumVideo command received from elohiminty in He's/general
+2024-11-28 22:45:03,615 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 99, in sumvideo
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-11-28 22:45:06,003 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 22:45:17,793 [INFO] logging in using static token

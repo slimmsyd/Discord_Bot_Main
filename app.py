@@ -47,8 +47,9 @@ async def on_ready():
     logger.info(f'Bot logged in as {bot.user.name} (ID: {bot.user.id})')
     logger.info(f'Connected to {len(bot.guilds)} guilds')
     try:
-        synced = await bot.tree.sync()
-        logger.info(f'Slash commands synced: {len(synced)}')
+        # Force sync all commands
+        await bot.tree.sync()
+        logger.info("Slash commands synced successfully")
     except Exception as e:
         logger.error(f'Failed to sync slash commands: {e}')
     for guild in bot.guilds:
