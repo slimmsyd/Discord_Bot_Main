@@ -7,3 +7,4 @@ flask>=2.3.2
 azure-functions
 openai
 python-dotenv
+youtube_transcript_api

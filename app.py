@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import logging
 from datetime import datetime
 import azure.functions as func
+from youtube_transcript_api import YouTubeTranscriptApi
+import re
 
 
 # Set up logging
@@ -86,6 +88,56 @@ async def summarize(interaction: discord.Interaction):
     except Exception as e:
         logger.error(f'Error in summarize command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, I couldn't summarize the messages. Error: {str(e)}")
+
+@bot.tree.command(name="sumvideo", description="Summarizes a YouTube video from the message URL")
+async def sumvideo(interaction: discord.Interaction, url: str):
+    logger.info(f'SumVideo command received from {interaction.user} in {interaction.guild.name}/{interaction.channel.name}')
+    
+    try:
+        # Defer the response since this might take time
+        await interaction.response.defer()
+        
+        # Extract YouTube video ID using regex
+        youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
+        match = re.search(youtube_regex, url)
+        
+        if not match:
+            await interaction.followup.send("Please provide a valid YouTube URL.")
+            return
+            
+        video_id = match.group(1)
+        
+        # Fetch transcript
+        try:
+            transcript = YouTubeTranscriptApi.get_transcript(video_id)
+            full_text = " ".join([entry['text'] for entry in transcript])
+            
+            # Split text into chunks if it's too long (OpenAI has token limits)
+            max_chunk_length = 4000  # Adjust based on your needs
+            if len(full_text) > max_chunk_length:
+                full_text = full_text[:max_chunk_length] + "..."
+            
+            # Get summary from OpenAI
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that summarizes YouTube video transcripts."},
+                    {"role": "user", "content": f"Please provide a concise summary of this video transcript:\n{full_text}"}
+                ],
+                max_tokens=300,
+                temperature=0.7
+            )
+            
+            summary = response.choices[0].message.content.strip()
+            await interaction.followup.send(f"{interaction.user.mention}, here's a summary of the video:\n{summary}")
+            
+        except Exception as e:
+            logger.error(f'Error fetching/processing transcript: {str(e)}')
+            await interaction.followup.send(f"Sorry, I couldn't process the video transcript. Error: {str(e)}")
+            
+    except Exception as e:
+        logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Sorry {interaction.user.mention}, an error occurred: {str(e)}")
 
 @bot.event
 async def on_command_error(ctx, error):

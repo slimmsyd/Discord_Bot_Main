@@ -61,3 +61,38 @@ A detailed migration guide is available here: https://github.com/openai/openai-p
 2024-11-28 16:12:15,925 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2024-11-28 16:12:15,934 [INFO] OpenAI API response received in 1.01 seconds
 2024-11-28 16:12:16,164 [INFO] Summary successfully sent to channel
+2024-11-28 22:26:30,473 [INFO] Starting bot...
+2024-11-28 22:26:30,474 [INFO] logging in using static token
+2024-11-28 22:26:31,060 [INFO] Shard ID None has connected to Gateway (Session ID: 913621ff1c15178376a763da53a37e2f).
+2024-11-28 22:26:33,102 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 22:26:33,102 [INFO] Connected to 2 guilds
+2024-11-28 22:26:33,310 [INFO] Slash commands synced: 2
+2024-11-28 22:26:33,311 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 22:26:33,311 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 22:26:47,972 [INFO] logging in using static token
+2024-11-28 22:26:51,201 [INFO] Starting bot...
+2024-11-28 22:26:51,201 [INFO] logging in using static token
+2024-11-28 22:26:51,977 [INFO] Shard ID None has connected to Gateway (Session ID: 3294dc032d9febb2584adb521b18b71b).
+2024-11-28 22:26:53,985 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 22:26:53,986 [INFO] Connected to 2 guilds
+2024-11-28 22:27:28,373 [INFO] SumVideo command received from elohiminty in He's/general
+2024-11-28 22:27:28,641 [ERROR] Error in sumvideo command: 'NoneType' object has no attribute 'reference'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 101, in sumvideo
+    if not interaction.message.reference:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'reference'
+2024-11-28 22:27:33,382 [INFO] Slash commands synced: 2
+2024-11-28 22:27:33,382 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 22:27:33,382 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 22:28:33,603 [INFO] logging in using static token
+2024-11-28 22:28:36,772 [INFO] Starting bot...
+2024-11-28 22:28:36,773 [INFO] logging in using static token
+2024-11-28 22:28:37,831 [INFO] Shard ID None has connected to Gateway (Session ID: 1f72f922b3fcd91f33481607ef696b1d).
+2024-11-28 22:28:39,838 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-28 22:28:39,838 [INFO] Connected to 2 guilds
+2024-11-28 22:28:40,154 [INFO] Slash commands synced: 2
+2024-11-28 22:28:40,155 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-28 22:28:40,155 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-28 22:29:00,443 [INFO] SumVideo command received from elohiminty in He's/general
+2024-11-28 22:29:02,821 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
