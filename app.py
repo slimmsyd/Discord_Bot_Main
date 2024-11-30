@@ -9,7 +9,32 @@ import azure.functions as func
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
 import re
+from aiohttp import web
+import asyncio
 
+# Add health check routes
+async def health_check(request):
+    return web.Response(text="Healthy", status=200)
+
+# Create web app
+app = web.Application()
+app.router.add_get('/health', health_check)
+app.router.add_get('/', health_check)
+
+# Modified run function
+async def run_bot_and_server():
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', 8000)
+    await site.start()
+    
+    # Rest of your existing bot setup code...
+    try:
+        await bot.start(token)
+    except Exception as e:
+        logger.critical(f'Failed to start bot: {str(e)}', exc_info=True)
+    finally:
+        await runner.cleanup()
 
 # Set up logging
 logging.basicConfig(
@@ -241,11 +266,11 @@ async def on_command_error(ctx, error):
     await ctx.send(f"An error occurred: {str(error)}")
 
 # Run the bot
-try:
-    logger.info('Starting bot...')
-    bot.run(token)
-except Exception as e:
-    logger.critical(f'Failed to start bot: {str(e)}', exc_info=True)
-
 if __name__ == "__main__":
-    bot.run(token)
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(run_bot_and_server())
+    except KeyboardInterrupt:
+        loop.run_until_complete(bot.close())
+    finally:
+        loop.close()
