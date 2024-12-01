@@ -4,3 +4,4 @@ openai
 azure-functions
 youtube_transcript_api
 aiohttp
+requests==2.31.0

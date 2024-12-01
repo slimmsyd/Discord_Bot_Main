@@ -11,6 +11,12 @@ from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFoun
 import re
 from aiohttp import web
 import asyncio
+from io import BytesIO
+import base64
+import requests
+import praw
+import random
+from typing import Optional
 
 # Add health check routes
 async def health_check(request):
@@ -68,6 +74,59 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True
 bot = commands.Bot(command_prefix='/', intents=intents)
+
+# Reddit setup
+reddit = praw.Reddit(
+    client_id=os.getenv('REDDIT_CLIENT_ID'),
+    client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+    user_agent="DiscordBot/1.0"
+)
+
+async def get_relevant_meme(conversation: str) -> Optional[tuple[str, str]]:
+    """
+    Attempts to find a relevant meme from Reddit based on conversation context.
+    Returns tuple of (meme_url, post_title) if found, None otherwise.
+    """
+    try:
+        # Use GPT to extract key topics/themes from conversation
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Extract 2-3 key words or themes from this conversation that could be used to search for a relevant meme. Respond with only the words, separated by spaces."},
+                {"role": "user", "content": conversation}
+            ],
+            max_tokens=50,
+            temperature=0.7
+        )
+        
+        search_terms = response.choices[0].message.content.strip()
+        logger.info(f"Searching for memes with terms: {search_terms}")
+        
+        # List of meme subreddits to search
+        meme_subreddits = ['memes', 'dankmemes', 'meirl', 'wholesomememes']
+        
+        for subreddit_name in meme_subreddits:
+            subreddit = reddit.subreddit(subreddit_name)
+            
+            # Search the subreddit for posts containing any of the key terms
+            for term in search_terms.split():
+                search_results = list(subreddit.search(term, limit=10))
+                if search_results:
+                    # Filter for image posts only
+                    image_posts = [post for post in search_results 
+                                 if post.url.endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+                    if image_posts:
+                        chosen_post = random.choice(image_posts)
+                        return (chosen_post.url, chosen_post.title)
+        
+        # If no relevant meme found, fall back to random top meme
+        fallback_posts = list(reddit.subreddit('memes').hot(limit=50))
+        chosen_post = random.choice(fallback_posts)
+        return (chosen_post.url, chosen_post.title)
+        
+    except Exception as e:
+        logger.error(f"Error finding relevant meme: {str(e)}")
+        return None
 
 @bot.event
 async def on_ready():
@@ -259,6 +318,46 @@ async def detailvideo(interaction: discord.Interaction, url: str):
     except Exception as e:
         logger.error(f'Error in detailvideo command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, an error occurred: {str(e)}")
+
+@bot.tree.command(name="meme", description="Finds a relevant meme based on recent conversation")
+async def meme(interaction: discord.Interaction):
+    logger.info(f'Meme command received from {interaction.user} in {interaction.guild.name}/{interaction.channel.name}')
+    
+    try:
+        await interaction.response.defer()
+        
+        # Fetch last 4 messages
+        messages = [message async for message in interaction.channel.history(limit=4)]
+        messages.reverse()
+        
+        # Format messages for context
+        conversation = "\n".join([f"{msg.author.name}: {msg.content}" for msg in messages])
+        
+        # Get relevant meme
+        meme_result = await get_relevant_meme(conversation)
+        
+        if meme_result:
+            meme_url, meme_title = meme_result
+            
+            # Download the meme
+            async with aiohttp.ClientSession() as session:
+                async with session.get(meme_url) as resp:
+                    if resp.status == 200:
+                        meme_data = BytesIO(await resp.read())
+                        await interaction.followup.send(
+                            content=f"**{meme_title}**\n*Found a relevant meme based on your conversation!*",
+                            file=discord.File(fp=meme_data, filename='meme.png')
+                        )
+                    else:
+                        await interaction.followup.send("Sorry, I couldn't download the meme image.")
+        else:
+            await interaction.followup.send("Sorry, I couldn't find a relevant meme.")
+            
+    except Exception as e:
+        logger.error(f'Error in meme command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Sorry {interaction.user.mention}, I couldn't generate the meme. Error: {str(e)}"
+        )
 
 @bot.event
 async def on_command_error(ctx, error):
