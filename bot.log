@@ -532,3 +532,27 @@ discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exc
 2024-11-30 21:41:27,802 [INFO] Meme command received from elohiminty in He's/general
 2024-11-30 21:41:29,663 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2024-11-30 21:41:41,420 [INFO] HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 200 OK"
+2024-11-30 21:57:00,499 [WARNING] Reddit integration disabled: Required configuration setting 'client_id' missing. 
+This setting can be provided in a praw.ini file, as a keyword argument to the Reddit class constructor, or as an environment variable.
+2024-11-30 21:57:00,500 [INFO] Web server started on 0.0.0.0:8000
+2024-11-30 21:57:00,500 [INFO] logging in using static token
+2024-11-30 21:57:01,270 [INFO] Shard ID None has connected to Gateway (Session ID: 44c283ccc3574034c7260d272bf63b9a).
+2024-11-30 21:57:03,287 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-30 21:57:03,288 [INFO] Connected to 2 guilds
+2024-11-30 21:57:03,466 [INFO] Slash commands synced successfully
+2024-11-30 21:57:03,467 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-30 21:57:03,467 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-30 21:57:06,311 [INFO] Summarize command received from elohiminty in He's/general
+2024-11-30 21:57:06,586 [INFO] Fetched 20 messages for summarization
+2024-11-30 21:57:08,764 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-30 21:57:44,805 [INFO] Meme command received from elohiminty in He's/general
+2024-11-30 22:00:52,103 [INFO] Meme command received from elohiminty in He's/general
+2024-11-30 22:00:59,816 [INFO] logging in using static token
+2024-11-30 22:01:01,927 [INFO] Shard ID None has connected to Gateway (Session ID: e21c1e933af7ef6fa7f5e388ac533f2d).
+2024-11-30 22:01:03,936 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-11-30 22:01:03,937 [INFO] Connected to 2 guilds
+2024-11-30 22:01:04,172 [INFO] Slash commands synced successfully
+2024-11-30 22:01:04,173 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-11-30 22:01:04,173 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-11-30 22:01:22,040 [INFO] Meme command received from elohiminty in He's/general
+2024-11-30 22:01:24,803 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
