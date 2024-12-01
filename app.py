@@ -17,6 +17,11 @@ import requests
 import praw
 import random
 from typing import Optional
+import sys
+
+# Add these constants
+PORT = os.getenv('PORT', 8000)
+HOST = os.getenv('HOST', '0.0.0.0')
 
 # Add health check routes
 async def health_check(request):
@@ -29,16 +34,25 @@ app.router.add_get('/', health_check)
 
 # Modified run function
 async def run_bot_and_server():
+    # Create the web app first
+    app = web.Application()
+    app.router.add_get('/health', health_check)
+    app.router.add_get('/', health_check)
+    
+    # Setup the runner
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', 8000)
-    await site.start()
+    site = web.TCPSite(runner, HOST, PORT)
     
-    # Rest of your existing bot setup code...
+    # Start both the web server and the bot
+    await site.start()
+    logger.info(f'Web server started on {HOST}:{PORT}')
+    
     try:
         await bot.start(token)
     except Exception as e:
         logger.critical(f'Failed to start bot: {str(e)}', exc_info=True)
+        raise  # Re-raise the exception to ensure Azure knows about the failure
     finally:
         await runner.cleanup()
 
@@ -47,8 +61,8 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s',
     handlers=[
-        logging.FileHandler('bot.log'),
-        logging.StreamHandler()
+        logging.StreamHandler(sys.stdout),  # Log to stdout for Azure
+        logging.FileHandler('bot.log')
     ]
 )
 logger = logging.getLogger('discord_bot')
@@ -366,10 +380,15 @@ async def on_command_error(ctx, error):
 
 # Run the bot
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    
     try:
         loop.run_until_complete(run_bot_and_server())
     except KeyboardInterrupt:
         loop.run_until_complete(bot.close())
+    except Exception as e:
+        logger.critical(f"Critical error: {str(e)}", exc_info=True)
+        raise  # Make sure Azure sees the error
     finally:
         loop.close()
