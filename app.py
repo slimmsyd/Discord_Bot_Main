@@ -13,6 +13,7 @@ from aiohttp import web
 import asyncio
 from io import BytesIO
 import requests
+from bs4 import BeautifulSoup
 
 # Add health check routes
 async def health_check(request):
@@ -360,6 +361,66 @@ async def dearoracle(interaction: discord.Interaction, question: str):
         logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
         await interaction.followup.send(
             f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
+        )
+        
+@bot.tree.command(name="finnasumthisup", description="Street Oracle breaks down an article for you")
+async def finnasumthisup(interaction: discord.Interaction, url: str):
+    logger.info(f'Article summary requested by {interaction.user}: {url}')
+    
+    try:
+        await interaction.response.defer()
+        
+        # Fetch the article content
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Extract text from the article
+        article_text = ""
+        
+        # Look for common article containers
+        article_containers = soup.find_all(['article', 'div'], class_=re.compile(r'article|content|story|post'))
+        for container in article_containers:
+            paragraphs = container.find_all('p')
+            article_text += ' '.join([p.get_text().strip() for p in paragraphs])
+        
+        if not article_text:
+            # Fallback to all paragraphs if no article container found
+            paragraphs = soup.find_all('p')
+            article_text = ' '.join([p.get_text().strip() for p in paragraphs])
+        
+        # Get Street Oracle to summarize
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": """You are the Street Oracle, breaking down complex articles in 
+                street-smart language with New York slang and urban wisdom. Structure your response like this:
+                
+                "Ay yo lil homie, peep game on this article right quick:
+                
+                [Break down main points using street slang and urban metaphors]
+                
+                Bottom line: [key takeaway with street flavor]"
+                
+                Keep it real, informative, and entertaining. Use authentic street/urban language."""},
+                {"role": "user", "content": f"Break down this article in your style:\n\n{article_text}"}
+            ],
+            max_tokens=400,
+            temperature=0.7
+        )
+        
+        summary = response.choices[0].message.content.strip()
+        
+        # Send the summary with some style
+        await interaction.followup.send(
+            f"🗞️ **Street Oracle Article Breakdown** 🔮\n\n{summary}\n\n*Original article: {url}*"
+        )
+        
+    except Exception as e:
+        logger.error(f'Error in finnasumthisup command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Ay yo {interaction.user.mention}, my bad fam! Couldn't grab that article. "
+            f"Make sure that link is straight and try again later! Error: {str(e)}"
         )
 
 @bot.event
