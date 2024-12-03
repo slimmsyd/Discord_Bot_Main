@@ -212,7 +212,7 @@ async def detailvideo(interaction: discord.Interaction, url: str):
             
             # Detailed analysis prompt
             response = client.chat.completions.create(
-                model="gpt-å",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": """You are an expert content analyzer with deep understanding of American society in 2024. 
                     Provide a comprehensive analysis with these sections:
@@ -421,6 +421,59 @@ async def finnasumthisup(interaction: discord.Interaction, url: str):
         await interaction.followup.send(
             f"Ay yo {interaction.user.mention}, my bad fam! Couldn't grab that article. "
             f"Make sure that link is straight and try again later! Error: {str(e)}"
+        )
+
+@bot.tree.command(name="fryemup", description="Street Oracle roasts based on recent messages")
+async def fryemup(interaction: discord.Interaction):
+    logger.info(f'Roast command received from {interaction.user} in {interaction.guild.name}/{interaction.channel.name}')
+    
+    try:
+        await interaction.response.defer()
+        
+        # Fetch last 5 messages for context
+        messages = [message async for message in interaction.channel.history(limit=5)]
+        messages.reverse()  # Put in chronological order
+        
+        # Format messages for context
+        conversation = "\n".join([f"{msg.author.name}: {msg.content}" for msg in messages])
+        
+        # Get the Street Oracle to deliver a roast
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": """You are the Street Oracle, now in roast mode. You're delivering 
+                a humorous, witty roast using New York street slang and urban wisdom. Your roasts should be:
+                - Funny but not truly mean-spirited
+                - Creative with street metaphors
+                - Using authentic urban slang
+                - Always start with "I finna fry ya ass up, if you dont getcho ol'"
+                - Always end with "lil homie"
+                - Reference specific things from the conversation
+                - Keep it playful and entertaining
+                
+                Example style:
+                "I finna fry ya ass up, if you dont getcho ol' pokemon card collecting, 
+                hot cheeto fingers, calculator watching, math class failing self somewhere else lil homie"
+                
+                Make it funny and creative, but keep it relatively clean and not actually hurtful."""},
+                {"role": "user", "content": f"Create a roast based on this conversation:\n{conversation}"}
+            ],
+            max_tokens=200,
+            temperature=0.9
+        )
+        
+        roast = response.choices[0].message.content.strip()
+        
+        # Send the roast with some style
+        await interaction.followup.send(
+            f"🔥 **Street Oracle Roast** 🔥\n\n{roast}"
+        )
+        
+    except Exception as e:
+        logger.error(f'Error in fryemup command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Ay yo {interaction.user.mention}, my bad fam! The roast ain't cooking right now. "
+            f"Try again later when the heat back on! Error: {str(e)}"
         )
 
 @bot.event
