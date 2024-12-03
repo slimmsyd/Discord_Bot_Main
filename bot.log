@@ -556,3 +556,13 @@ This setting can be provided in a praw.ini file, as a keyword argument to the Re
 2024-11-30 22:01:04,173 [INFO] Connected to guild: He's (ID: 1311794114198503444)
 2024-11-30 22:01:22,040 [INFO] Meme command received from elohiminty in He's/general
 2024-11-30 22:01:24,803 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-30 22:01:36,621 [INFO] HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 200 OK"
+2024-12-03 15:25:40,675 [INFO] logging in using static token
+2024-12-03 15:25:41,298 [INFO] Shard ID None has connected to Gateway (Session ID: a2da2c5d3448036917befd681618e53b).
+2024-12-03 15:25:43,308 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-03 15:25:43,308 [INFO] Connected to 2 guilds
+2024-12-03 15:25:43,516 [INFO] Slash commands synced successfully
+2024-12-03 15:25:43,517 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-03 15:25:43,517 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-03 15:26:20,887 [INFO] Street Oracle question received from elohiminty: if their is 8 billion population , thant what is 21 mil percentage of it ?
+2024-12-03 15:26:23,771 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

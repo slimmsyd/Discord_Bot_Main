@@ -333,6 +333,35 @@ async def meme(interaction: discord.Interaction):
             f"Sorry {interaction.user.mention}, I couldn't generate the meme. Error: {str(e)}"
         )
 
+@bot.tree.command(name="dearoracle", description="Ask the Street Oracle any question for some street-wise wisdom")
+async def dearoracle(interaction: discord.Interaction, question: str):
+    logger.info(f'Street Oracle question received from {interaction.user}: {question}')
+    
+    try:
+        await interaction.response.defer()
+        
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": """You are the Street Oracle, a wise but cool advisor who speaks in 
+                casual, urban style. Always start your response with "Lil homie," and maintain a friendly, 
+                street-smart tone. Use casual language but give genuinely thoughtful advice. Keep your responses 
+                relatively concise but meaningful."""},
+                {"role": "user", "content": question}
+            ],
+            max_tokens=150,
+            temperature=0.7
+        )
+        
+        oracle_wisdom = response.choices[0].message.content.strip()
+        await interaction.followup.send(f"🔮 {oracle_wisdom}")
+        
+    except Exception as e:
+        logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
+        )
+
 @bot.event
 async def on_command_error(ctx, error):
     logger.error(f'Command error: {str(error)}', exc_info=True)
