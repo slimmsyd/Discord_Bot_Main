@@ -591,3 +591,37 @@ This setting can be provided in a praw.ini file, as a keyword argument to the Re
 2024-12-03 17:33:22,137 [INFO] Connected to guild: He's (ID: 1311794114198503444)
 2024-12-03 17:33:46,977 [INFO] Roast command received from elohiminty in He's/general
 2024-12-03 17:33:52,924 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-07 12:34:59,178 [INFO] logging in using static token
+2024-12-07 12:35:01,375 [INFO] Shard ID None has connected to Gateway (Session ID: 385f056035922a688247a56bafc1fc30).
+2024-12-07 12:35:03,432 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-07 12:35:03,432 [INFO] Connected to 1 guilds
+2024-12-07 12:35:03,675 [INFO] Slash commands synced successfully
+2024-12-07 12:35:03,676 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-07 12:35:55,869 [INFO] logging in using static token
+2024-12-07 12:35:56,567 [INFO] Shard ID None has connected to Gateway (Session ID: be7ddc5a23482b8ab8e44b1e792dbf44).
+2024-12-07 12:35:58,583 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-07 12:35:58,583 [INFO] Connected to 1 guilds
+2024-12-07 12:35:58,965 [INFO] Slash commands synced successfully
+2024-12-07 12:35:58,966 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-07 12:36:28,737 [INFO] Roast command received from elohiminty in He's/general
+2024-12-07 12:36:28,962 [ERROR] Error in fryemup command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 431, in fryemup
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-07 12:36:39,630 [INFO] Roast was replied to by elohiminty
+2024-12-07 12:36:42,331 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-07 12:37:38,564 [INFO] logging in using static token
+2024-12-07 12:37:39,521 [INFO] Shard ID None has connected to Gateway (Session ID: fc3596f8900608b79cfd9144a9c05ca6).
+2024-12-07 12:37:41,535 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-07 12:37:41,535 [INFO] Connected to 1 guilds
+2024-12-07 12:37:41,759 [INFO] Slash commands synced successfully
+2024-12-07 12:37:41,759 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-07 12:38:06,686 [INFO] Roast command received from elohiminty in He's/general
+2024-12-07 12:38:15,790 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-07 12:38:23,465 [INFO] Roast was replied to by elohiminty saying: bro you need to relax
+2024-12-07 12:38:24,854 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

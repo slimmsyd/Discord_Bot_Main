@@ -481,6 +481,56 @@ async def on_command_error(ctx, error):
     logger.error(f'Command error: {str(error)}', exc_info=True)
     await ctx.send(f"An error occurred: {str(error)}")
 
+@bot.event
+async def on_message(message):
+    # Ignore messages from the bot itself
+    if message.author == bot.user:
+        return
+        
+    # Check if this is a reply to our bot
+    if message.reference and message.reference.resolved:
+        referenced_message = message.reference.resolved
+        # Only respond if it's replying to a fryemup command
+        if (referenced_message.author == bot.user and 
+            "🔥 **Street Oracle Roast**" in referenced_message.content):
+            logger.info(f'Roast was replied to by {message.author} saying: {message.content}')
+            
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": """You are the Street Oracle in comeback mode. Your job is to 
+                        create a comeback roast that specifically references what the person said in their reply.
+                        Use their own words against them in a clever way. Format must be EXACTLY:
+                        "im on ya ass boi, you look like a [FIRST_ROAST based on their reply] like shit boi, like a mf [SECOND_ROAST based on their reply]"
+                        
+                        Example:
+                        If they say "your roasts are weak", you might respond:
+                        "im on ya ass boi, you look like a dictionary reading roast critic like shit boi, like a mf comedy show heckler from the dollar seats"
+                        
+                        Make it:
+                        - Directly reference their reply
+                        - Use street slang
+                        - Be creative and funny
+                        - Keep it playful not mean"""},
+                        {"role": "user", "content": f"Create a comeback roast based on their reply: {message.content}"}
+                    ],
+                    max_tokens=150,
+                    temperature=0.9
+                )
+                
+                comeback = response.choices[0].message.content.strip()
+                await message.reply(f"🔥 {comeback}")
+                
+            except Exception as e:
+                logger.error(f'Error in roast comeback: {str(e)}', exc_info=True)
+                await message.channel.send(
+                    f"Ay yo, my comeback game ain't working right now, but you still look suspect {message.author.mention} 😤"
+                )
+    
+    # Process commands after handling the reply
+    await bot.process_commands(message)
+
 # Run the bot
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
