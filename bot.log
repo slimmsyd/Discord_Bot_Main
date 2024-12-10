@@ -625,3 +625,38 @@ discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
 2024-12-07 12:38:15,790 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2024-12-07 12:38:23,465 [INFO] Roast was replied to by elohiminty saying: bro you need to relax
 2024-12-07 12:38:24,854 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-10 10:54:57,357 [INFO] logging in using static token
+2024-12-10 10:54:58,061 [INFO] Shard ID None has connected to Gateway (Session ID: 49501ed4031bd9fd8e214a6bdf3f2921).
+2024-12-10 10:55:00,065 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-10 10:55:00,066 [INFO] Connected to 2 guilds
+2024-12-10 10:55:00,313 [INFO] Slash commands synced successfully
+2024-12-10 10:55:00,313 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-10 10:55:00,313 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-10 10:56:05,651 [INFO] Street Oracle question received from elohiminty: How do we motivate the community
+2024-12-10 10:56:12,427 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-10 10:57:11,088 [INFO] logging in using static token
+2024-12-10 10:57:11,786 [INFO] Shard ID None has connected to Gateway (Session ID: 50ba98c672d2b0354555450fcc2b7da8).
+2024-12-10 10:57:13,796 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-10 10:57:13,797 [INFO] Connected to 2 guilds
+2024-12-10 10:57:14,215 [INFO] Slash commands synced successfully
+2024-12-10 10:57:14,216 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-10 10:57:14,216 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-10 10:57:39,748 [INFO] Street Oracle question received from elohiminty
+2024-12-10 10:57:43,417 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-10 10:57:52,213 [INFO] Street Oracle question received from elohiminty
+2024-12-10 10:57:55,894 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-10 10:58:06,888 [INFO] logging in using static token
+2024-12-10 10:58:07,554 [INFO] Shard ID None has connected to Gateway (Session ID: 637bc2ff505629b71718734880b1a064).
+2024-12-10 10:58:09,564 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-10 10:58:09,565 [INFO] Connected to 2 guilds
+2024-12-10 10:58:09,726 [INFO] Slash commands synced successfully
+2024-12-10 10:58:09,726 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-10 10:58:09,726 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-10 10:58:58,995 [INFO] logging in using static token
+2024-12-10 10:58:59,727 [INFO] Shard ID None has connected to Gateway (Session ID: 52c04cff7f87643e683f1d7bb9d8a6c2).
+2024-12-10 10:59:01,737 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-10 10:59:01,738 [INFO] Connected to 1 guilds
+2024-12-10 10:59:02,044 [INFO] Slash commands synced successfully
+2024-12-10 10:59:02,045 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-10 10:59:29,623 [INFO] Street Oracle question received from elohiminty
+2024-12-10 10:59:34,512 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

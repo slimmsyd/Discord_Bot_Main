@@ -363,6 +363,35 @@ async def dearoracle(interaction: discord.Interaction, question: str):
             f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
         )
         
+@bot.tree.command(name="motivate", description="Ask the Street Oracle to motivate you")
+async def motivate(interaction: discord.Interaction):
+    logger.info(f'Street Oracle question received from {interaction.user}')
+    
+    try:
+        await interaction.response.defer()
+        
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well. Most of you thoughts are based on the early stoics and the early Greek philosophers. Mainly Heraclitus, Epictetus, and Seneca. 
+                . Always start your response with "Young God," and maintain a friendly, 
+                street-smart tone. Use casual language but give genuinely thoughtful advice. Keep your responses 
+                relatively concise but meaningful."""},
+                {"role": "user", "content": "Give me a aphorism and or quote of wisdom  "}
+            ],
+            max_tokens=150,
+            temperature=0.7
+        )
+        
+        oracle_wisdom = response.choices[0].message.content.strip()
+        await interaction.followup.send(f"🔮 {oracle_wisdom}")
+        
+    except Exception as e:
+        logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
+        )
+        
 @bot.tree.command(name="finnasumthisup", description="Street Oracle breaks down an article for you")
 async def finnasumthisup(interaction: discord.Interaction, url: str):
     logger.info(f'Article summary requested by {interaction.user}: {url}')
