@@ -148,47 +148,119 @@ async def sumvideo(interaction: discord.Interaction, url: str):
         video_id = match.group(1)
         
         try:
-            # First try English
+            # Validate video ID exists before attempting transcript
             try:
-                transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
-            except (TranscriptsDisabled, NoTranscriptFound):
-                # If English fails, get available transcripts and use the first one
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-                transcript = transcript_list.find_generated_transcript(['en', 'es', 'fr', 'de', 'it', 'pt'])
-                if not transcript:
-                    # If no generated transcript, get any manual transcript and translate it
-                    transcript = transcript_list.find_manually_created_transcript()
-                transcript = transcript.translate('en').fetch()
-
-            full_text = " ".join([entry['text'] for entry in transcript])
-            
-            if len(full_text) > 4000:
-                full_text = full_text[:4000] + "..."
-            
-            # Rest of your summary code...
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": """Analyze the content in this structured format:
-                    1. CORE CONCEPT (2-3 sentences)
-                    2. BREAKDOWN (key points)
-                    3. IMPLICATIONS
-                    4. CRITICAL ANALYSIS
-                    5. FUTURE OUTLOOK
+                validate_url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
+                validation_response = requests.get(validate_url)
+                if validation_response.status_code != 200:
+                    await response_method("❌ This video appears to be unavailable or private.")
+                    return
                     
-                    Keep each section brief and concise."""},
-                    {"role": "user", "content": f"Analyze this video transcript:\n{full_text}"}
-                ],
-                max_tokens=300,  # Reduced for more concise response
-                temperature=0.7
-            )
+                video_info = validation_response.json()
+                logger.info(f"Processing video: {video_info.get('title', 'Unknown Title')}")
+                
+            except Exception as e:
+                logger.error(f"Error validating video: {str(e)}")
+                await response_method("❌ Error validating video URL.")
+                return
+
+            # Initialize transcript variable
+            transcript = None
             
-            analysis = response.choices[0].message.content.strip()
-            await response_method(analysis)
-            
+            # Method 1: Direct fetch with multiple languages
+            if not transcript:
+                languages = ['en', 'en-US', 'en-GB', 'auto']
+                for lang in languages:
+                    try:
+                        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+                        logger.info(f"Successfully got transcript using language: {lang}")
+                        break
+                    except Exception as lang_error:
+                        logger.info(f"Failed to get transcript in {lang}: {str(lang_error)}")
+                        continue
+
+            # Method 2: Try listing available transcripts
+            if not transcript:
+                try:
+                    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                    
+                    # Try different methods in sequence
+                    methods = [
+                        lambda: transcript_list.find_generated_transcript(['en']),
+                        lambda: transcript_list.find_generated_transcript(['en-US', 'en-GB']),
+                        lambda: transcript_list.find_manually_created_transcript(['en']),
+                        lambda: next((t for t in transcript_list.manual_transcripts), None),
+                        lambda: next((t for t in transcript_list.generated_transcripts), None),
+                    ]
+                    
+                    for method_num, method in enumerate(methods, 1):
+                        try:
+                            logger.info(f"Trying transcript method {method_num}")
+                            result = method()
+                            if result:
+                                transcript = result.fetch()
+                                logger.info(f"Method {method_num} succeeded")
+                                break
+                        except Exception as e:
+                            logger.error(f"Method {method_num} failed: {str(e)}")
+                            continue
+
+                except Exception as e:
+                    logger.error(f"Failed to list transcripts: {str(e)}")
+
+            # Method 3: Try any available transcript and translate
+            if not transcript:
+                try:
+                    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                    available = transcript_list.manual_transcripts + transcript_list.generated_transcripts
+                    if available:
+                        first_transcript = available[0]
+                        logger.info(f"Found transcript in {first_transcript.language_code}, translating to English")
+                        transcript = first_transcript.translate('en').fetch()
+                except Exception as e:
+                    logger.error(f"Translation attempt failed: {str(e)}")
+
+            # Process transcript if we got it
+            if transcript:
+                # Convert to list format if it's not already
+                if not isinstance(transcript, list):
+                    transcript = transcript.fetch()
+                
+                full_text = " ".join([entry['text'] for entry in transcript])
+                
+                if len(full_text) > 4000:
+                    full_text = full_text[:4000] + "..."
+                
+                # Create the analysis
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": """Analyze the content in this structured format:
+                        1. CORE CONCEPT (2-3 sentences)
+                        2. BREAKDOWN (key points)
+                        3. IMPLICATIONS
+                        4. CRITICAL ANALYSIS
+                        5. FUTURE OUTLOOK
+                        
+                        Keep each section brief and concise."""},
+                        {"role": "user", "content": f"Analyze this video transcript:\n{full_text}"}
+                    ],
+                    max_tokens=300,
+                    temperature=0.7
+                )
+                
+                analysis = response.choices[0].message.content.strip()
+                await response_method(analysis)
+            else:
+                await response_method("❌ No transcript available for this video. This might be because:\n" +
+                                    "• Subtitles are disabled\n" +
+                                    "• The video is private or age-restricted\n" +
+                                    "• No auto-generated captions are available\n" +
+                                    "• The video is too new and captions haven't been processed yet")
+
         except Exception as e:
-            logger.error(f'Transcript error: {str(e)}')
-            await response_method("❌ No transcript available for this video.")
+            logger.error(f'Transcript processing error: {str(e)}')
+            await response_method(f"❌ Error processing video transcript: {str(e)}")
             
     except Exception as e:
         logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
@@ -531,7 +603,7 @@ async def on_message(message):
         referenced_message = message.reference.resolved
         # Only respond if it's replying to a fryemup command
         if (referenced_message.author == bot.user and 
-            "🔥 **Street Oracle Roast**" in referenced_message.content):
+            "�� **Street Oracle Roast**" in referenced_message.content):
             logger.info(f'Roast was replied to by {message.author} saying: {message.content}')
             
             try:
