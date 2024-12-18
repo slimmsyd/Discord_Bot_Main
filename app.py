@@ -122,17 +122,27 @@ async def summarize(interaction: discord.Interaction):
 
 @bot.tree.command(name="sumvideo", description="Summarizes a YouTube video")
 async def sumvideo(interaction: discord.Interaction, url: str):
-    if interaction.response.is_done():
-        await interaction.followup.send("Processing your request...", wait=True)
-    else:
-        await interaction.response.defer(thinking=True)
+    # Store references early
+    channel = interaction.channel
+    user = interaction.user
     
     try:
-        youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
+        try:
+            # Try to acknowledge the interaction immediately
+            await interaction.response.defer(thinking=True)
+            response_method = interaction.followup.send
+        except discord.NotFound:
+            # If interaction expired, fall back to regular channel messages
+            logger.info("Interaction expired, falling back to channel messages")
+            await channel.send(f"{user.mention} Processing your request...")
+            response_method = channel.send
+        
+        # Rest of your existing code, but replace all interaction.followup.send with response_method
+        youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|live\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
         match = re.search(youtube_regex, url)
         
         if not match:
-            await interaction.followup.send("Please provide a valid YouTube URL.")
+            await response_method("Please provide a valid YouTube URL.")
             return
             
         video_id = match.group(1)
@@ -174,18 +184,18 @@ async def sumvideo(interaction: discord.Interaction, url: str):
             )
             
             analysis = response.choices[0].message.content.strip()
-            await interaction.followup.send(analysis)
+            await response_method(analysis)
             
         except Exception as e:
             logger.error(f'Transcript error: {str(e)}')
-            await interaction.followup.send("❌ No transcript available for this video.")
+            await response_method("❌ No transcript available for this video.")
             
     except Exception as e:
         logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
         try:
-            await interaction.followup.send(f"Sorry, an error occurred: {str(e)}")
+            await response_method(f"Sorry, an error occurred: {str(e)}")
         except:
-            await interaction.channel.send(f"Sorry, an error occurred: {str(e)}")
+            await channel.send(f"Sorry, an error occurred: {str(e)}")
 
 @bot.tree.command(name="detailvideo", description="Provides an in-depth analysis with personalized impact assessment")
 async def detailvideo(interaction: discord.Interaction, url: str):

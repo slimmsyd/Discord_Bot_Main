@@ -660,3 +660,263 @@ discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
 2024-12-10 10:59:02,045 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
 2024-12-10 10:59:29,623 [INFO] Street Oracle question received from elohiminty
 2024-12-10 10:59:34,512 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 13:22:04,477 [INFO] logging in using static token
+2024-12-18 13:22:05,529 [INFO] Shard ID None has connected to Gateway (Session ID: 9033789c84b171ab95ca85beec94a6cd).
+2024-12-18 13:22:07,615 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-18 13:22:07,615 [INFO] Connected to 2 guilds
+2024-12-18 13:22:07,867 [INFO] Slash commands synced successfully
+2024-12-18 13:22:07,867 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-18 13:22:07,867 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-18 13:25:41,289 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:26:46,290 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:27:30,011 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:28:30,234 [INFO] logging in using static token
+2024-12-18 13:28:30,919 [INFO] Shard ID None has connected to Gateway (Session ID: c4320a1e387a8c263ec49543592ea1a7).
+2024-12-18 13:28:32,955 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-18 13:28:32,955 [INFO] Connected to 2 guilds
+2024-12-18 13:28:33,189 [INFO] Slash commands synced successfully
+2024-12-18 13:28:33,189 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-18 13:28:33,189 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-18 13:28:57,306 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:29:10,886 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:30:17,031 [INFO] logging in using static token
+2024-12-18 13:30:17,754 [INFO] Shard ID None has connected to Gateway (Session ID: 1731f0ff3b0b7f5c23f6f9ffa3c36eec).
+2024-12-18 13:30:19,798 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-18 13:30:19,798 [INFO] Connected to 2 guilds
+2024-12-18 13:30:20,030 [INFO] Slash commands synced successfully
+2024-12-18 13:30:20,034 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-18 13:30:20,034 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-18 13:30:49,677 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:31:20,758 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 223, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2024-12-18 13:32:05,873 [INFO] logging in using static token
+2024-12-18 13:32:06,746 [INFO] Shard ID None has connected to Gateway (Session ID: 060f10be5c2fa320635482c70206a64b).
+2024-12-18 13:32:08,772 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-18 13:32:08,773 [INFO] Connected to 2 guilds
+2024-12-18 13:32:08,974 [INFO] Slash commands synced successfully
+2024-12-18 13:32:08,975 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-18 13:32:08,975 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-18 13:32:25,302 [ERROR] Error in sumvideo command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 127, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:33:06,943 [INFO] Summarize command received from elohiminty in He's/general
+2024-12-18 13:33:07,322 [INFO] Fetched 20 messages for summarization
+2024-12-18 13:33:09,784 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 13:33:44,085 [INFO] logging in using static token
+2024-12-18 13:33:44,822 [INFO] Shard ID None has connected to Gateway (Session ID: 51a637665dfb4c001079ad8e1c68cd45).
+2024-12-18 13:33:46,853 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-18 13:33:46,854 [INFO] Connected to 2 guilds
+2024-12-18 13:33:47,243 [INFO] Slash commands synced successfully
+2024-12-18 13:33:47,243 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-18 13:33:47,244 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-18 13:34:08,079 [INFO] Summarize command received from elohiminty in He's/general
+2024-12-18 13:34:08,300 [ERROR] Error in summarize command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 94, in summarize
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:34:21,009 [ERROR] Ignoring exception in command 'sumvideo'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 128, in sumvideo
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'sumvideo' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-18 13:35:06,424 [ERROR] Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x104123fd0>
+2024-12-18 13:35:06,425 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-20' coro=<Client.close.<locals>._close() running at /Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py:741> wait_for=<Future pending cb=[Task.task_wakeup()]> cb=[Task.task_wakeup()]>
+2024-12-18 13:35:08,605 [INFO] logging in using static token
+2024-12-18 13:35:10,467 [INFO] Shard ID None has connected to Gateway (Session ID: 35bbcfda3d36a3071beb6a5b2e0ada4a).
+2024-12-18 13:35:12,470 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-18 13:35:12,471 [INFO] Connected to 1 guilds
+2024-12-18 13:35:12,650 [INFO] Slash commands synced successfully
+2024-12-18 13:35:12,651 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-18 13:35:37,587 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
