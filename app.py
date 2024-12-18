@@ -14,6 +14,8 @@ import asyncio
 from io import BytesIO
 import requests
 from bs4 import BeautifulSoup
+import http.client
+import socket
 
 # Add health check routes
 async def health_check(request):
@@ -71,6 +73,11 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True
 bot = commands.Bot(command_prefix='/', intents=intents)
+
+# Add these configurations after your imports
+# Increase timeout for HTTP operations
+socket.setdefaulttimeout(30)
+http.client._MAXHEADERS = 1000
 
 @bot.event
 async def on_ready():
@@ -167,17 +174,30 @@ async def sumvideo(interaction: discord.Interaction, url: str):
             # Initialize transcript variable
             transcript = None
             
-            # Method 1: Direct fetch with multiple languages
+            # Method 1: Direct fetch with multiple languages and proxy handling
             if not transcript:
                 languages = ['en', 'en-US', 'en-GB', 'auto']
+                proxies = {
+                    'http': None,
+                    'https': None
+                }
                 for lang in languages:
                     try:
+                        # Try with default settings
                         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
-                        logger.info(f"Successfully got transcript using language: {lang}")
                         break
-                    except Exception as lang_error:
-                        logger.info(f"Failed to get transcript in {lang}: {str(lang_error)}")
-                        continue
+                    except Exception as e1:
+                        try:
+                            # Try with proxies disabled
+                            transcript = YouTubeTranscriptApi.get_transcript(
+                                video_id, 
+                                languages=[lang],
+                                proxies=proxies
+                            )
+                            break
+                        except Exception as e2:
+                            logger.error(f"Failed attempt for {lang}: {str(e1)} | {str(e2)}")
+                            continue
 
             # Method 2: Try listing available transcripts
             if not transcript:
@@ -603,7 +623,7 @@ async def on_message(message):
         referenced_message = message.reference.resolved
         # Only respond if it's replying to a fryemup command
         if (referenced_message.author == bot.user and 
-            "�� **Street Oracle Roast**" in referenced_message.content):
+            "🔥 **Street Oracle Roast**" in referenced_message.content):
             logger.info(f'Roast was replied to by {message.author} saying: {message.content}')
             
             try:
