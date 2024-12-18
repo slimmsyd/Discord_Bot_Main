@@ -920,3 +920,14 @@ task: <Task pending name='Task-20' coro=<Client.close.<locals>._close() running 
 2024-12-18 13:35:12,650 [INFO] Slash commands synced successfully
 2024-12-18 13:35:12,651 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
 2024-12-18 13:35:37,587 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 13:39:34,251 [INFO] logging in using static token
+2024-12-18 13:39:35,208 [INFO] Shard ID None has connected to Gateway (Session ID: 62cdc3670174b3998b20f722855592df).
+2024-12-18 13:39:37,263 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-18 13:39:37,263 [INFO] Connected to 2 guilds
+2024-12-18 13:39:37,581 [INFO] Slash commands synced successfully
+2024-12-18 13:39:37,581 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-18 13:39:37,581 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-18 13:39:38,720 [INFO] Interaction expired, falling back to channel messages
+2024-12-18 13:39:44,692 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-18 13:40:05,011 [INFO] Interaction expired, falling back to channel messages
+2024-12-18 13:40:11,595 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
