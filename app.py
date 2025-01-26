@@ -17,6 +17,9 @@ from bs4 import BeautifulSoup
 import http.client
 import socket
 
+SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
+BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
+
 # Add health check routes
 async def health_check(request):
     return web.Response(text="Healthy", status=200)
@@ -33,7 +36,6 @@ async def run_bot_and_server():
     site = web.TCPSite(runner, '0.0.0.0', 8000)
     await site.start()
     
-    # Rest of your existing bot setup code...
     try:
         await bot.start(token)
     except Exception as e:
@@ -52,9 +54,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger('discord_bot')
 
-
 # Load .env file
 load_dotenv()
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Token validation
 token = os.getenv('DISCORD_BOT_TOKEN')
@@ -64,6 +67,7 @@ if token is None:
 
 # OpenAI setup
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
 if not client.api_key:
     logger.error("No OpenAI API key found. Make sure OPENAI_API_KEY is set in your .env file")
     raise ValueError("No OpenAI API key found")
@@ -91,6 +95,315 @@ async def on_ready():
         logger.error(f'Failed to sync slash commands: {e}')
     for guild in bot.guilds:
         logger.info(f'Connected to guild: {guild.name} (ID: {guild.id})')
+        
+        
+def get_crypto_price(coin_id="bitcoin"):
+    url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()[coin_id]["usd"]
+    else:
+        return None
+
+# Generate analysis with OpenAI
+def generate_analysis(coin_name, price):
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    prompt = f"""
+    The current {coin_name} price is ${price}. 
+    Provide a concise summary (1-2 sentences) of its recent performance and a brief analysis.
+    """
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content
+
+        
+        
+
+class CryptoTools:
+    @staticmethod
+    async def get_dex_price(contract_address: str, network: str = "ethereum") -> str:
+        """Fetches price for a token using DEX data."""
+        try:
+            # Define API endpoints for different networks
+            dex_apis = {
+                "ethereum": "https://api.1inch.io/v5.0/1",
+                "bsc": "https://api.1inch.io/v5.0/56",
+                "polygon": "https://api.1inch.io/v5.0/137",
+                "base": "https://api.1inch.io/v5.0/8453"  # Added Base chain
+            }
+            
+            if network.lower() not in dex_apis:
+                return f"Unsupported network: {network}"
+                
+            # Standard stable pairs for price checking
+            base_tokens = {
+                "ethereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",  # USDT
+                "bsc": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",      # BUSD
+                "polygon": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",   # USDT
+                "base": "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb"      # USDbC
+            }
+            
+            
+            
+            # Get quote from 1inch API
+            quote_url = f"{dex_apis[network.lower()]}/quote"
+            params = {
+                "fromTokenAddress": contract_address,
+                "toTokenAddress": base_tokens[network.lower()],
+                "amount": "1000000000000000000"  # 1 token in wei
+            }
+            
+            response = requests.get(quote_url, params=params, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                # Calculate price in USD
+                price = float(data['toTokenAmount']) / float(data['fromTokenAmount'])
+                return f"The current DEX price is ${price:.8f} USD"
+            else:
+                return "Could not fetch DEX price. Token might not have enough liquidity."
+                
+        except Exception as e:
+            logger.error(f"DEX price fetch error: {str(e)}")
+            return f"Error fetching DEX price: {str(e)}"
+        
+        
+        
+
+    @staticmethod
+    async def get_solana_price(address: str) -> str:
+        """Fetches price for a Solana token using Jupiter API and cross-references metadata."""
+        try:
+            # Try multiple sources for token metadata
+            token_name = "Unknown Token"
+            token_symbol = ""
+            
+            # 1. Try Birdeye API for both price and metadata
+            birdeye_price_url = "https://public-api.birdeye.so/defi/price"
+            birdeye_token_url = "https://public-api.birdeye.so/public/token"
+            headers = {
+                "X-API-KEY": "a9907fc664764811855e98e0835862a3",
+                "x-chain": "solana",
+                "accept": "application/json"
+            }
+            
+            # Get token metadata from Birdeye
+            token_params = {"address": address}
+            token_response = requests.get(birdeye_token_url, headers=headers, params=token_params, timeout=10)
+            
+            if token_response.status_code == 200:
+                token_data = token_response.json()
+                if token_data.get("success") and token_data.get("data"):
+                    metadata = token_data["data"]
+                    token_name = metadata.get("name", "Unknown Token")
+                    token_symbol = metadata.get("symbol", "")
+            
+            # If still unknown, try Jupiter's token list
+            if token_name == "Unknown Token":
+                metadata_url = "https://token.jup.ag/all"
+                metadata_response = requests.get(metadata_url, timeout=10)
+                
+                if metadata_response.status_code == 200:
+                    tokens = metadata_response.json()
+                    for token in tokens:
+                        if token.get("address") == address:
+                            token_name = token.get("name", "Unknown Token")
+                            token_symbol = token.get("symbol", "")
+                            break
+            
+            # Get price from Birdeye
+            price_params = {"address": address}
+            price_response = requests.get(birdeye_price_url, headers=headers, params=price_params, timeout=10)
+            logger.info(f"Birdeye API Response: {price_response.status_code} - {price_response.text[:200]}")
+            
+            if price_response.status_code == 200:
+                price_data = price_response.json()
+                if price_data.get("success") and price_data.get("data"):
+                    price = float(price_data["data"].get("value", 0))
+                    price_change = price_data["data"].get("priceChange24h", 0)
+                    volume_24h = price_data["data"].get("volume24h", 0)
+                    
+                    # Format token info
+                    token_info = f"{token_name}"
+                    if token_symbol:
+                        token_info += f" ({token_symbol})"
+                    
+                    # Add address for unknown tokens
+                    if token_name == "Unknown Token":
+                        token_info += f"\nAddress: {address}"
+                    
+                    # Build response with additional info
+                    response = f"Token: {token_info}\n"
+                    response += f"Current Price: ${price:.8f} USD\n"
+                    response += f"24h Change: {price_change:.2f}%\n"
+                    response += f"24h Volume: ${volume_24h:,.2f}"
+                    
+                    return response
+                    
+                return "Could not find price data for this Solana token"
+            else:
+                return f"Birdeye API returned status code {price_response.status_code}"
+                
+        except requests.exceptions.RequestException as e:
+            logger.error(f"API request failed: {str(e)}")
+            return f"Failed to connect to API: {str(e)}"
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return f"Error processing price: {str(e)}"
+
+    @staticmethod
+    async def get_crypto_price(crypto: str, currency: str = "usd") -> str:
+        """Fetches the current price of a cryptocurrency."""
+        logger.info(f"Fetching crypto price for {crypto} in {currency}")
+        
+        # Check for Solana address first
+        if re.match(SOLANA_ADDRESS_REGEX, crypto):
+            return await CryptoTools.get_solana_price(crypto)
+            
+        # Check for Base address
+        if re.match(BASE_ADDRESS_REGEX, crypto):
+            # Try Base network first
+            base_price = await CryptoTools.get_dex_price(crypto, "base")
+            if "USD" in base_price:
+                return f"[Base Chain] {base_price}"
+            return await CryptoTools.get_dex_price(crypto, "ethereum")  # Fallback
+
+        # Check if input is a contract address (0x...)
+        if crypto.startswith("0x") and len(crypto) == 42:
+            # Try networks in order
+            networks = ["ethereum", "bsc", "polygon", "base"]
+            for network in networks:
+                price_info = await CryptoTools.get_dex_price(crypto, network)
+                if "current DEX price" in price_info:
+                    return f"[{network.upper()}] {price_info}"
+            return "Could not find price for this token on major DEXes"
+
+        try:
+            # First try direct CoinGecko API call
+            direct_response = requests.get(
+                f"https://api.coingecko.com/api/v3/simple/price",
+                params={"ids": crypto.lower(), "vs_currencies": currency.lower()},
+                timeout=10
+            )
+            
+            if direct_response.status_code == 200 and crypto.lower() in direct_response.json():
+                price = direct_response.json()[crypto.lower()][currency.lower()]
+                return f"The current price of {crypto.capitalize()} is {price:,.2f} {currency.upper()}"
+
+            # If direct call fails, try common mappings
+            crypto_mapping = {
+                "bitcoin": "bitcoin",
+                "btc": "bitcoin",
+                "ethereum": "ethereum",
+                "eth": "ethereum",
+                "matic": "polygon",
+                "polygon": "polygon"
+                # Add more mappings as needed
+            }
+            
+            crypto_id = crypto_mapping.get(crypto.lower())
+            
+            if crypto_id:
+                response = requests.get(
+                    f"https://api.coingecko.com/api/v3/simple/price",
+                    params={"ids": crypto_id, "vs_currencies": currency.lower()},
+                    timeout=10
+                )
+                response.raise_for_status()
+                
+                price_data = response.json()
+                if crypto_id in price_data:
+                    price = price_data[crypto_id][currency.lower()]
+                    return f"The current price of {crypto.capitalize()} is {price:,.2f} {currency.upper()}"
+
+            # If both attempts fail, search CoinGecko's coin list
+            search_response = requests.get(
+                "https://api.coingecko.com/api/v3/search",
+                params={"query": crypto},
+                timeout=10
+            )
+            
+            if search_response.status_code == 200:
+                search_data = search_response.json()
+                if search_data.get("coins"):
+                    # Get the first (most relevant) result
+                    coin = search_data["coins"][0]
+                    coin_id = coin["id"]
+                    
+                    # Fetch price for found coin
+                    final_response = requests.get(
+                        f"https://api.coingecko.com/api/v3/simple/price",
+                        params={"ids": coin_id, "vs_currencies": currency.lower()},
+                        timeout=10
+                    )
+                    
+                    if final_response.status_code == 200:
+                        price_data = final_response.json()
+                        if coin_id in price_data:
+                            price = price_data[coin_id][currency.lower()]
+                            return f"The current price of {coin['name']} ({coin['symbol'].upper()}) is {price:,.2f} {currency.upper()}"
+            
+            return f"Sorry, couldn't find price data for {crypto}"
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"API request failed: {str(e)}")
+            return f"Failed to fetch price data: {str(e)}"
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return f"An unexpected error occurred: {str(e)}"
+
+@bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
+async def dearoracle(interaction: discord.Interaction, question: str):
+    logger.info(f'Oracle question received from {interaction.user}: {question}')
+    
+    try:
+        await interaction.response.defer()
+        
+        # Get crypto price if it's a crypto question
+        if any(keyword in question.lower() for keyword in ['price', 'crypto', 'bitcoin', 'ethereum', 'btc', 'eth']):
+            crypto_tools = CryptoTools()
+            # Extract crypto name from question
+            crypto_names = ['bitcoin', 'btc', 'ethereum', 'eth']
+            found_crypto = next((name for name in crypto_names if name in question.lower()), None)
+            
+            if found_crypto:
+                price_info = await crypto_tools.get_crypto_price(found_crypto)
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": "You are a crypto-savvy oracle. Provide insights about the cryptocurrency along with its price."},
+                        {"role": "user", "content": f"Give me insights about {found_crypto}. Here's the current price info: {price_info}"}
+                    ],
+                    max_tokens=150,
+                    temperature=0.7
+                )
+                oracle_response = response.choices[0].message.content.strip()
+                await interaction.followup.send(f"🔮 {oracle_response}")
+                return
+        
+        # For non-crypto questions
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well. 
+                Most of your thoughts are based on the early stoics and Greek philosophers. Be diverse in your thoughts and ideas. 
+                Always start your response with "Young God," and maintain a friendly, street-smart tone."""},
+                {"role": "user", "content": question}
+            ],
+            max_tokens=150,
+            temperature=0.7
+        )
+        
+        oracle_wisdom = response.choices[0].message.content.strip()
+        await interaction.followup.send(f"🔮 {oracle_wisdom}")
+        
+    except Exception as e:
+        logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
+        )
 
 @bot.tree.command(name="summarize", description="Summarizes the last 20 messages in the channel")
 async def summarize(interaction: discord.Interaction):
@@ -436,64 +749,6 @@ async def meme(interaction: discord.Interaction):
             f"Sorry {interaction.user.mention}, I couldn't generate the meme. Error: {str(e)}"
         )
 
-@bot.tree.command(name="dearoracle", description="Ask the Street Oracle any question for some street-wise wisdom")
-async def dearoracle(interaction: discord.Interaction, question: str):
-    logger.info(f'Street Oracle question received from {interaction.user}: {question}')
-    
-    try:
-        await interaction.response.defer()
-        
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": """You are the Street Oracle, a wise but cool advisor who speaks in 
-                casual, urban style, new york slang, Gods of the streets, slang . Always start your response with "Lil homie," and maintain a friendly, 
-                street-smart tone. Use casual language but give genuinely thoughtful advice. Keep your responses 
-                relatively concise but meaningful."""},
-                {"role": "user", "content": question}
-            ],
-            max_tokens=150,
-            temperature=0.7
-        )
-        
-        oracle_wisdom = response.choices[0].message.content.strip()
-        await interaction.followup.send(f"🔮 {oracle_wisdom}")
-        
-    except Exception as e:
-        logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
-        await interaction.followup.send(
-            f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
-        )
-        
-@bot.tree.command(name="motivate", description="Ask the Street Oracle to motivate you")
-async def motivate(interaction: discord.Interaction):
-    logger.info(f'Street Oracle question received from {interaction.user}')
-    
-    try:
-        await interaction.response.defer()
-        
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well. Most of you thoughts are based on the early stoics and the early Greek philosophers. Mainly Heraclitus, Epictetus, and Seneca. Be diverse in your thoughts and ideas. 
-                . Always start your response with "Young God," and maintain a friendly, 
-                street-smart tone. Use casual language but give genuinely thoughtful advice. Keep your responses 
-                relatively concise but meaningful."""},
-                {"role": "user", "content": "Give me a aphorism and or quote of wisdom  "}
-            ],
-            max_tokens=150,
-            temperature=0.7
-        )
-        
-        oracle_wisdom = response.choices[0].message.content.strip()
-        await interaction.followup.send(f"🔮 {oracle_wisdom}")
-        
-    except Exception as e:
-        logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
-        await interaction.followup.send(
-            f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
-        )
-        
 @bot.tree.command(name="finnasumthisup", description="Street Oracle breaks down an article for you")
 async def finnasumthisup(interaction: discord.Interaction, url: str):
     logger.info(f'Article summary requested by {interaction.user}: {url}')
@@ -618,6 +873,73 @@ async def on_message(message):
     if message.author == bot.user:
         return
         
+    # Check if bot is mentioned and message contains price-related keywords
+    if bot.user.mentioned_in(message) and any(word in message.content.lower() for word in ["price", "value", "how much"]):
+        timestamp = datetime.now().strftime("%H:%M:%S")  # Get current time in HH:MM:SS format
+        logger.info(f'[{timestamp}] Price check requested by {message.author}: {message.content}')
+        
+        try:
+            # Use GPT to identify the cryptocurrency from the message
+            crypto_context_response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": """You are a cryptocurrency identifier. 
+                    Given a message, identify the cryptocurrency being referenced. 
+                    If a Solana address is mentioned (base58 string, 32-44 chars), return that exact address.
+                    If an Ethereum-style address is mentioned (0x...), return that exact address.
+                    Otherwise, return the cryptocurrency name or symbol mentioned in the message, exactly as written.
+                    Do not try to map or convert it to any standard format.
+                    If multiple cryptocurrencies are mentioned, return the most prominently discussed one.
+                    If no cryptocurrency is clearly referenced, return 'bitcoin'.
+                    
+                    Examples:
+                    "what's the price of GALA" -> "GALA"
+                    "how much is matic worth" -> "matic"
+                    "check 0x1234...5678" -> "0x1234...5678"
+                    "check solana token AKJ82..." -> "AKJ82..."
+                    "tell me about ADA" -> "ADA"
+                    "what's going on with crypto" -> "bitcoin"
+                    """},
+                    {"role": "user", "content": f"Identify the cryptocurrency in this message: {message.content}"}
+                ],
+                max_tokens=50,
+                temperature=0
+            )
+            
+            coin_name = crypto_context_response.choices[0].message.content.strip()
+            logger.info(f'[{timestamp}] AI identified cryptocurrency as: {coin_name}')
+            
+            # Create CryptoTools instance and get price
+            crypto_tools = CryptoTools()
+            price_info = await crypto_tools.get_crypto_price(coin_name)
+            
+            # Check if we got a valid price response
+            if "current price" in price_info.lower():
+                logger.info(f'[{timestamp}] Retrieved price info: {price_info}')
+                
+                # Extract just the price value for the analysis
+                price_match = re.search(r'(\d+(?:,\d+)*(?:\.\d+)?)', price_info)
+                if price_match:
+                    price = float(price_match.group(1).replace(',', ''))
+                    analysis = generate_analysis(coin_name, price)
+                    await message.reply(
+                        f"**[{timestamp}] Crypto Price Update** 📊\n"
+                        f"💰 {price_info}\n\n"
+                        f"*Analysis*:\n{analysis}"
+                    )
+                else:
+                    await message.reply(price_info)
+            else:
+                logger.error(f'[{timestamp}] Failed to get price: {price_info}')
+                await message.reply(price_info)
+        
+        except Exception as e:
+            logger.error(f'[{timestamp}] Error in price check: {str(e)}', exc_info=True)
+            await message.reply(
+                f"[{timestamp}] Yo, something went wrong with that price check. My bad! 😅\n"
+                f"Error: {str(e)}"
+            )
+    
     # Check if this is a reply to our bot
     if message.reference and message.reference.resolved:
         referenced_message = message.reference.resolved

@@ -942,3 +942,642 @@ task: <Task pending name='Task-20' coro=<Client.close.<locals>._close() running 
 2024-12-18 13:43:54,302 [INFO] Processing video: GitHub Executives Reveal The Future of Coding and AI
 2024-12-18 13:43:55,062 [INFO] Successfully got transcript using language: en
 2024-12-18 13:43:57,508 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 23:19:48,058 [INFO] logging in using static token
+2024-12-28 23:19:48,928 [INFO] Shard ID None has connected to Gateway (Session ID: a726f40e0efe49bdfbf4861258880017).
+2024-12-28 23:19:50,935 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:19:50,936 [INFO] Connected to 2 guilds
+2024-12-28 23:19:51,474 [INFO] Slash commands synced successfully
+2024-12-28 23:19:51,475 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:19:51,475 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:20:37,172 [INFO] Street Oracle question received from elohiminty: what is the current price of bitcoin?
+2024-12-28 23:20:37,342 [ERROR] Error in dearoracle command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 444, in dearoracle
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:23:26,842 [INFO] logging in using static token
+2024-12-28 23:23:27,557 [INFO] Shard ID None has connected to Gateway (Session ID: c6b13d42a5db72735d7386d8ba7c641b).
+2024-12-28 23:23:29,568 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:23:29,568 [INFO] Connected to 2 guilds
+2024-12-28 23:23:29,781 [INFO] Slash commands synced successfully
+2024-12-28 23:23:29,782 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:23:29,782 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:31:35,409 [INFO] logging in using static token
+2024-12-28 23:31:36,080 [INFO] Shard ID None has connected to Gateway (Session ID: 99967b1d8cc4b8cafa6f0875eb842f9e).
+2024-12-28 23:31:38,108 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:31:38,108 [INFO] Connected to 2 guilds
+2024-12-28 23:31:38,345 [INFO] Slash commands synced successfully
+2024-12-28 23:31:38,345 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:31:38,346 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:31:42,574 [INFO] Street Oracle question received from elohiminty: what is the price of bitcion
+2024-12-28 23:31:42,668 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 486, in dearoracle
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:31:59,590 [INFO] Street Oracle question received from elohiminty: what is the price of bitcion
+2024-12-28 23:31:59,749 [ERROR] Error in dearoracle command: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 486, in dearoracle
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 223, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2024-12-28 23:32:51,819 [INFO] logging in using static token
+2024-12-28 23:32:52,447 [INFO] Shard ID None has connected to Gateway (Session ID: e0c825cd3895af3127960b28c5ab0153).
+2024-12-28 23:32:54,465 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:32:54,465 [INFO] Connected to 1 guilds
+2024-12-28 23:32:54,691 [INFO] Slash commands synced successfully
+2024-12-28 23:32:54,692 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:33:20,394 [INFO] Street Oracle question received from elohiminty: what is the pricce of bitcion
+2024-12-28 23:33:20,548 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 486, in dearoracle
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:35:03,193 [INFO] logging in using static token
+2024-12-28 23:35:03,879 [INFO] Shard ID None has connected to Gateway (Session ID: ce0c090e7a6600866836a2b5bb425c85).
+2024-12-28 23:35:05,886 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:35:05,886 [INFO] Connected to 2 guilds
+2024-12-28 23:35:06,197 [INFO] Slash commands synced successfully
+2024-12-28 23:35:06,197 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:35:06,197 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:35:45,467 [INFO] Street Oracle question received from elohiminty: what is the price of bitcion?
+2024-12-28 23:35:45,628 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 496, in dearoracle
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:36:01,689 [INFO] Street Oracle question received from elohiminty: what is the priced of Bitcoin
+2024-12-28 23:36:01,872 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 496, in dearoracle
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:38:58,819 [INFO] logging in using static token
+2024-12-28 23:38:59,555 [INFO] Shard ID None has connected to Gateway (Session ID: de0e4d811e7c8e40e48dfa9fc0c9c2d3).
+2024-12-28 23:39:01,571 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:39:01,572 [INFO] Connected to 1 guilds
+2024-12-28 23:39:01,758 [INFO] Slash commands synced successfully
+2024-12-28 23:39:01,759 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:40:28,451 [INFO] Street Oracle question received from elohiminty: what is the price of bitcion?
+2024-12-28 23:40:28,625 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 497, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:43:27,440 [INFO] logging in using static token
+2024-12-28 23:43:28,162 [INFO] Shard ID None has connected to Gateway (Session ID: b54248c3ab27e1e256285d49a2e71275).
+2024-12-28 23:43:30,168 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:43:30,168 [INFO] Connected to 2 guilds
+2024-12-28 23:43:30,440 [INFO] Slash commands synced successfully
+2024-12-28 23:43:30,440 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:43:30,440 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:43:50,483 [INFO] Question received from elohiminty: what is the price of Bitcion?
+2024-12-28 23:43:50,644 [ERROR] Error processing request: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 527, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:47:29,734 [INFO] logging in using static token
+2024-12-28 23:47:30,454 [INFO] Shard ID None has connected to Gateway (Session ID: 07a54bc8ddb5ba7a34f9c3dd17ef89f2).
+2024-12-28 23:47:32,461 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:47:32,461 [INFO] Connected to 2 guilds
+2024-12-28 23:47:32,643 [INFO] Slash commands synced successfully
+2024-12-28 23:47:32,643 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:47:32,643 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:47:53,087 [INFO] Question received from elohiminty: what is the price of btc
+2024-12-28 23:47:53,262 [ERROR] Error processing request: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 527, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 223, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2024-12-28 23:49:32,247 [INFO] logging in using static token
+2024-12-28 23:49:33,078 [INFO] Shard ID None has connected to Gateway (Session ID: 4e0cf8d0e95836ff255b359c6019541c).
+2024-12-28 23:49:35,085 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:49:35,085 [INFO] Connected to 2 guilds
+2024-12-28 23:49:35,284 [INFO] Slash commands synced successfully
+2024-12-28 23:49:35,285 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:49:35,285 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:49:56,993 [INFO] Question received from elohiminty: what is the price of btc
+2024-12-28 23:49:57,154 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 528, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:52:12,594 [INFO] logging in using static token
+2024-12-28 23:52:13,492 [INFO] Shard ID None has connected to Gateway (Session ID: 5f0970caa681bfae0d1a17bfbf581989).
+2024-12-28 23:52:15,497 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:52:15,498 [INFO] Connected to 2 guilds
+2024-12-28 23:52:15,689 [INFO] Slash commands synced successfully
+2024-12-28 23:52:15,689 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:52:15,689 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:52:46,451 [INFO] Question received from elohiminty: what the price of btc
+2024-12-28 23:52:46,710 [ERROR] Error processing request: 'CryptoBot' object has no attribute 'process_query'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 535, in dearoracle
+    response = await crypto_bot.process_query(question)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'CryptoBot' object has no attribute 'process_query'
+2024-12-28 23:53:41,514 [INFO] logging in using static token
+2024-12-28 23:53:45,016 [INFO] logging in using static token
+2024-12-28 23:53:45,720 [INFO] Shard ID None has connected to Gateway (Session ID: 626fe328bf1771de639352d4d773658c).
+2024-12-28 23:53:47,729 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:53:47,730 [INFO] Connected to 2 guilds
+2024-12-28 23:53:47,892 [INFO] Slash commands synced successfully
+2024-12-28 23:53:47,893 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:53:47,893 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:54:21,974 [INFO] Question received from elohiminty: what is the price of BTC?
+2024-12-28 23:54:22,131 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 532, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:56:05,892 [INFO] logging in using static token
+2024-12-28 23:56:06,603 [INFO] Shard ID None has connected to Gateway (Session ID: 8e76a642b505a6757ccc0dd21e4a35d6).
+2024-12-28 23:56:08,621 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:56:08,621 [INFO] Connected to 2 guilds
+2024-12-28 23:56:08,875 [INFO] Slash commands synced successfully
+2024-12-28 23:56:08,876 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:56:08,876 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:56:33,735 [INFO] Question received from elohiminty: what is the price of btc
+2024-12-28 23:56:33,904 [ERROR] HTTP Exception: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 534, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 223, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2024-12-28 23:56:33,990 [ERROR] Ignoring exception in command 'dearoracle'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 534, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 223, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 549, in dearoracle
+    await interaction.response.send_message(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 855, in send_message
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 223, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'dearoracle' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2024-12-28 23:57:02,914 [INFO] logging in using static token
+2024-12-28 23:57:03,612 [INFO] Shard ID None has connected to Gateway (Session ID: d9778ccaa875f18f392d03f31a2bdb7c).
+2024-12-28 23:57:05,621 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:57:05,621 [INFO] Connected to 2 guilds
+2024-12-28 23:57:05,795 [INFO] Slash commands synced successfully
+2024-12-28 23:57:05,795 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:57:05,795 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-28 23:57:30,627 [ERROR] Error handling interaction: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 532, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-28 23:59:31,376 [INFO] logging in using static token
+2024-12-28 23:59:32,078 [INFO] Shard ID None has connected to Gateway (Session ID: 55deac527fb16fe34e4604a07e692072).
+2024-12-28 23:59:34,087 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-28 23:59:34,088 [INFO] Connected to 2 guilds
+2024-12-28 23:59:34,429 [INFO] Slash commands synced successfully
+2024-12-28 23:59:34,430 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-28 23:59:34,430 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-29 00:00:05,795 [INFO] Question received from elohiminty: what is the price of btc
+2024-12-29 00:00:05,972 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 534, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-29 00:01:07,917 [INFO] logging in using static token
+2024-12-29 00:01:08,576 [INFO] Shard ID None has connected to Gateway (Session ID: 4c04091b6c2fc6ed2153a9013199a292).
+2024-12-29 00:01:10,596 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-29 00:01:10,596 [INFO] Connected to 2 guilds
+2024-12-29 00:01:10,768 [INFO] Slash commands synced successfully
+2024-12-29 00:01:10,768 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-29 00:01:10,768 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-29 00:01:33,592 [INFO] Question received from elohiminty: what is the price of btc
+2024-12-29 00:01:33,757 [ERROR] Interaction not found: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 534, in dearoracle
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2024-12-29 00:07:05,189 [INFO] logging in using static token
+2024-12-29 00:07:06,023 [INFO] Shard ID None has connected to Gateway (Session ID: a51c9964388dafeea584d94ca809e47f).
+2024-12-29 00:07:08,032 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-29 00:07:08,032 [INFO] Connected to 2 guilds
+2024-12-29 00:07:08,271 [INFO] Slash commands synced successfully
+2024-12-29 00:07:08,272 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-29 00:07:08,272 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-29 00:07:28,395 [ERROR] Ignoring exception in command 'dearoracle'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/langchain_community/chat_models/premai.py", line 320, in validate_environments
+    from premai import Prem
+ModuleNotFoundError: No module named 'premai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 538, in dearoracle
+    chat_model = ChatPremAI()  # Initialize the ChatPremAI model
+                 ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/pydantic/_internal/_decorators_v1.py", line 148, in _wrapper1
+    return validator(values)
+           ^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/langchain_core/utils/pydantic.py", line 219, in wrapper
+    return func(cls, values)
+           ^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/langchain_community/chat_models/premai.py", line 322, in validate_environments
+    raise ImportError(
+ImportError: Could not import Prem Python package.Please install it with: `pip install premai`
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'dearoracle' raised an exception: ImportError: Could not import Prem Python package.Please install it with: `pip install premai`
+2024-12-29 00:08:15,546 [INFO] logging in using static token
+2024-12-29 00:08:16,221 [INFO] Shard ID None has connected to Gateway (Session ID: 05728dcc7f9f26361b095faee9bad0c7).
+2024-12-29 00:08:18,238 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2024-12-29 00:08:18,239 [INFO] Connected to 2 guilds
+2024-12-29 00:08:18,405 [INFO] Slash commands synced successfully
+2024-12-29 00:08:18,406 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2024-12-29 00:08:18,406 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2024-12-29 00:08:40,790 [ERROR] Ignoring exception in command 'dearoracle'
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 858, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 538, in dearoracle
+    chat_model = ChatPremAI()  # Initialize the ChatPremAI model
+                 ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ChatPremAI
+  Value error, Your API Key is incorrect. Please try again. [type=value_error, input_value={'name': None, 'cache': N...: False, 'client': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'dearoracle' raised an exception: ValidationError: 1 validation error for ChatPremAI
+  Value error, Your API Key is incorrect. Please try again. [type=value_error, input_value={'name': None, 'cache': N...: False, 'client': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error
+2025-01-26 00:34:53,995 [INFO] logging in using static token
+2025-01-26 00:34:54,649 [INFO] Shard ID None has connected to Gateway (Session ID: 52d428efcbac909d8da21b94864161c4).
+2025-01-26 00:35:18,420 [INFO] logging in using static token
+2025-01-26 00:35:19,086 [INFO] Shard ID None has connected to Gateway (Session ID: be03053f9aeb4331adfde0f2a91f1890).
+2025-01-26 00:35:21,113 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 00:35:21,114 [INFO] Connected to 1 guilds
+2025-01-26 00:35:21,265 [INFO] Slash commands synced successfully
+2025-01-26 00:35:21,266 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 00:38:37,701 [INFO] logging in using static token
+2025-01-26 00:38:38,362 [INFO] Shard ID None has connected to Gateway (Session ID: 82ada0321d4f84ea1c6416c5bd02851a).
+2025-01-26 00:38:40,369 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 00:38:40,369 [INFO] Connected to 2 guilds
+2025-01-26 00:38:40,529 [INFO] Slash commands synced successfully
+2025-01-26 00:38:40,530 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 00:38:40,530 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 00:38:44,200 [INFO] Price check requested by elohiminty: <@1311783916516020324> what is the price of bitcion
+2025-01-26 00:38:44,389 [INFO] Retrieved price for bitcoin: $105012
+2025-01-26 00:38:45,649 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:40:54,278 [INFO] Price check requested by elohiminty: <@1311783916516020324>  what is the price of BTC
+2025-01-26 00:40:54,428 [INFO] Retrieved price for bitcoin: $105012
+2025-01-26 00:40:55,493 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:41:01,561 [INFO] Price check requested by elohiminty: <@1311783916516020324> what is the price of matic
+2025-01-26 00:41:01,729 [INFO] Retrieved price for bitcoin: $105012
+2025-01-26 00:41:02,322 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:41:34,856 [INFO] Price check requested by elohiminty: <@1311783916516020324> what is hte price of eth
+2025-01-26 00:41:35,173 [INFO] Retrieved price for ethereum: $3340.23
+2025-01-26 00:41:36,049 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:43:53,286 [INFO] logging in using static token
+2025-01-26 00:43:53,951 [INFO] Shard ID None has connected to Gateway (Session ID: 10ba94b2cb0414c9db3d5fdb5ef91ff3).
+2025-01-26 00:43:55,962 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 00:43:55,962 [INFO] Connected to 1 guilds
+2025-01-26 00:43:56,236 [INFO] Slash commands synced successfully
+2025-01-26 00:43:56,236 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 00:44:15,093 [INFO] [00:44:15] Price check requested by elohiminty: <@1311783916516020324> what is the price of Solana
+2025-01-26 00:44:15,535 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:44:15,545 [INFO] [00:44:15] AI identified cryptocurrency as: Solana
+2025-01-26 00:44:15,545 [INFO] Fetching crypto price for Solana in usd
+2025-01-26 00:44:15,743 [INFO] [00:44:15] Retrieved price info: The current price of Solana is 257.80 USD
+2025-01-26 00:44:16,403 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:44:35,979 [INFO] [00:44:35] Price check requested by elohiminty: <@1311783916516020324> what is the price of Trump coin
+2025-01-26 00:44:36,366 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:44:36,371 [INFO] [00:44:35] AI identified cryptocurrency as: Trump coin
+2025-01-26 00:44:36,371 [INFO] Fetching crypto price for Trump coin in usd
+2025-01-26 00:44:36,911 [ERROR] [00:44:35] Failed to get price: Sorry, couldn't find price data for Trump coin
+2025-01-26 00:44:48,382 [INFO] [00:44:48] Price check requested by elohiminty: what is the price of #Trump <@1311783916516020324>
+2025-01-26 00:44:48,710 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:44:48,713 [INFO] [00:44:48] AI identified cryptocurrency as: bitcoin
+2025-01-26 00:44:48,713 [INFO] Fetching crypto price for bitcoin in usd
+2025-01-26 00:44:48,971 [INFO] [00:44:48] Retrieved price info: The current price of Bitcoin is 105,013.00 USD
+2025-01-26 00:44:49,889 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:46:43,136 [INFO] logging in using static token
+2025-01-26 00:46:43,891 [INFO] Shard ID None has connected to Gateway (Session ID: c406a069c15484165c97de9d86d31280).
+2025-01-26 00:46:45,910 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 00:46:45,911 [INFO] Connected to 2 guilds
+2025-01-26 00:46:46,125 [INFO] Slash commands synced successfully
+2025-01-26 00:46:46,126 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 00:46:46,126 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 00:47:19,721 [INFO] logging in using static token
+2025-01-26 00:47:20,474 [INFO] Shard ID None has connected to Gateway (Session ID: f7b02a04e3508f4408c01ae74e181af3).
+2025-01-26 00:47:22,480 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 00:47:22,481 [INFO] Connected to 2 guilds
+2025-01-26 00:47:23,119 [INFO] Slash commands synced successfully
+2025-01-26 00:47:23,120 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 00:47:23,120 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 00:47:28,940 [INFO] [00:47:28] Price check requested by elohiminty: <@1311783916516020324> what is the price of Etherum
+2025-01-26 00:47:29,433 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:47:29,445 [INFO] [00:47:28] AI identified cryptocurrency as: Ethereum
+2025-01-26 00:47:29,445 [INFO] Fetching crypto price for Ethereum in usd
+2025-01-26 00:47:29,603 [INFO] [00:47:28] Retrieved price info: The current price of Ethereum is 3,341.22 USD
+2025-01-26 00:47:30,333 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:47:48,115 [INFO] [00:47:48] Price check requested by elohiminty: <@1311783916516020324> what is the price of 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 00:47:48,785 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:47:48,789 [INFO] [00:47:48] AI identified cryptocurrency as: 0x6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 00:47:48,789 [INFO] Fetching crypto price for 0x6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN in usd
+2025-01-26 00:47:49,330 [ERROR] [00:47:48] Failed to get price: Sorry, couldn't find price data for 0x6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 00:48:01,164 [INFO] [00:48:01] Price check requested by elohiminty: what is the price of GALA
+<@1311783916516020324>
+2025-01-26 00:48:01,470 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:48:01,472 [INFO] [00:48:01] AI identified cryptocurrency as: GALA
+2025-01-26 00:48:01,472 [INFO] Fetching crypto price for GALA in usd
+2025-01-26 00:48:01,693 [INFO] [00:48:01] Retrieved price info: The current price of Gala is 0.03 USD
+2025-01-26 00:48:02,359 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:53:34,458 [INFO] logging in using static token
+2025-01-26 00:53:35,150 [INFO] Shard ID None has connected to Gateway (Session ID: d78af3504c812532179e82bb6cd3087a).
+2025-01-26 00:53:37,160 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 00:53:37,161 [INFO] Connected to 1 guilds
+2025-01-26 00:53:37,348 [INFO] Slash commands synced successfully
+2025-01-26 00:53:37,348 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 00:53:59,683 [INFO] [00:53:59] Price check requested by elohiminty: <@1311783916516020324> what is the price of XRP
+2025-01-26 00:54:00,197 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:54:00,206 [INFO] [00:53:59] AI identified cryptocurrency as: XRP
+2025-01-26 00:54:00,207 [INFO] Fetching crypto price for XRP in usd
+2025-01-26 00:54:00,814 [INFO] [00:53:59] Retrieved price info: The current price of XRP (XRP) is 3.13 USD
+2025-01-26 00:54:02,275 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:54:32,304 [INFO] [00:54:32] Price check requested by elohiminty: <@1311783916516020324> what is the price of this coin.
+
+6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 00:54:32,824 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:54:32,828 [INFO] [00:54:32] AI identified cryptocurrency as: 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 00:54:32,828 [INFO] Fetching crypto price for 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN in usd
+2025-01-26 00:54:32,945 [ERROR] Solana price fetch error: HTTPSConnectionPool(host='price.jup.ag', port=443): Max retries exceeded with url: /v4/price?ids=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN&vsToken=USDC (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x107aa1b90>: Failed to resolve 'price.jup.ag' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-01-26 00:54:32,945 [ERROR] [00:54:32] Failed to get price: Error fetching Solana price: HTTPSConnectionPool(host='price.jup.ag', port=443): Max retries exceeded with url: /v4/price?ids=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN&vsToken=USDC (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x107aa1b90>: Failed to resolve 'price.jup.ag' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-01-26 00:56:17,451 [INFO] logging in using static token
+2025-01-26 00:56:18,108 [INFO] Shard ID None has connected to Gateway (Session ID: b12f03df780a85f8279da89c516bdf02).
+2025-01-26 00:56:20,117 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 00:56:20,117 [INFO] Connected to 2 guilds
+2025-01-26 00:56:20,278 [INFO] Slash commands synced successfully
+2025-01-26 00:56:20,278 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 00:56:20,278 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 00:56:25,422 [INFO] [00:56:25] Price check requested by elohiminty: <@1311783916516020324> what is the price of Stacks
+2025-01-26 00:56:25,850 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:56:25,862 [INFO] [00:56:25] AI identified cryptocurrency as: Stacks
+2025-01-26 00:56:25,862 [INFO] Fetching crypto price for Stacks in usd
+2025-01-26 00:56:26,099 [INFO] [00:56:25] Retrieved price info: The current price of Stacks is 0.00 USD
+2025-01-26 00:56:26,846 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:56:40,637 [INFO] [00:56:40] Price check requested by elohiminty: <@1311783916516020324> what is the the price of  ALU
+2025-01-26 00:56:41,007 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:56:41,011 [INFO] [00:56:40] AI identified cryptocurrency as: ALU
+2025-01-26 00:56:41,012 [INFO] Fetching crypto price for ALU in usd
+2025-01-26 00:56:41,750 [INFO] [00:56:40] Retrieved price info: The current price of Altura (ALU) is 0.11 USD
+2025-01-26 00:56:42,505 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:56:55,513 [INFO] [00:56:55] Price check requested by elohiminty: <@1311783916516020324> what is the price of Doge
+2025-01-26 00:56:55,914 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:56:55,916 [INFO] [00:56:55] AI identified cryptocurrency as: Doge
+2025-01-26 00:56:55,916 [INFO] Fetching crypto price for Doge in usd
+2025-01-26 00:56:56,113 [INFO] [00:56:55] Retrieved price info: The current price of Doge is 0.00 USD
+2025-01-26 00:56:56,877 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:57:06,536 [INFO] [00:57:06] Price check requested by elohiminty: <@1311783916516020324> what is the price of DOGE
+2025-01-26 00:57:06,833 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:57:06,835 [INFO] [00:57:06] AI identified cryptocurrency as: DOGE
+2025-01-26 00:57:06,835 [INFO] Fetching crypto price for DOGE in usd
+2025-01-26 00:57:06,992 [INFO] [00:57:06] Retrieved price info: The current price of Doge is 0.00 USD
+2025-01-26 00:57:07,692 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:57:19,107 [INFO] [00:57:19] Price check requested by elohiminty: <@1311783916516020324> what is the price of ADA
+2025-01-26 00:57:19,387 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:57:19,390 [INFO] [00:57:19] AI identified cryptocurrency as: ADA
+2025-01-26 00:57:19,390 [INFO] Fetching crypto price for ADA in usd
+2025-01-26 00:57:20,067 [INFO] [00:57:19] Retrieved price info: The current price of Cardano (ADA) is 0.99 USD
+2025-01-26 00:57:20,655 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:57:41,136 [INFO] [00:57:41] Price check requested by elohiminty: <@1311783916516020324> what is the price of  FUAfBo2jgks6gB4Z4LfZkqSZgzNucisEHqnNebaRxM1P
+2025-01-26 00:57:41,689 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:57:41,692 [INFO] [00:57:41] AI identified cryptocurrency as: FUAfBo2jgks6gB4Z4LfZkqSZgzNucisEHqnNebaRxM1P
+2025-01-26 00:57:41,692 [INFO] Fetching crypto price for FUAfBo2jgks6gB4Z4LfZkqSZgzNucisEHqnNebaRxM1P in usd
+2025-01-26 00:57:41,959 [INFO] Jupiter API Response: 404 - 
+2025-01-26 00:57:41,960 [ERROR] [00:57:41] Failed to get price: Jupiter API returned status code 404
+2025-01-26 00:58:08,823 [INFO] [00:58:08] Price check requested by elohiminty: <@1311783916516020324> what is the price of JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 00:58:09,425 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 00:58:09,427 [INFO] [00:58:08] AI identified cryptocurrency as: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 00:58:09,428 [INFO] Fetching crypto price for JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN in usd
+2025-01-26 00:58:09,596 [INFO] Jupiter API Response: 404 - 
+2025-01-26 00:58:09,597 [ERROR] [00:58:08] Failed to get price: Jupiter API returned status code 404
+2025-01-26 01:00:15,252 [INFO] logging in using static token
+2025-01-26 01:00:16,019 [INFO] Shard ID None has connected to Gateway (Session ID: bf8ab70e184183ab9c0971cb57ef98d8).
+2025-01-26 01:00:18,026 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 01:00:18,026 [INFO] Connected to 2 guilds
+2025-01-26 01:00:18,591 [INFO] Slash commands synced successfully
+2025-01-26 01:00:18,591 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 01:00:18,591 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 01:00:22,688 [INFO] [01:00:22] Price check requested by elohiminty: <@1311783916516020324> what is the price of JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:00:23,430 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:00:23,438 [INFO] [01:00:22] AI identified cryptocurrency as: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:00:23,438 [INFO] Fetching crypto price for JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN in usd
+2025-01-26 01:00:23,646 [INFO] Jupiter API Response: 500 - {"code":500,"error":"No vs_token price found"}
+2025-01-26 01:00:23,648 [ERROR] [01:00:22] Failed to get price: Jupiter API returned status code 500
+2025-01-26 01:03:19,428 [INFO] logging in using static token
+2025-01-26 01:03:20,210 [INFO] Shard ID None has connected to Gateway (Session ID: 77647c63679407f0612a796d17de7d64).
+2025-01-26 01:03:22,220 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 01:03:22,220 [INFO] Connected to 2 guilds
+2025-01-26 01:03:22,393 [INFO] Slash commands synced successfully
+2025-01-26 01:03:22,393 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 01:03:22,393 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 01:03:28,725 [INFO] [01:03:28] Price check requested by elohiminty: <@1311783916516020324> what is the price what is the price of So11111111111111111111111111111111111111112
+2025-01-26 01:03:29,490 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:03:29,503 [INFO] [01:03:28] AI identified cryptocurrency as: So11111111111111111111111111111111111111112
+2025-01-26 01:03:29,503 [INFO] Fetching crypto price for So11111111111111111111111111111111111111112 in usd
+2025-01-26 01:03:29,719 [INFO] Jupiter API Response: 200 - {"data":{"So11111111111111111111111111111111111111112":{"id":"So11111111111111111111111111111111111111112","type":"derivedPrice","price":"257.492903500","extraInfo":{"lastSwappedPrice":{"lastJupiterSe
+2025-01-26 01:03:29,723 [ERROR] [01:03:28] Failed to get price: The current Solana token price is $257.49290350 USD
+Confidence Level: HIGH
+2025-01-26 01:03:39,365 [INFO] [01:03:39] Price check requested by elohiminty: <@1311783916516020324> what is the price of JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:03:39,933 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:03:39,941 [INFO] [01:03:39] AI identified cryptocurrency as: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:03:39,941 [INFO] Fetching crypto price for JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN in usd
+2025-01-26 01:03:40,218 [INFO] Jupiter API Response: 200 - {"data":{"JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN":{"id":"JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN","type":"derivedPrice","price":"0.909670","extraInfo":{"lastSwappedPrice":{"lastJupiterSellAt"
+2025-01-26 01:03:40,221 [ERROR] [01:03:39] Failed to get price: The current Solana token price is $0.90967000 USD
+Confidence Level: HIGH
+2025-01-26 01:05:29,788 [INFO] logging in using static token
+2025-01-26 01:05:30,539 [INFO] Shard ID None has connected to Gateway (Session ID: 898f47e7f9639d32ab2e5af153ae2224).
+2025-01-26 01:05:32,547 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 01:05:32,547 [INFO] Connected to 2 guilds
+2025-01-26 01:05:32,975 [INFO] [01:05:32] Price check requested by elohiminty: <@1311783916516020324>  what is the price of JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:05:33,708 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:05:33,718 [INFO] [01:05:32] AI identified cryptocurrency as: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:05:33,719 [INFO] Fetching crypto price for JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN in usd
+2025-01-26 01:05:36,894 [INFO] Jupiter API Response: 200 - {"data":{"JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN":{"id":"JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN","type":"derivedPrice","price":"0.909411","extraInfo":{"lastSwappedPrice":{"lastJupiterSellAt"
+2025-01-26 01:05:36,927 [INFO] [01:05:32] Retrieved price info: Token: Jupiter (JUP)
+The current price is $0.90941100 USD
+Confidence Level: HIGH
+2025-01-26 01:05:38,011 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:05:38,018 [INFO] Slash commands synced successfully
+2025-01-26 01:05:38,018 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 01:05:38,018 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 01:05:59,436 [INFO] [01:05:59] Price check requested by elohiminty: <@1311783916516020324> what is the price of 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 01:05:59,977 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:05:59,981 [INFO] [01:05:59] AI identified cryptocurrency as: 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 01:05:59,982 [INFO] Fetching crypto price for 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN in usd
+2025-01-26 01:06:03,216 [INFO] Jupiter API Response: 200 - {"data":{"6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN":{"id":"6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN","type":"derivedPrice","price":"30.836184","extraInfo":{"lastSwappedPrice":{"lastJupiterSell
+2025-01-26 01:06:03,264 [INFO] [01:05:59] Retrieved price info: Token: Unknown Token
+The current price is $30.83618400 USD
+Confidence Level: HIGH
+2025-01-26 01:06:04,095 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:06:29,615 [INFO] [01:06:29] Price check requested by elohiminty: <@1311783916516020324> what is the price of 9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump
+2025-01-26 01:06:30,223 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:06:30,227 [INFO] [01:06:29] AI identified cryptocurrency as: 9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump
+2025-01-26 01:06:30,227 [INFO] Fetching crypto price for 9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump in usd
+2025-01-26 01:06:33,500 [INFO] Jupiter API Response: 200 - {"data":{"9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump":{"id":"9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump","type":"derivedPrice","price":"0.040896","extraInfo":{"lastSwappedPrice":{"lastJupiterSellA
+2025-01-26 01:06:33,532 [INFO] [01:06:29] Retrieved price info: Token: Unknown Token
+The current price is $0.04089600 USD
+Confidence Level: HIGH
+2025-01-26 01:06:34,563 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:14:16,465 [INFO] logging in using static token
+2025-01-26 01:14:17,192 [INFO] Shard ID None has connected to Gateway (Session ID: 046cb6aa2a24c76a4c5f6b8fbf776481).
+2025-01-26 01:14:18,955 [INFO] [01:14:18] Price check requested by elohiminty: <@1311783916516020324> what is the price of 9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpum
+2025-01-26 01:14:19,623 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:14:19,632 [INFO] [01:14:18] AI identified cryptocurrency as: 9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpum
+2025-01-26 01:14:19,632 [INFO] Fetching crypto price for 9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpum in usd
+2025-01-26 01:14:23,014 [INFO] Birdeye API Response: 200 - {"data":{},"success":true}
+2025-01-26 01:14:23,061 [ERROR] [01:14:18] Failed to get price: Could not find price data for this Solana token
+2025-01-26 01:14:23,062 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-26 01:14:23,062 [INFO] Connected to 2 guilds
+2025-01-26 01:14:23,367 [INFO] Slash commands synced successfully
+2025-01-26 01:14:23,367 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-26 01:14:23,367 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-26 01:14:43,357 [INFO] [01:14:43] Price check requested by elohiminty: <@1311783916516020324>  what is the price of So
+2025-01-26 01:14:43,715 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:14:43,719 [INFO] [01:14:43] AI identified cryptocurrency as: So
+2025-01-26 01:14:43,719 [INFO] Fetching crypto price for So in usd
+2025-01-26 01:14:44,491 [INFO] [01:14:43] Retrieved price info: The current price of Solana (SOL) is 257.90 USD
+2025-01-26 01:14:45,117 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:14:54,269 [INFO] [01:14:54] Price check requested by elohiminty: <@1311783916516020324> what is the price of 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 01:14:54,887 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:14:54,890 [INFO] [01:14:54] AI identified cryptocurrency as: 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+2025-01-26 01:14:54,891 [INFO] Fetching crypto price for 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN in usd
+2025-01-26 01:14:58,479 [INFO] Birdeye API Response: 200 - {"data":{"value":31.27845628900863,"updateUnixTime":1737871761,"updateHumanTime":"2025-01-26T06:09:21","priceChange24h":9.031186902910697},"success":true}
+2025-01-26 01:14:58,530 [INFO] [01:14:54] Retrieved price info: Token: Unknown Token
+Address: 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+Current Price: $31.27845629 USD
+24h Change: 9.03%
+24h Volume: $0.00
+2025-01-26 01:14:59,299 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:15:13,899 [INFO] [01:15:13] Price check requested by elohiminty: <@1311783916516020324> what is the price of JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:15:14,949 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-26 01:15:14,957 [INFO] [01:15:13] AI identified cryptocurrency as: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+2025-01-26 01:15:14,957 [INFO] Fetching crypto price for JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN in usd
+2025-01-26 01:15:18,092 [INFO] Birdeye API Response: 200 - {"data":{"value":0.9120922424265864,"updateUnixTime":1737872109,"updateHumanTime":"2025-01-26T06:15:09","priceChange24h":5.890097407937113},"success":true}
+2025-01-26 01:15:18,140 [INFO] [01:15:13] Retrieved price info: Token: Jupiter (JUP)
+Current Price: $0.91209224 USD
+24h Change: 5.89%
+24h Volume: $0.00
+2025-01-26 01:15:18,888 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
