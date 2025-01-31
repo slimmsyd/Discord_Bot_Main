@@ -1105,7 +1105,8 @@ async def addresource(interaction: discord.Interaction, link: str):
             await interaction.followup.send(
                 f"✅ Resource added:\n**{title}**\n"
                 f"Tags: {', '.join(tags)}\n"
-                f"{link}"
+                f"{link}\n"
+                f"View all resources: [Street Network Resources](https://street-network.vercel.app/app/rerouces)"
             )
         else:
             await interaction.followup.send("❌ Failed to save resource")
