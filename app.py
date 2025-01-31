@@ -16,6 +16,8 @@ import requests
 from bs4 import BeautifulSoup
 import http.client
 import socket
+import httpx
+from pymongo import MongoClient
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -66,9 +68,15 @@ if token is None:
     raise ValueError("No Discord token found")
 
 # OpenAI setup
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+openai_client = OpenAI(
+    api_key=os.getenv('OPENAI_API_KEY'),
+    http_client=httpx.Client(  # Add explicit HTTP client configuration
+        timeout=60,
+        follow_redirects=True
+    )
+)
 
-if not client.api_key:
+if not openai_client.api_key:
     logger.error("No OpenAI API key found. Make sure OPENAI_API_KEY is set in your .env file")
     raise ValueError("No OpenAI API key found")
 
@@ -82,6 +90,21 @@ bot = commands.Bot(command_prefix='/', intents=intents)
 # Increase timeout for HTTP operations
 socket.setdefaulttimeout(30)
 http.client._MAXHEADERS = 1000
+
+# MongoDB setup
+mongo_client = MongoClient(os.getenv('MONGODB_URI'))
+db = mongo_client['test']
+resources_collection = db['resources']
+
+# Create index for faster queries
+resources_collection.create_index([("workspace", 1), ("link", 1)])
+
+# Add this near your other constants
+RESOURCE_CATEGORIES = {
+    "DAO", "CRYPTO", "MEMES", "AI", 
+    "CRYPTO_NEWS", "QUANTUM", "SPIRITUALITY",
+    "TECHNOLOGY", "GENERAL"
+}
 
 @bot.event
 async def on_ready():
@@ -107,12 +130,11 @@ def get_crypto_price(coin_id="bitcoin"):
 
 # Generate analysis with OpenAI
 def generate_analysis(coin_name, price):
-    client = OpenAI(api_key=OPENAI_API_KEY)
     prompt = f"""
     The current {coin_name} price is ${price}. 
     Provide a concise summary (1-2 sentences) of its recent performance and a brief analysis.
     """
-    response = client.chat.completions.create(
+    response = openai_client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
     )
@@ -354,6 +376,66 @@ class CryptoTools:
             logger.error(f"Unexpected error: {str(e)}")
             return f"An unexpected error occurred: {str(e)}"
 
+    @staticmethod
+    async def categorize_link(link: str) -> tuple[str, list[str]]:
+        """Uses AI to generate title and categorize a link"""
+        try:
+            # First fetch the page content
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+            response = requests.get(link, headers=headers, timeout=10)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Extract main content and existing title
+            text_content = ' '.join([p.get_text() for p in soup.find_all(['p', 'h1', 'h2', 'h3'])])
+            page_title = soup.title.string if soup.title else ""
+            
+            if len(text_content) > 4000:
+                text_content = text_content[:4000] + "..."
+            
+            # Get AI analysis
+            response = openai_client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": f"""Analyze this web content and:
+                    1. Create a concise, 5-8 word title
+                    2. Categorize using ONLY these tags: {', '.join(RESOURCE_CATEGORIES)}
+                    
+                    Format response EXACTLY like:
+                    TITLE: [Generated Title]
+                    TAGS: [Tag1], [Tag2], [Tag3]
+                    
+                    Example:
+                    TITLE: AI Breakthrough in Quantum Computing
+                    TAGS: AI, QUANTUM, TECHNOLOGY"""},
+                    {"role": "user", "content": f"Content:\n{text_content}\n\nOriginal Title: {page_title}"}
+                ],
+                max_tokens=200,
+                temperature=0.3
+            )
+            
+            # Parse response
+            result = response.choices[0].message.content
+            title = "Untitled Resource"
+            tags = ["GENERAL"]
+            
+            # Extract title and tags
+            for line in result.split('\n'):
+                if line.startswith('TITLE:'):
+                    title = line.split(':', 1)[1].strip()
+                elif line.startswith('TAGS:'):
+                    tags = [tag.strip().upper() for tag in line.split(':', 1)[1].split(',')]
+            
+            # Validate and fallback
+            title = title if len(title) > 2 else page_title or link.split('//')[-1].split('/')[0]
+            valid_tags = [tag for tag in tags if tag in RESOURCE_CATEGORIES][:3]
+            
+            return title, valid_tags
+            
+        except Exception as e:
+            logger.error(f"AI analysis failed: {str(e)}")
+            fallback_title = soup.title.string if soup.title else link.split('//')[-1].split('/')[0]
+            return fallback_title, ["GENERAL"]
+
 @bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
 async def dearoracle(interaction: discord.Interaction, question: str):
     logger.info(f'Oracle question received from {interaction.user}: {question}')
@@ -370,7 +452,7 @@ async def dearoracle(interaction: discord.Interaction, question: str):
             
             if found_crypto:
                 price_info = await crypto_tools.get_crypto_price(found_crypto)
-                response = client.chat.completions.create(
+                response = openai_client.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": "You are a crypto-savvy oracle. Provide insights about the cryptocurrency along with its price."},
@@ -384,7 +466,7 @@ async def dearoracle(interaction: discord.Interaction, question: str):
                 return
         
         # For non-crypto questions
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well. 
@@ -422,7 +504,7 @@ async def summarize(interaction: discord.Interaction):
         
         # OpenAI API call
         start_time = datetime.now()
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that summarizes conversations."},
@@ -565,7 +647,7 @@ async def sumvideo(interaction: discord.Interaction, url: str):
                     full_text = full_text[:4000] + "..."
                 
                 # Create the analysis
-                response = client.chat.completions.create(
+                response = openai_client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "system", "content": """Analyze the content in this structured format:
@@ -626,7 +708,7 @@ async def detailvideo(interaction: discord.Interaction, url: str):
                 full_text = full_text[:4000] + "..."
             
             # Detailed analysis prompt
-            response = client.chat.completions.create(
+            response = openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": """You are an expert content analyzer with deep understanding of American society in 2024. 
@@ -694,7 +776,7 @@ async def meme(interaction: discord.Interaction):
         conversation = "\n".join([f"{msg.author.name}: {msg.content}" for msg in messages])
         
         # First, get a meme concept from GPT
-        concept_response = client.chat.completions.create(
+        concept_response = openai_client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": """You are a meme expert. Based on the conversation, 
@@ -722,7 +804,7 @@ async def meme(interaction: discord.Interaction):
                 caption = line.replace('CAPTION:', '').strip()
         
         # Generate image using DALL-E
-        image_response = client.images.generate(
+        image_response = openai_client.images.generate(
             model="dall-e-3",
             prompt=f"Create a meme-style image: {image_desc}. Make it funny and suitable for a meme. Use bold, clear visuals typical of internet memes.",
             n=1,
@@ -776,7 +858,7 @@ async def finnasumthisup(interaction: discord.Interaction, url: str):
             article_text = ' '.join([p.get_text().strip() for p in paragraphs])
         
         # Get Street Oracle to summarize
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": """You are the Street Oracle, breaking down complex articles in 
@@ -824,7 +906,7 @@ async def fryemup(interaction: discord.Interaction):
         conversation = "\n".join([f"{msg.author.name}: {msg.content}" for msg in messages])
         
         # Get the Street Oracle to deliver a roast
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": """You are the Street Oracle, now in roast mode. You're delivering 
@@ -880,7 +962,7 @@ async def on_message(message):
         
         try:
             # Use GPT to identify the cryptocurrency from the message
-            crypto_context_response = client.chat.completions.create(
+            crypto_context_response = openai_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": """You are a cryptocurrency identifier. 
@@ -949,7 +1031,7 @@ async def on_message(message):
             logger.info(f'Roast was replied to by {message.author} saying: {message.content}')
             
             try:
-                response = client.chat.completions.create(
+                response = openai_client.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": """You are the Street Oracle in comeback mode. Your job is to 
@@ -983,6 +1065,54 @@ async def on_message(message):
     
     # Process commands after handling the reply
     await bot.process_commands(message)
+
+@bot.tree.command(name="addresource", description="Add a resource to the resources table")
+async def addresource(interaction: discord.Interaction, link: str):
+    """Stores a resource link in MongoDB with metadata"""
+    try:
+        await interaction.response.defer()
+        
+        if not link.startswith(("http://", "https://")):
+            return await interaction.followup.send("❌ Please provide a valid HTTP/HTTPS URL")
+            
+        try:
+            # Get AI-generated title and tags
+            title, tags = await CryptoTools.categorize_link(link)
+            logger.info(f"AI generated title: {title}, tags: {tags}")
+        except Exception as e:
+            logger.error(f"AI analysis failed: {str(e)}")
+            title = "Untitled Resource"
+            tags = ["GENERAL"]
+            
+        # Create document
+        resource_data = {
+            "title": title,
+            "link": link,
+            "submitted_by": {
+                "user_id": str(interaction.user.id),
+                "username": interaction.user.name
+            },
+            "timestamp": datetime.now(),
+            "upvotes": 0,
+            "tags": tags,
+            "auto_generated": True
+        }
+        
+        # Insert into MongoDB
+        result = resources_collection.insert_one(resource_data)
+        
+        if result.inserted_id:
+            await interaction.followup.send(
+                f"✅ Resource added:\n**{title}**\n"
+                f"Tags: {', '.join(tags)}\n"
+                f"{link}"
+            )
+        else:
+            await interaction.followup.send("❌ Failed to save resource")
+            
+    except Exception as e:
+        logger.error(f'Resource submission error: {str(e)}')
+        await interaction.followup.send("🔥 Yo, something burned up in the process! Try again later.")
 
 # Run the bot
 if __name__ == "__main__":

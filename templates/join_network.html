@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Street Network</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Build Your Street Profile</h1>
+        <div class="street-form">
+            <form action="/submit-profile" method="POST">
+                <div class="form-group">
+                    <label for="streetName">Street Name:</label>
+                    <input type="text" id="streetName" name="streetName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Street Description:</label>
+                    <textarea id="description" name="description" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="features">Street Features:</label>
+                    <select id="features" name="features" multiple>
+                        <option value="residential">Residential</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="pedestrian">Pedestrian-friendly</option>
+                        <option value="bicycle">Bicycle lanes</option>
+                        <option value="parking">Street parking</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-btn">Create Street Profile</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html> 

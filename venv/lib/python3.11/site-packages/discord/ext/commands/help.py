@@ -297,11 +297,6 @@ class _HelpCommandImpl(Command):
         # Revert `on_error` to use the original one in case of race conditions
         self.on_error = self._injected.on_help_command_error
 
-    def update(self, **kwargs: Any) -> None:
-        cog = self.cog
-        self.__init__(self._original, **dict(self.__original_kwargs__, **kwargs))
-        self.cog = cog
-
 
 class HelpCommand:
     r"""The base implementation for help command formatting.
@@ -382,8 +377,9 @@ class HelpCommand:
         return obj
 
     def _add_to_bot(self, bot: BotBase) -> None:
-        self._command_impl.update(**self.command_attrs)
-        bot.add_command(self._command_impl)
+        command = _HelpCommandImpl(self, **self.command_attrs)
+        bot.add_command(command)
+        self._command_impl = command
 
     def _remove_from_bot(self, bot: BotBase) -> None:
         bot.remove_command(self._command_impl.name)

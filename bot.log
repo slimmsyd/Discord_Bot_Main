@@ -1581,3 +1581,853 @@ Current Price: $0.91209224 USD
 24h Change: 5.89%
 24h Volume: $0.00
 2025-01-26 01:15:18,888 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-28 04:05:43,020 [INFO] logging in using static token
+2025-01-28 04:05:43,828 [INFO] Shard ID None has connected to Gateway (Session ID: f32021c64bc31fd5b82b57dc2308c8d2).
+2025-01-28 04:05:45,836 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-28 04:05:45,836 [INFO] Connected to 1 guilds
+2025-01-28 04:05:46,061 [INFO] Slash commands synced successfully
+2025-01-28 04:05:46,062 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-28 04:32:56,491 [INFO] logging in using static token
+2025-01-28 04:32:57,184 [INFO] Shard ID None has connected to Gateway (Session ID: d3e72f5c7b16ce9f2091a3280888e684).
+2025-01-28 04:32:59,188 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-28 04:32:59,189 [INFO] Connected to 2 guilds
+2025-01-28 04:32:59,354 [INFO] Slash commands synced successfully
+2025-01-28 04:32:59,354 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-28 04:32:59,354 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-28 04:34:58,571 [INFO] logging in using static token
+2025-01-28 04:34:59,708 [INFO] Shard ID None has connected to Gateway (Session ID: 8bcbe99f3742c48bb0b8cec1e9f14a78).
+2025-01-28 04:35:01,715 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-28 04:35:01,715 [INFO] Connected to 1 guilds
+2025-01-28 04:35:01,880 [INFO] Slash commands synced successfully
+2025-01-28 04:35:01,881 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-28 04:36:12,656 [INFO] logging in using static token
+2025-01-28 04:36:13,278 [INFO] Shard ID None has connected to Gateway (Session ID: 8f5b98bf615ef0bb6a459c102cb9a6dd).
+2025-01-28 04:36:15,286 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-28 04:36:15,286 [INFO] Connected to 2 guilds
+2025-01-28 04:36:15,507 [INFO] Slash commands synced successfully
+2025-01-28 04:36:15,507 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-28 04:36:15,507 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-28 04:38:53,539 [INFO] logging in using static token
+2025-01-28 04:38:54,397 [INFO] Shard ID None has connected to Gateway (Session ID: 885743293e7ab042116b4d763a7e1062).
+2025-01-28 04:38:56,433 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-28 04:38:56,433 [INFO] Connected to 2 guilds
+2025-01-28 04:38:56,664 [INFO] Slash commands synced successfully
+2025-01-28 04:38:56,664 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-28 04:38:56,664 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-28 04:39:23,045 [INFO] Join network command received from elohiminty
+2025-01-29 17:56:43,785 [INFO] logging in using static token
+2025-01-29 17:56:44,701 [INFO] Shard ID None has connected to Gateway (Session ID: 108e0ad44601d495ae23a1dbd121154d).
+2025-01-29 17:56:46,727 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-29 17:56:46,727 [INFO] Connected to 2 guilds
+2025-01-29 17:56:47,086 [INFO] Slash commands synced successfully
+2025-01-29 17:56:47,087 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-29 17:56:47,087 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-29 17:57:42,033 [INFO] Resource command received from elohiminty
+2025-01-29 17:57:42,384 [ERROR] Error in addresource command: 'Collection' object is not callable. If you meant to call the 'create' method on a 'Collection' object it is failing because no such method exists.
+2025-01-29 17:58:46,821 [INFO] logging in using static token
+2025-01-29 17:58:47,715 [INFO] Shard ID None has connected to Gateway (Session ID: 0e10b15b1b686ff6395f3479edf88660).
+2025-01-29 17:58:49,720 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-29 17:58:49,720 [INFO] Connected to 1 guilds
+2025-01-29 17:58:49,913 [INFO] Slash commands synced successfully
+2025-01-29 17:58:49,913 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-29 17:59:29,498 [INFO] Resource command received from elohiminty
+2025-01-29 17:59:29,772 [ERROR] Error in addresource command: 'Collection' object is not callable. If you meant to call the 'create' method on a 'Collection' object it is failing because no such method exists.
+2025-01-29 18:45:02,666 [INFO] Shard ID None session has been invalidated.
+2025-01-29 18:45:08,055 [INFO] Shard ID None has connected to Gateway (Session ID: d49c792fac2625321e31235868d69908).
+2025-01-29 18:45:10,062 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-29 18:45:10,063 [INFO] Connected to 2 guilds
+2025-01-29 18:45:10,577 [INFO] Slash commands synced successfully
+2025-01-29 18:45:10,577 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-29 18:45:10,577 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-29 20:43:14,313 [INFO] Shard ID None has successfully RESUMED session d49c792fac2625321e31235868d69908.
+2025-01-29 20:51:05,936 [INFO] Meme command received from yhm.bran in Street Economics HQ/🗼-crypto
+2025-01-29 20:51:06,183 [ERROR] Error in meme command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 783, in meme
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2025-01-29 20:54:19,946 [INFO] Roast command received from yhm.bran in Street Economics HQ/🗼-crypto
+2025-01-29 20:54:20,131 [ERROR] Error in fryemup command: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 913, in fryemup
+    await interaction.response.defer()
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 709, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 221, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2025-01-29 22:53:34,624 [INFO] Shard ID None session has been invalidated.
+2025-01-29 23:11:02,107 [INFO] Shard ID None session has been invalidated.
+2025-01-29 23:11:15,883 [INFO] Shard ID None has connected to Gateway (Session ID: 3da8b5ef6ce16b2e6c6580e64ad4f15c).
+2025-01-29 23:11:17,888 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-29 23:11:17,889 [INFO] Connected to 2 guilds
+2025-01-29 23:11:18,237 [INFO] Slash commands synced successfully
+2025-01-29 23:11:18,237 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-29 23:11:18,237 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 00:05:44,723 [INFO] Shard ID None session has been invalidated.
+2025-01-30 00:23:18,743 [INFO] Shard ID None session has been invalidated.
+2025-01-30 00:39:25,792 [INFO] Shard ID None session has been invalidated.
+2025-01-30 00:49:16,882 [INFO] Shard ID None session has been invalidated.
+2025-01-30 02:26:52,637 [INFO] Shard ID None session has been invalidated.
+2025-01-30 02:26:57,957 [INFO] Shard ID None has connected to Gateway (Session ID: d9b8c7d8e9b5e77055f46fc439547760).
+2025-01-30 02:26:59,973 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 02:26:59,973 [INFO] Connected to 2 guilds
+2025-01-30 02:27:00,286 [INFO] Slash commands synced successfully
+2025-01-30 02:27:00,286 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 02:27:00,286 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 03:34:16,090 [INFO] Shard ID None has successfully RESUMED session d9b8c7d8e9b5e77055f46fc439547760.
+2025-01-30 03:50:39,478 [INFO] Shard ID None has successfully RESUMED session d9b8c7d8e9b5e77055f46fc439547760.
+2025-01-30 04:37:53,765 [INFO] Shard ID None session has been invalidated.
+2025-01-30 04:37:59,728 [INFO] Shard ID None has connected to Gateway (Session ID: 918239764fe21eed1fb4105dab95118a).
+2025-01-30 04:38:01,746 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 04:38:01,746 [INFO] Connected to 2 guilds
+2025-01-30 04:38:02,137 [INFO] Slash commands synced successfully
+2025-01-30 04:38:02,137 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 04:38:02,137 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 04:46:25,426 [INFO] Shard ID None session has been invalidated.
+2025-01-30 04:46:30,712 [INFO] Shard ID None has connected to Gateway (Session ID: 54f78cd1e6a47fb0610c5d617096ee1b).
+2025-01-30 04:48:22,654 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 04:48:22,654 [INFO] Connected to 2 guilds
+2025-01-30 04:48:23,320 [INFO] Slash commands synced successfully
+2025-01-30 04:48:23,320 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 04:48:23,320 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 04:49:09,079 [INFO] Shard ID None session has been invalidated.
+2025-01-30 04:49:14,457 [INFO] Shard ID None has connected to Gateway (Session ID: d2fef49cd5b341d7f8399cb2302090d2).
+2025-01-30 04:49:16,463 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 04:49:16,463 [INFO] Connected to 2 guilds
+2025-01-30 04:49:16,898 [INFO] Slash commands synced successfully
+2025-01-30 04:49:16,898 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 04:49:16,899 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 04:55:28,903 [WARNING] Can't keep up, shard ID None websocket is 14.1s behind.
+2025-01-30 04:57:46,229 [INFO] Shard ID None has successfully RESUMED session d2fef49cd5b341d7f8399cb2302090d2.
+2025-01-30 05:30:20,324 [INFO] Shard ID None session has been invalidated.
+2025-01-30 05:30:25,584 [INFO] Shard ID None has connected to Gateway (Session ID: 600d7f933ee7fe3dfbc8549cb4de21c0).
+2025-01-30 05:30:30,354 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 05:30:30,354 [INFO] Connected to 2 guilds
+2025-01-30 05:30:31,103 [INFO] Slash commands synced successfully
+2025-01-30 05:30:31,103 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 05:30:31,104 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 05:43:54,105 [INFO] Shard ID None session has been invalidated.
+2025-01-30 05:43:59,657 [INFO] Shard ID None has connected to Gateway (Session ID: 4ac81857450f5655ff5c8ececa99362c).
+2025-01-30 05:44:01,665 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 05:44:01,665 [INFO] Connected to 2 guilds
+2025-01-30 05:44:02,102 [INFO] Slash commands synced successfully
+2025-01-30 05:44:02,103 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 05:44:02,103 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 06:41:06,687 [INFO] Shard ID None session has been invalidated.
+2025-01-30 06:47:04,126 [INFO] Shard ID None session has been invalidated.
+2025-01-30 06:47:09,402 [INFO] Shard ID None has connected to Gateway (Session ID: 6a9d135d38f8e802222af0b77ffb67b1).
+2025-01-30 06:47:11,417 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 06:47:11,418 [INFO] Connected to 2 guilds
+2025-01-30 06:47:11,680 [INFO] Slash commands synced successfully
+2025-01-30 06:47:11,680 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 06:47:11,680 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 07:34:26,379 [INFO] Shard ID None session has been invalidated.
+2025-01-30 07:34:31,737 [INFO] Shard ID None has connected to Gateway (Session ID: 1835ba6e19ba6bb803ee9d08fcde8745).
+2025-01-30 07:34:33,750 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 07:34:33,750 [INFO] Connected to 2 guilds
+2025-01-30 07:34:34,100 [INFO] Slash commands synced successfully
+2025-01-30 07:34:34,101 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 07:34:34,101 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 07:40:52,545 [INFO] Shard ID None session has been invalidated.
+2025-01-30 07:40:57,930 [INFO] Shard ID None has connected to Gateway (Session ID: c61c72b07cb2748d58083aef14ed88f4).
+2025-01-30 07:40:59,967 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 07:40:59,967 [INFO] Connected to 2 guilds
+2025-01-30 07:41:00,221 [INFO] Slash commands synced successfully
+2025-01-30 07:41:00,222 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 07:41:00,222 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 08:02:40,898 [INFO] Shard ID None session has been invalidated.
+2025-01-30 08:08:13,413 [INFO] Shard ID None session has been invalidated.
+2025-01-30 08:35:16,394 [ERROR] Attempting a reconnect in 0.14s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 08:35:16,553 [ERROR] Attempting a reconnect in 0.97s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 08:35:17,526 [ERROR] Attempting a reconnect in 5.07s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 08:35:22,603 [ERROR] Attempting a reconnect in 12.71s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 08:35:35,642 [INFO] Shard ID None session has been invalidated.
+2025-01-30 08:35:41,013 [INFO] Shard ID None has connected to Gateway (Session ID: d8dd55391b773b1f73681ef1b11642aa).
+2025-01-30 08:35:43,019 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 08:35:43,019 [INFO] Connected to 2 guilds
+2025-01-30 08:35:58,717 [INFO] Slash commands synced successfully
+2025-01-30 08:35:58,717 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 08:35:58,717 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 08:49:29,217 [INFO] Shard ID None session has been invalidated.
+2025-01-30 08:49:34,605 [INFO] Shard ID None has connected to Gateway (Session ID: dd5145af75472781b216dec9b7f3358a).
+2025-01-30 08:49:36,614 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 08:49:36,614 [INFO] Connected to 2 guilds
+2025-01-30 08:49:37,214 [INFO] Slash commands synced successfully
+2025-01-30 08:49:37,214 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 08:49:37,214 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 09:05:39,606 [INFO] Shard ID None session has been invalidated.
+2025-01-30 09:05:45,189 [INFO] Shard ID None has connected to Gateway (Session ID: 4c0ec1c4247053e8ab7d54a1b65cb4ad).
+2025-01-30 09:05:47,195 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 09:05:47,199 [INFO] Connected to 2 guilds
+2025-01-30 09:05:47,550 [INFO] Slash commands synced successfully
+2025-01-30 09:05:47,551 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 09:05:47,551 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 09:35:13,458 [INFO] Shard ID None has successfully RESUMED session 4c0ec1c4247053e8ab7d54a1b65cb4ad.
+2025-01-30 10:23:27,219 [ERROR] Attempting a reconnect in 0.74s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 10:23:27,961 [ERROR] Attempting a reconnect in 1.71s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 10:23:29,677 [ERROR] Attempting a reconnect in 5.01s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 10:23:34,694 [ERROR] Attempting a reconnect in 4.01s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 10:23:38,717 [ERROR] Attempting a reconnect in 5.98s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 10:23:44,711 [ERROR] Attempting a reconnect in 32.70s
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1345, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 989, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1020, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/resolver.py", line 36, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 867, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 664, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/gateway.py", line 374, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/discord/http.py", line 550, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 1002, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/client.py", line 701, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1050, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/aiohttp/connector.py", line 1351, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+2025-01-30 10:25:29,695 [INFO] Shard ID None session has been invalidated.
+2025-01-30 10:25:35,324 [INFO] Shard ID None has connected to Gateway (Session ID: 17a329847a306ece43bb9d720b4cbf6e).
+2025-01-30 10:25:37,333 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 10:25:37,333 [INFO] Connected to 2 guilds
+2025-01-30 10:25:38,003 [INFO] Slash commands synced successfully
+2025-01-30 10:25:38,004 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 10:25:38,004 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 10:26:14,605 [INFO] [10:26:14] Price check requested by elohiminty: Whats Eth's price <@1311783916516020324>
+2025-01-30 10:26:14,606 [ERROR] [10:26:14] Error in price check: 'Collection' object is not callable. If you meant to call the 'create' method on a 'Collection' object it is failing because no such method exists.
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/EconomicsBot/app.py", line 979, in on_message
+    crypto_context_response = client.chat.completions.create(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/EconomicsBot/venv/lib/python3.11/site-packages/pymongo/synchronous/collection.py", line 428, in __call__
+    raise TypeError(
+TypeError: 'Collection' object is not callable. If you meant to call the 'create' method on a 'Collection' object it is failing because no such method exists.
+2025-01-30 11:41:23,091 [INFO] Shard ID None session has been invalidated.
+2025-01-30 11:41:28,737 [INFO] Shard ID None has connected to Gateway (Session ID: eef308b7d6a657870bdd7b1b98b58ca7).
+2025-01-30 11:41:30,747 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-30 11:41:30,747 [INFO] Connected to 2 guilds
+2025-01-30 11:41:31,136 [INFO] Slash commands synced successfully
+2025-01-30 11:41:31,136 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-30 11:41:31,136 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-30 11:57:50,920 [INFO] Shard ID None has successfully RESUMED session eef308b7d6a657870bdd7b1b98b58ca7.
+2025-01-31 15:44:36,934 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 15:44:36,935 [INFO] logging in using static token
+2025-01-31 15:44:37,889 [INFO] Shard ID None has connected to Gateway (Session ID: 0243d0ce7fa14e9e19e1b18a5f3663bf).
+2025-01-31 15:44:39,896 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 15:44:39,896 [INFO] Connected to 2 guilds
+2025-01-31 15:44:40,310 [INFO] Slash commands synced successfully
+2025-01-31 15:44:40,311 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 15:44:40,311 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-31 15:48:55,283 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 15:48:56,452 [INFO] logging in using static token
+2025-01-31 15:48:57,696 [INFO] Shard ID None has connected to Gateway (Session ID: 721f5e0bf4b7201942497d0fab121261).
+2025-01-31 15:48:59,703 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 15:48:59,703 [INFO] Connected to 2 guilds
+2025-01-31 15:49:00,053 [INFO] Slash commands synced successfully
+2025-01-31 15:49:00,054 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 15:49:00,054 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-31 15:53:34,176 [ERROR] Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x106b8f890>
+2025-01-31 15:53:36,678 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 15:53:37,736 [INFO] logging in using static token
+2025-01-31 15:53:41,726 [INFO] Shard ID None has connected to Gateway (Session ID: 27bc130c80466d2fe0997b5b5eeea70d).
+2025-01-31 15:53:43,745 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 15:53:43,745 [INFO] Connected to 1 guilds
+2025-01-31 15:53:44,017 [INFO] Slash commands synced successfully
+2025-01-31 15:53:44,017 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 15:54:49,748 [ERROR] Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x113fbb590>
+2025-01-31 15:54:51,474 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 15:54:52,499 [INFO] logging in using static token
+2025-01-31 15:54:53,698 [INFO] Shard ID None has connected to Gateway (Session ID: c2137171d4e7d01d7be02657235dd93f).
+2025-01-31 15:54:55,718 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 15:54:55,718 [INFO] Connected to 2 guilds
+2025-01-31 15:54:55,993 [INFO] Slash commands synced successfully
+2025-01-31 15:54:55,993 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 15:54:55,993 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-31 15:55:24,336 [ERROR] Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x105df01a0>, 12044.006284875)]']
+connector: <aiohttp.connector.TCPConnector object at 0x105deb210>
+2025-01-31 15:55:26,298 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 15:55:27,228 [INFO] logging in using static token
+2025-01-31 15:55:28,563 [INFO] Shard ID None has connected to Gateway (Session ID: 4cd8daadca0507d4da16edb57f549ffc).
+2025-01-31 15:55:30,569 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 15:55:30,569 [INFO] Connected to 2 guilds
+2025-01-31 15:55:30,898 [INFO] Slash commands synced successfully
+2025-01-31 15:55:30,898 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 15:55:30,898 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-31 15:55:39,356 [INFO] Resource added to MongoDB: {'link': 'https://chat.deepseek.com/', 'workspace': 'general', 'submitted_by': {'user_id': '852749494541221890', 'username': 'elohiminty'}, 'timestamp': datetime.datetime(2025, 1, 31, 15, 55, 39, 283414), 'upvotes': 0, 'tags': [], '_id': ObjectId('679d38cb79547d436436b203')}
+2025-01-31 15:55:39,356 [INFO] Result: InsertOneResult(ObjectId('679d38cb79547d436436b203'), acknowledged=True)
+2025-01-31 15:55:39,356 [INFO] Collection: Collection(Database(MongoClient(host=['lockertube-cluster01-shard-00-01.fhpzo.mongodb.net:27017', 'lockertube-cluster01-shard-00-00.fhpzo.mongodb.net:27017', 'lockertube-cluster01-shard-00-02.fhpzo.mongodb.net:27017'], document_class=dict, tz_aware=False, connect=True, authsource='admin', replicaset='atlas-pb1cn3-shard-0', tls=True), 'street_network'), 'resources')
+2025-01-31 15:57:48,268 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 15:57:50,112 [INFO] logging in using static token
+2025-01-31 15:57:51,048 [INFO] Shard ID None has connected to Gateway (Session ID: 587211781d8c5e73d5862ea0af2b3b5b).
+2025-01-31 15:57:53,057 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 15:57:53,058 [INFO] Connected to 1 guilds
+2025-01-31 15:57:53,403 [INFO] Slash commands synced successfully
+2025-01-31 15:57:53,404 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 16:02:00,532 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 16:02:01,594 [INFO] logging in using static token
+2025-01-31 16:02:02,644 [INFO] Shard ID None has connected to Gateway (Session ID: ee3d39af406925faee778bc2365327aa).
+2025-01-31 16:02:04,655 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 16:02:04,655 [INFO] Connected to 1 guilds
+2025-01-31 16:02:04,899 [INFO] Slash commands synced successfully
+2025-01-31 16:02:04,899 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 16:03:13,669 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-31 16:03:13,681 [INFO] AI assigned tags: ['AI', 'TECHNOLOGY', 'CRYPTO_NEWS']
+2025-01-31 16:24:11,802 [ERROR] Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x10438fdd0>
+2025-01-31 16:24:13,588 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 16:24:15,470 [INFO] logging in using static token
+2025-01-31 16:24:17,603 [INFO] Shard ID None has connected to Gateway (Session ID: 5b76aef2edb3484ad2aa3be20d859629).
+2025-01-31 16:24:19,613 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 16:24:19,613 [INFO] Connected to 2 guilds
+2025-01-31 16:24:19,955 [INFO] Slash commands synced successfully
+2025-01-31 16:24:19,955 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 16:24:19,956 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-31 16:24:47,917 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-31 16:24:47,926 [INFO] AI assigned tags: ['AI', 'TECHNOLOGY', 'CRYPTO_NEWS']
+2025-01-31 16:27:29,160 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-01-31 16:27:30,432 [INFO] logging in using static token
+2025-01-31 16:27:31,540 [INFO] Shard ID None has connected to Gateway (Session ID: 33117c6d83e8465bb85e988e426d23ad).
+2025-01-31 16:27:33,558 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-01-31 16:27:33,559 [INFO] Connected to 2 guilds
+2025-01-31 16:27:33,893 [INFO] Slash commands synced successfully
+2025-01-31 16:27:33,894 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-01-31 16:27:33,894 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-01-31 16:27:59,105 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-31 16:27:59,128 [INFO] AI generated title: Ai2 Open-Source Model Tülu 3 Breakthrough, tags: ['TECHNOLOGY', 'AI']
+2025-01-31 16:32:53,553 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-31 16:32:53,563 [INFO] AI generated title: YouTube, tags: ['GENERAL']
+2025-01-31 16:33:19,620 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-31 16:33:19,628 [INFO] AI generated title: AI Code Editor for Startup Idea, tags: ['TECHNOLOGY', 'AI']
+2025-01-31 16:34:01,710 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-31 16:34:01,716 [INFO] AI generated title: Amazon.com Verification Process, tags: ['TECHNOLOGY']

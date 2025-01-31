@@ -1,4 +1,4 @@
-#!/Users/sydneysanders/Desktop/EconomicsBot/venv/bin/python3.11
+#!/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
