@@ -18,6 +18,8 @@ import http.client
 import socket
 import httpx
 from pymongo import MongoClient
+from PyPDF2 import PdfReader
+from urllib.parse import urlparse
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -380,40 +382,109 @@ class CryptoTools:
     async def categorize_link(link: str) -> tuple[str, list[str]]:
         """Uses AI to generate title and categorize a link"""
         try:
-            # First fetch the page content
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
             response = requests.get(link, headers=headers, timeout=10)
-            soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Extract main content and existing title
-            text_content = ' '.join([p.get_text() for p in soup.find_all(['p', 'h1', 'h2', 'h3'])])
-            page_title = soup.title.string if soup.title else ""
+            text_content = ""
+            page_title = ""
+            content_type = "GENERAL"
+            system_prompt = """Analyze this content and create a title + tags."""
+
+            # Platform-specific handling
+            if "amazon.com" in link and "/dp/" in link:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # Extract actual product details
+                product_title = soup.select_one("#productTitle")
+                product_description = soup.select_one("#productDescription")
+                
+                if product_title:
+                    text_content = product_title.get_text().strip()
+                    if product_description:
+                        text_content += "\n" + product_description.get_text().strip()
+                
+                # Fallback to meta description
+                if not text_content:
+                    meta_desc = soup.find("meta", {"name":"description"})
+                    if meta_desc:
+                        text_content = meta_desc.get("content", "")
+                
+                page_title = f"Amazon Product: {text_content[:50]}..." if text_content else "Amazon Product"
+                content_type = "PRODUCT"
             
+            elif "youtube.com/watch" in link or "youtu.be/" in link:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                page_title = soup.find("meta", property="og:title")["content"]
+                description = soup.find("meta", property="og:description")["content"]
+                text_content = f"{page_title}\n{description}"
+                content_type = "VIDEO"
+            
+            elif "github.com/" in link:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                repo_title = soup.find("meta", property="og:title")["content"]
+                about_section = soup.find("div", class_="BorderGrid-cell") 
+                readme = soup.find("div", id="readme")
+                text_content = f"{repo_title}\n{about_section.text if about_section else ''}\n{readme.text if readme else ''}"
+                content_type = "CODE_REPO"
+            
+            elif "wikipedia.org/wiki/" in link:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                page_title = soup.find("h1", id="firstHeading").text
+                paragraphs = soup.find_all("p", recursive=True)
+                text_content = "\n".join([p.text for p in paragraphs[:3]])  # First 3 paragraphs
+                content_type = "ENCYCLOPEDIA"
+            
+            elif "arxiv.org/abs/" in link:
+                text_content = requests.get(link.replace("/abs/", "/pdf/") + ".pdf").text
+                content_type = "RESEARCH_PAPER"
+            
+            elif "news." in link or "article" in link:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                article = soup.find("article") or soup.find("div", class_=re.compile(r'article|content|story'))
+                text_content = ' '.join([p.text for p in article.find_all('p')]) if article else ""
+                content_type = "NEWS_ARTICLE"
+
+            elif link.lower().endswith('.pdf'):
+                try:
+                    # Read PDF content
+                    pdf_file = BytesIO(response.content)
+                    pdf_reader = PdfReader(pdf_file)
+                    text_content = " ".join([page.extract_text() for page in pdf_reader.pages if page.extract_text()])
+                    page_title = link.split('/')[-1].replace('.pdf', '')  # Use filename as title
+                except Exception as e:
+                    logger.error(f"PDF processing failed: {str(e)}")
+                    return "PDF Document", ["Academic Paper", "Research Publication"]
+
+            else:  # General web content
+                soup = BeautifulSoup(response.text, 'html.parser')
+                text_content = ' '.join([p.get_text() for p in soup.find_all(['p', 'h1', 'h2', 'h3'])])
+                page_title = soup.title.string if soup.title else ""
+
+            # Truncate content
             if len(text_content) > 4000:
                 text_content = text_content[:4000] + "..."
+
+            # Custom prompts per content type
+            prompt_templates = {
+                "PRODUCT": """Analyze this product and create...""",
+                "VIDEO": """Analyze this video and... Include tags about presentation style, production quality...""",
+                "CODE_REPO": """Analyze this code repository... Focus on technical stack, application domains...""",
+                "ENCYCLOPEDIA": """Analyze this encyclopedia entry... Include historical context, key figures...""",
+                "RESEARCH_PAPER": """Analyze this academic paper... Focus on methodology, contributions...""",
+                "NEWS_ARTICLE": """Analyze this news article... Identify key events, political leanings...""",
+                "DOCUMENT": """Analyze this document... Focus on key arguments, evidence..."""
+            }
             
+            system_prompt = prompt_templates.get(content_type, system_prompt)
+            
+            # Add content-type specific guidance
+            system_prompt += f"\nCONTEXT: This is a {content_type.replace('_', ' ')} from {urlparse(link).netloc}"
+
             # Get AI analysis
             response = openai_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": f"""Analyze this web content and:
-                    1. Create a concise, 5-8 word title
-                    2. Generate 3-5 relevant tags that capture the essence
-                    
-                    Format response EXACTLY like:
-                    TITLE: [Generated Title]
-                    TAGS: [Tag1], [Tag2], [Tag3]
-                    
-                    Tags should be:
-                    - Creative and unexpected
-                    - Mix concrete and abstract concepts
-                    - Use pop culture references when relevant
-                    - Include both broad and niche categories
-                    - Max 2 words per tag
-                    
-                    Example:
-                    TITLE: Quantum Computing Breakthrough
-                    TAGS: Physics Revolution, AI Arms Race, Future Tech, Schrödinger's Chip"""},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": f"Content:\n{text_content}\n\nOriginal Title: {page_title}"}
                 ],
                 max_tokens=200,
@@ -1013,7 +1084,7 @@ async def on_message(message):
                     analysis = generate_analysis(coin_name, price)
                     await message.reply(
                         f"**[{timestamp}] Crypto Price Update** 📊\n"
-                        f"💰 {price_info}\n\n"
+                        f"�� {price_info}\n\n"
                         f"*Analysis*:\n{analysis}"
                     )
                 else:
