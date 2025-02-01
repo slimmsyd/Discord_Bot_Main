@@ -446,23 +446,54 @@ class CryptoTools:
 
             elif link.lower().endswith('.pdf'):
                 try:
-                    # Read PDF content
                     pdf_file = BytesIO(response.content)
                     pdf_reader = PdfReader(pdf_file)
-                    text_content = " ".join([page.extract_text() for page in pdf_reader.pages if page.extract_text()])
-                    page_title = link.split('/')[-1].replace('.pdf', '')  # Use filename as title
+                    text_content = ""
+                    
+                    # Extract text from first 3 pages even if others fail
+                    for i in range(min(3, len(pdf_reader.pages))):
+                        try:
+                            text_content += pdf_reader.pages[i].extract_text() + "\n"
+                        except Exception as e:
+                            logger.warning(f"Error extracting page {i}: {str(e)}")
+                            continue
+                    
+                    # Fallback title from URL
+                    page_title = link.split('/')[-1].replace('.pdf', '')
+                    if not page_title:
+                        page_title = "Research Paper"
+
+                    # Special handling for academic PDFs
+                    system_prompt = """Analyze this academic paper and:
+                    1. Create a formal title (max 10 words)
+                    2. Generate 3-5 scholarly tags
+                    
+                    Format response EXACTLY like:
+                    TITLE: [Paper Title]
+                    TAGS: [Field1], [Field2], [Field3]
+                    
+                    Example:
+                    TITLE: Blockchain Technology in Modern Economic Systems
+                    TAGS: Cryptoeconomics, Distributed Ledgers, Financial Innovation"""
+
                 except Exception as e:
                     logger.error(f"PDF processing failed: {str(e)}")
-                    return "PDF Document", ["Academic Paper", "Research Publication"]
+                    # Better fallback for failed PDFs
+                    filename = link.split('/')[-1].replace('.pdf', '')
+                    return f"Research: {filename}", ["Academic Paper", "Technical Content"]
 
             else:  # General web content
                 soup = BeautifulSoup(response.text, 'html.parser')
                 text_content = ' '.join([p.get_text() for p in soup.find_all(['p', 'h1', 'h2', 'h3'])])
                 page_title = soup.title.string if soup.title else ""
 
-            # Truncate content
+            # Enhanced content truncation with complete sentences
             if len(text_content) > 4000:
-                text_content = text_content[:4000] + "..."
+                last_period = text_content[:4000].rfind('.')
+                if last_period != -1:
+                    text_content = text_content[:last_period+1]
+                else:
+                    text_content = text_content[:4000] + "..."
 
             # Custom prompts per content type
             prompt_templates = {
@@ -511,8 +542,11 @@ class CryptoTools:
             
         except Exception as e:
             logger.error(f"AI analysis failed: {str(e)}")
-            fallback_title = soup.title.string if soup.title else link.split('//')[-1].split('/')[0]
-            return fallback_title, ["Community Submission"]  # More creative fallback
+            # Improved fallback using URL components
+            domain = urlparse(link).netloc
+            filename = link.split('/')[-1]
+            fallback_title = f"{domain} Resource: {filename[:50]}"
+            return fallback_title, ["Community Submission", "Needs Review"]
 
 @bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
 async def dearoracle(interaction: discord.Interaction, question: str):
@@ -1084,7 +1118,7 @@ async def on_message(message):
                     analysis = generate_analysis(coin_name, price)
                     await message.reply(
                         f"**[{timestamp}] Crypto Price Update** 📊\n"
-                        f"�� {price_info}\n\n"
+                        f" {price_info}\n\n"
                         f"*Analysis*:\n{analysis}"
                     )
                 else:
