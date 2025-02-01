@@ -398,19 +398,26 @@ class CryptoTools:
                 messages=[
                     {"role": "system", "content": f"""Analyze this web content and:
                     1. Create a concise, 5-8 word title
-                    2. Categorize using ONLY these tags: {', '.join(RESOURCE_CATEGORIES)}
+                    2. Generate 3-5 relevant tags that capture the essence
                     
                     Format response EXACTLY like:
                     TITLE: [Generated Title]
                     TAGS: [Tag1], [Tag2], [Tag3]
                     
+                    Tags should be:
+                    - Creative and unexpected
+                    - Mix concrete and abstract concepts
+                    - Use pop culture references when relevant
+                    - Include both broad and niche categories
+                    - Max 2 words per tag
+                    
                     Example:
-                    TITLE: AI Breakthrough in Quantum Computing
-                    TAGS: AI, QUANTUM, TECHNOLOGY"""},
+                    TITLE: Quantum Computing Breakthrough
+                    TAGS: Physics Revolution, AI Arms Race, Future Tech, Schrödinger's Chip"""},
                     {"role": "user", "content": f"Content:\n{text_content}\n\nOriginal Title: {page_title}"}
                 ],
                 max_tokens=200,
-                temperature=0.3
+                temperature=0.7  # Higher temperature for more creativity
             )
             
             # Parse response
@@ -427,14 +434,14 @@ class CryptoTools:
             
             # Validate and fallback
             title = title if len(title) > 2 else page_title or link.split('//')[-1].split('/')[0]
-            valid_tags = [tag for tag in tags if tag in RESOURCE_CATEGORIES][:3]
+            valid_tags = [tag for tag in tags][:5]  # Take up to 5 tags
             
             return title, valid_tags
             
         except Exception as e:
             logger.error(f"AI analysis failed: {str(e)}")
             fallback_title = soup.title.string if soup.title else link.split('//')[-1].split('/')[0]
-            return fallback_title, ["GENERAL"]
+            return fallback_title, ["Community Submission"]  # More creative fallback
 
 @bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
 async def dearoracle(interaction: discord.Interaction, question: str):
