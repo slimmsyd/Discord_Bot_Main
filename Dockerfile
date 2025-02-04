@@ -2,8 +2,14 @@ FROM python:3.9-slim
 
 # Install required system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc python3-dev && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    libasound2-dev \
+    portaudio19-dev \
+    python3-pyaudio \
+    python3-all-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY requirements.txt .
