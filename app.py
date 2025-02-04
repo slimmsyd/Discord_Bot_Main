@@ -33,7 +33,7 @@ app = web.Application()
 app.router.add_get('/health', health_check)
 app.router.add_get('/', health_check)
 
-# Modified run function
+# Modified run function for development
 async def run_bot_and_server():
     runner = web.AppRunner(app)
     await runner.setup()
@@ -46,9 +46,21 @@ async def run_bot_and_server():
         await bot.start(token)
     except Exception as e:
         logger.critical(f'Failed to start bot: {str(e)}', exc_info=True)
-        raise  # Re-raise the exception to ensure the process exits on failure
+        raise
     finally:
         await runner.cleanup()
+
+# For Gunicorn compatibility
+async def init_app():
+    """Initialize the application for Gunicorn"""
+    app['bot'] = bot
+    app['token'] = token
+    
+    # Start the Discord bot in the background
+    asyncio.create_task(bot.start(token))
+    
+    logger.info("Application initialized with Discord bot")
+    return app
 
 # Set up logging
 logging.basicConfig(
@@ -1230,8 +1242,9 @@ async def addresource(interaction: discord.Interaction, link: str):
         logger.error(f'Resource submission error: {str(e)}')
         await interaction.followup.send("🔥 Yo, something burned up in the process! Try again later.")
 
-# Run the bot
+# Choose initialization based on context
 if __name__ == "__main__":
+    # Development mode
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(run_bot_and_server())
@@ -1239,6 +1252,9 @@ if __name__ == "__main__":
         loop.run_until_complete(bot.close())
     finally:
         loop.close()
+else:
+    # Production mode (Gunicorn)
+    app.on_startup.append(lambda app: asyncio.create_task(init_app()))
 
 # For Gunicorn compatibility
 app.bot = bot  # Store bot instance on app

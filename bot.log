@@ -5860,3 +5860,98 @@ aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host gateway-u
 2025-02-04 13:46:31,906 [INFO] Shard ID None has successfully RESUMED session 2c969a4ba2f7aeec0500f67531006a8b.
 2025-02-04 13:47:48,305 [ERROR] Unclosed client session
 client_session: <aiohttp.client.ClientSession object at 0x10837c350>
+2025-02-04 14:14:41,211 [WARNING] PyNaCl is not installed, voice will NOT be supported
+2025-02-04 14:14:43,335 [INFO] Web server started successfully on port 8000
+2025-02-04 14:14:43,335 [INFO] logging in using static token
+2025-02-04 14:14:44,715 [INFO] Shard ID None has connected to Gateway (Session ID: 54863be243cfa6a42a63ab8ed343a918).
+2025-02-04 14:14:46,723 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-02-04 14:14:46,723 [INFO] Connected to 2 guilds
+2025-02-04 14:14:46,964 [INFO] Slash commands synced successfully
+2025-02-04 14:14:46,964 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-04 14:14:46,965 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-02-04 14:14:49,070 [INFO] Meme command received from elohiminty in He's/general
+2025-02-04 14:14:57,216 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-04 14:15:06,656 [ERROR] Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x1073fce90>
+2025-02-04 14:15:06,656 [ERROR] Task exception was never retrieved
+future: <Task finished name='CommandTree-invoker' coro=<CommandTree._from_interaction.<locals>.wrapper() done, defined at /Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py:1087> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 1250, in <module>
+    loop.run_until_complete(run_bot_and_server())
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 640, in run_until_complete
+    self.run_forever()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 607, in run_forever
+    self._run_once()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1922, in _run_once
+    handle._run()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1089, in wrapper
+    await self._call(interaction)
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/tree.py", line 1248, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 853, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/app_commands/commands.py", line 828, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 934, in meme
+    image_response = openai_client.images.generate(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/openai/resources/images.py", line 251, in generate
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/openai/_base_client.py", line 1055, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/openai/_base_client.py", line 834, in request
+    return self._request(
+           ^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/openai/_base_client.py", line 858, in _request
+    response = self._client.send(request, auth=self.custom_auth, stream=stream)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/httpcore/_backends/sync.py", line 128, in read
+    return self._sock.recv(max_bytes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/ssl.py", line 1296, in recv
+    return self.read(buflen)
+           ^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/ssl.py", line 1169, in read
+    return self._sslobj.read(len)
+           ^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
