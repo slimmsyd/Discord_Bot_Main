@@ -10,9 +10,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
+# Make startup script executable
+RUN chmod +x startup.sh
+
 # Azure-specific configurations
 ENV WEBSITES_PORT=8000
 EXPOSE 8000
 
-# Use production-grade server (install gunicorn in requirements.txt)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--worker-class", "aiohttp.GunicornWebWorker", "app:app"] 
+# Use startup script
+CMD ["./startup.sh"] 

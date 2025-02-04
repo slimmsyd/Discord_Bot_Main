@@ -40,10 +40,13 @@ async def run_bot_and_server():
     site = web.TCPSite(runner, '0.0.0.0', 8000)
     await site.start()
     
+    logger.info("Web server started successfully on port 8000")
+    
     try:
         await bot.start(token)
     except Exception as e:
         logger.critical(f'Failed to start bot: {str(e)}', exc_info=True)
+        raise  # Re-raise the exception to ensure the process exits on failure
     finally:
         await runner.cleanup()
 
@@ -1236,3 +1239,7 @@ if __name__ == "__main__":
         loop.run_until_complete(bot.close())
     finally:
         loop.close()
+
+# For Gunicorn compatibility
+app.bot = bot  # Store bot instance on app
+app.token = token  # Store token on app
