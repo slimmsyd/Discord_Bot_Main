@@ -11,5 +11,4 @@ Flask==3.0.0
 azure-functions==1.17.0
 gunicorn==21.2.0
 aiohttp-wsgi==0.10.0
-PyAudio==0.2.14
 PyPDF2==3.0.1
