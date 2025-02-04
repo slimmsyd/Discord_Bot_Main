@@ -5857,3 +5857,6 @@ aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host gateway-u
 2025-02-04 13:22:12,028 [INFO] Slash commands synced successfully
 2025-02-04 13:22:12,029 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
 2025-02-04 13:22:12,029 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-02-04 13:46:31,906 [INFO] Shard ID None has successfully RESUMED session 2c969a4ba2f7aeec0500f67531006a8b.
+2025-02-04 13:47:48,305 [ERROR] Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x10837c350>
