@@ -62,10 +62,10 @@ async def init_app():
     logger.info("Application initialized with Discord bot")
     return app
 
-# Set up logging
+# Set up logging with more detailed format
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
     handlers=[
         logging.FileHandler('bot.log'),
         logging.StreamHandler()
@@ -395,173 +395,159 @@ class CryptoTools:
 
     @staticmethod
     async def categorize_link(link: str) -> tuple[str, list[str]]:
-        """Uses AI to generate title and categorize a link"""
+        """Uses DeepSeek AI to generate title and categorize a link"""
         try:
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-            response = requests.get(link, headers=headers, timeout=10)
+            logger.info(f"Starting categorization for link: {link}")
             
-            text_content = ""
-            page_title = ""
-            content_type = "GENERAL"
-            system_prompt = """Analyze this content and create a title + tags."""
-
-            # Platform-specific handling
-            if "amazon.com" in link and "/dp/" in link:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                
-                # Extract actual product details
-                product_title = soup.select_one("#productTitle")
-                product_description = soup.select_one("#productDescription")
-                
-                if product_title:
-                    text_content = product_title.get_text().strip()
-                    if product_description:
-                        text_content += "\n" + product_description.get_text().strip()
-                
-                # Fallback to meta description
-                if not text_content:
-                    meta_desc = soup.find("meta", {"name":"description"})
-                    if meta_desc:
-                        text_content = meta_desc.get("content", "")
-                
-                page_title = f"Amazon Product: {text_content[:50]}..." if text_content else "Amazon Product"
-                content_type = "PRODUCT"
-            
-            elif "youtube.com/watch" in link or "youtu.be/" in link:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                page_title = soup.find("meta", property="og:title")["content"]
-                description = soup.find("meta", property="og:description")["content"]
-                text_content = f"{page_title}\n{description}"
-                content_type = "VIDEO"
-            
-            elif "github.com/" in link:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                repo_title = soup.find("meta", property="og:title")["content"]
-                about_section = soup.find("div", class_="BorderGrid-cell") 
-                readme = soup.find("div", id="readme")
-                text_content = f"{repo_title}\n{about_section.text if about_section else ''}\n{readme.text if readme else ''}"
-                content_type = "CODE_REPO"
-            
-            elif "wikipedia.org/wiki/" in link:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                page_title = soup.find("h1", id="firstHeading").text
-                paragraphs = soup.find_all("p", recursive=True)
-                text_content = "\n".join([p.text for p in paragraphs[:3]])  # First 3 paragraphs
-                content_type = "ENCYCLOPEDIA"
-            
-            elif "arxiv.org/abs/" in link:
-                text_content = requests.get(link.replace("/abs/", "/pdf/") + ".pdf").text
-                content_type = "RESEARCH_PAPER"
-            
-            elif "news." in link or "article" in link:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                article = soup.find("article") or soup.find("div", class_=re.compile(r'article|content|story'))
-                text_content = ' '.join([p.text for p in article.find_all('p')]) if article else ""
-                content_type = "NEWS_ARTICLE"
-
-            elif link.lower().endswith('.pdf'):
-                try:
-                    pdf_file = BytesIO(response.content)
-                    pdf_reader = PdfReader(pdf_file)
-                    text_content = ""
-                    
-                    # Extract text from first 3 pages even if others fail
-                    for i in range(min(3, len(pdf_reader.pages))):
-                        try:
-                            text_content += pdf_reader.pages[i].extract_text() + "\n"
-                        except Exception as e:
-                            logger.warning(f"Error extracting page {i}: {str(e)}")
-                            continue
-                    
-                    # Fallback title from URL
-                    page_title = link.split('/')[-1].replace('.pdf', '')
-                    if not page_title:
-                        page_title = "Research Paper"
-
-                    # Special handling for academic PDFs
-                    system_prompt = """Analyze this academic paper and:
-                    1. Create a formal title (max 10 words)
-                    2. Generate 3-5 scholarly tags
-                    
-                    Format response EXACTLY like:
-                    TITLE: [Paper Title]
-                    TAGS: [Field1], [Field2], [Field3]
-                    
-                    Example:
-                    TITLE: Blockchain Technology in Modern Economic Systems
-                    TAGS: Cryptoeconomics, Distributed Ledgers, Financial Innovation"""
-
-                except Exception as e:
-                    logger.error(f"PDF processing failed: {str(e)}")
-                    # Better fallback for failed PDFs
-                    filename = link.split('/')[-1].replace('.pdf', '')
-                    return f"Research: {filename}", ["Academic Paper", "Technical Content"]
-
-            else:  # General web content
-                soup = BeautifulSoup(response.text, 'html.parser')
-                text_content = ' '.join([p.get_text() for p in soup.find_all(['p', 'h1', 'h2', 'h3'])])
-                page_title = soup.title.string if soup.title else ""
-
-            # Enhanced content truncation with complete sentences
-            if len(text_content) > 4000:
-                last_period = text_content[:4000].rfind('.')
-                if last_period != -1:
-                    text_content = text_content[:last_period+1]
-                else:
-                    text_content = text_content[:4000] + "..."
-
-            # Custom prompts per content type
-            prompt_templates = {
-                "PRODUCT": """Analyze this product and create...""",
-                "VIDEO": """Analyze this video and... Include tags about presentation style, production quality...""",
-                "CODE_REPO": """Analyze this code repository... Focus on technical stack, application domains...""",
-                "ENCYCLOPEDIA": """Analyze this encyclopedia entry... Include historical context, key figures...""",
-                "RESEARCH_PAPER": """Analyze this academic paper... Focus on methodology, contributions...""",
-                "NEWS_ARTICLE": """Analyze this news article... Identify key events, political leanings...""",
-                "DOCUMENT": """Analyze this document... Focus on key arguments, evidence..."""
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
             }
             
-            system_prompt = prompt_templates.get(content_type, system_prompt)
+            logger.info("Fetching webpage content...")
+            response = requests.get(link, headers=headers, timeout=15)
+            logger.info(f"Webpage response status: {response.status_code}")
             
-            # Add content-type specific guidance
-            system_prompt += f"\nCONTEXT: This is a {content_type.replace('_', ' ')} from {urlparse(link).netloc}"
-
-            # Get AI analysis
-            response = openai_client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Content:\n{text_content}\n\nOriginal Title: {page_title}"}
-                ],
-                max_tokens=200,
-                temperature=0.7  # Higher temperature for more creativity
-            )
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Extract content with logging
+            text_content = ""
+            main_content_tags = [
+                'article', 'main', '[role="main"]', '.content', '#content',
+                '.post', '.article', '.paper', '.document'
+            ]
+            
+            # First try to get title from meta tags or title tag
+            meta_title = soup.find("meta", {"property": "og:title"}) or soup.find("meta", {"name": "title"})
+            html_title = soup.find('title')
+            initial_title = None
+            
+            if meta_title:
+                initial_title = meta_title.get("content", "").strip()
+            elif html_title:
+                initial_title = html_title.get_text(strip=True)
+            
+            logger.info("Attempting to extract content from main tags...")
+            for selector in main_content_tags:
+                content = soup.select_one(selector)
+                if content:
+                    text_content = content.get_text(strip=True)
+                    logger.info(f"Found content using selector: {selector}")
+                    break
+            
+            if not text_content:
+                logger.info("No main content found, trying meta tags...")
+                meta_desc = soup.find("meta", {"property": "og:description"}) or soup.find("meta", {"name": "description"})
+                
+                if meta_desc:
+                    text_content += meta_desc.get("content", "") + "\n"
+                    logger.info(f"Found meta description: {meta_desc.get('content', '')}")
+            
+            if not text_content:
+                logger.info("No meta content found, falling back to paragraphs...")
+                paragraphs = soup.find_all('p')[:5]
+                paragraph_text = " ".join(p.get_text(strip=True) for p in paragraphs)
+                text_content += paragraph_text
+                logger.info(f"Found {len(paragraphs)} paragraphs")
+            
+            text_content = re.sub(r'\s+', ' ', text_content)[:4000]
+            logger.info(f"Final extracted content length: {len(text_content)} characters")
+            logger.info(f"Content preview: {text_content[:200]}...")
+            
+            # Try DeepSeek first
+            try:
+                deepseek_headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {os.getenv('DEEPSEEK_API_KEY')}"
+                }
+                
+                system_prompt = """Analyze this content and provide:
+                1. A clear, descriptive title (max 10 words)
+                2. 2-4 relevant tags from: DAO, CRYPTO, MEMES, AI, CRYPTO_NEWS, QUANTUM, SPIRITUALITY, TECHNOLOGY, GENERAL
+                
+                Format response EXACTLY as:
+                TITLE: [Your Title]
+                TAGS: [Tag1], [Tag2], [Tag3]"""
+                
+                payload = {
+                    "model": "deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": f"URL: {link}\n\nContent:\n{text_content}"}
+                    ],
+                    "stream": False
+                }
+                
+                logger.info("Making DeepSeek API call...")
+                deepseek_response = requests.post(
+                    "https://api.deepseek.com/chat/completions",
+                    headers=deepseek_headers,
+                    json=payload,
+                    timeout=30
+                )
+                
+                logger.info(f"DeepSeek API response status: {deepseek_response.status_code}")
+                logger.info(f"DeepSeek API response: {deepseek_response.text[:500]}")
+                
+                if deepseek_response.status_code != 200:
+                    raise Exception(f"DeepSeek API error: {deepseek_response.text}")
+                
+                result = deepseek_response.json()["choices"][0]["message"]["content"]
+                logger.info(f"DeepSeek analysis result: {result}")
+                
+            except Exception as e:
+                logger.warning(f"DeepSeek API failed, falling back to OpenAI: {str(e)}")
+                
+                # Fallback to OpenAI
+                openai_response = openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": f"URL: {link}\n\nContent:\n{text_content}"}
+                    ],
+                    max_tokens=150,
+                    temperature=0.7
+                )
+                
+                result = openai_response.choices[0].message.content
+                logger.info(f"OpenAI analysis result: {result}")
             
             # Parse response
-            result = response.choices[0].message.content
-            title = "Untitled Resource"
+            title = initial_title or "Untitled Resource"  # Use the HTML/meta title as fallback
             tags = ["GENERAL"]
             
-            # Extract title and tags
             for line in result.split('\n'):
                 if line.startswith('TITLE:'):
-                    title = line.split(':', 1)[1].strip()
+                    ai_title = line.split(':', 1)[1].strip()
+                    if len(ai_title) >= 3:  # Only use AI title if it's meaningful
+                        title = ai_title
+                    logger.info(f"Extracted title: {title}")
                 elif line.startswith('TAGS:'):
-                    tags = [tag.strip().upper() for tag in line.split(':', 1)[1].split(',')]
+                    potential_tags = [tag.strip().upper() for tag in line.split(':', 1)[1].split(',')]
+                    valid_tags = [tag for tag in potential_tags if tag in RESOURCE_CATEGORIES]
+                    if valid_tags:
+                        tags = valid_tags
+                    logger.info(f"Extracted tags: {tags}")
             
-            # Validate and fallback
-            title = title if len(title) > 2 else page_title or link.split('//')[-1].split('/')[0]
-            valid_tags = [tag for tag in tags][:5]  # Take up to 5 tags
+            # Final validation
+            if len(title) < 3:
+                # Use domain/path as last resort
+                parsed_url = urlparse(link)
+                domain = parsed_url.netloc.replace('www.', '')
+                path = parsed_url.path.strip('/')
+                title = f"{domain}/{path}"[:50] if path else domain
             
-            return title, valid_tags
+            logger.info(f"Final title: {title}, tags: {tags[:5]}")
+            return title, tags[:5]
             
         except Exception as e:
-            logger.error(f"AI analysis failed: {str(e)}")
-            # Improved fallback using URL components
-            domain = urlparse(link).netloc
-            filename = link.split('/')[-1]
-            fallback_title = f"{domain} Resource: {filename[:50]}"
-            return fallback_title, ["Community Submission", "Needs Review"]
+            logger.error(f"Content analysis failed: {str(e)}", exc_info=True)
+            # Use URL components for title as absolute fallback
+            parsed_url = urlparse(link)
+            domain = parsed_url.netloc.replace('www.', '')
+            path = parsed_url.path.strip('/')
+            title = f"{domain}/{path}"[:50] if path else domain
+            return title, ["GENERAL"]
 
 @bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
 async def dearoracle(interaction: discord.Interaction, question: str):
@@ -1196,19 +1182,57 @@ async def on_message(message):
 @bot.tree.command(name="addresource", description="Add a resource to the resources table")
 async def addresource(interaction: discord.Interaction, link: str):
     """Stores a resource link in MongoDB with metadata"""
+    # Store references early
+    channel = interaction.channel
+    user = interaction.user
+    
     try:
-        await interaction.response.defer()
+        try:
+            # Try to acknowledge the interaction immediately
+            await interaction.response.defer(thinking=True)
+            response_method = interaction.followup.send
+        except discord.NotFound:
+            # If interaction expired, fall back to regular channel messages
+            logger.info("Interaction expired, falling back to channel messages")
+            await channel.send(f"{user.mention} Processing your request...")
+            response_method = channel.send
+            
+        logger.info(f"Processing resource submission from {user.name}: {link}")
         
         if not link.startswith(("http://", "https://")):
-            return await interaction.followup.send("❌ Please provide a valid HTTP/HTTPS URL")
+            logger.warning(f"Invalid URL format: {link}")
+            return await response_method("❌ Please provide a valid HTTP/HTTPS URL")
             
         try:
-            # Get AI-generated title and tags
-            title, tags = await CryptoTools.categorize_link(link)
-            logger.info(f"AI generated title: {title}, tags: {tags}")
+            # Get AI-generated title and tags with timeout handling
+            logger.info("Starting AI analysis of link...")
+            
+            # Create task for categorization with timeout
+            async def categorize_with_timeout():
+                return await asyncio.wait_for(
+                    CryptoTools.categorize_link(link),
+                    timeout=25  # 25 second timeout
+                )
+            
+            try:
+                title, tags = await categorize_with_timeout()
+                logger.info(f"AI analysis complete - Title: {title}, Tags: {tags}")
+            except asyncio.TimeoutError:
+                logger.warning("AI analysis timed out, using default values")
+                # Parse title from URL as fallback
+                parsed_url = urlparse(link)
+                domain = parsed_url.netloc.replace('www.', '')
+                path = parsed_url.path.strip('/')
+                title = f"{domain}/{path}"[:50] if path else domain
+                tags = ["GENERAL"]
+            
         except Exception as e:
-            logger.error(f"AI analysis failed: {str(e)}")
-            title = "Untitled Resource"
+            logger.error(f"AI analysis failed: {str(e)}", exc_info=True)
+            # Use URL components for title as fallback
+            parsed_url = urlparse(link)
+            domain = parsed_url.netloc.replace('www.', '')
+            path = parsed_url.path.strip('/')
+            title = f"{domain}/{path}"[:50] if path else domain
             tags = ["GENERAL"]
             
         # Create document
@@ -1216,8 +1240,8 @@ async def addresource(interaction: discord.Interaction, link: str):
             "title": title,
             "link": link,
             "submitted_by": {
-                "user_id": str(interaction.user.id),
-                "username": interaction.user.name
+                "user_id": str(user.id),
+                "username": user.name
             },
             "timestamp": datetime.now(),
             "upvotes": 0,
@@ -1225,22 +1249,35 @@ async def addresource(interaction: discord.Interaction, link: str):
             "auto_generated": True
         }
         
+        logger.info(f"Attempting to save resource to MongoDB: {resource_data}")
+        
         # Insert into MongoDB
         result = resources_collection.insert_one(resource_data)
         
         if result.inserted_id:
-            await interaction.followup.send(
+            logger.info(f"Resource saved successfully with ID: {result.inserted_id}")
+            await response_method(
                 f"✅ Resource added:\n**{title}**\n"
                 f"Tags: {', '.join(tags)}\n"
                 f"{link}\n"
                 f"View all resources: [Street Network Resources](https://street-network.vercel.app/app/resources)"
             )
         else:
-            await interaction.followup.send("❌ Failed to save resource")
+            logger.error("MongoDB insert failed - no inserted_id returned")
+            await response_method("❌ Failed to save resource")
             
     except Exception as e:
-        logger.error(f'Resource submission error: {str(e)}')
-        await interaction.followup.send("🔥 Yo, something burned up in the process! Try again later.")
+        logger.error(f'Resource submission error: {str(e)}', exc_info=True)
+        error_msg = "🔥 Yo, something burned up in the process! Try again later."
+        try:
+            if isinstance(response_method, type(interaction.followup.send)):
+                await response_method(error_msg)
+            else:
+                await channel.send(f"{user.mention} {error_msg}")
+        except Exception as e2:
+            logger.error(f"Failed to send error message: {str(e2)}")
+            if channel:
+                await channel.send(f"{user.mention} 🔥 Error processing your request. Please try again.")
 
 # Choose initialization based on context
 if __name__ == "__main__":

@@ -5955,3 +5955,102 @@ Traceback (most recent call last):
     return self._sslobj.read(len)
            ^^^^^^^^^^^^^^^^^^^^^^
 KeyboardInterrupt
+2025-02-06 10:51:57,762 [INFO] Web server started successfully on port 8000
+2025-02-06 10:51:57,763 [INFO] logging in using static token
+2025-02-06 10:51:58,485 [INFO] Shard ID None has connected to Gateway (Session ID: f981037faada1a7e03df6ca72ab818c5).
+2025-02-06 10:52:00,507 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-02-06 10:52:00,507 [INFO] Connected to 2 guilds
+2025-02-06 10:52:00,752 [INFO] Slash commands synced successfully
+2025-02-06 10:52:00,752 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 10:52:00,752 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 10:58:33,632 [ERROR] Resource submission error: 404 Not Found (error code: 10062): Unknown interaction
+2025-02-06 11:00:45,843 [ERROR] Resource submission error: 404 Not Found (error code: 10062): Unknown interaction
+2025-02-06 11:00:52,257 [INFO] Web server started successfully on port 8000
+2025-02-06 11:00:52,257 [INFO] logging in using static token
+2025-02-06 11:00:52,838 [INFO] Shard ID None has connected to Gateway (Session ID: d85ee095d4301419ee2be610318964b0).
+2025-02-06 11:00:54,857 [INFO] Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-02-06 11:00:54,857 [INFO] Connected to 2 guilds
+2025-02-06 11:00:55,338 [INFO] Slash commands synced successfully
+2025-02-06 11:00:55,338 [INFO] Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 11:00:55,338 [INFO] Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 11:00:56,008 [ERROR] Resource submission error: 404 Not Found (error code: 10062): Unknown interaction
+2025-02-06 11:02:13,896 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 11:02:13,897 [INFO] discord.client: logging in using static token
+2025-02-06 11:02:14,532 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 11be96779cb227611931c362e3291550).
+2025-02-06 11:02:16,562 [INFO] discord_bot: Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-02-06 11:02:16,562 [INFO] discord_bot: Connected to 2 guilds
+2025-02-06 11:02:16,732 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 11:02:16,732 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 11:02:16,732 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 11:02:17,477 [ERROR] discord_bot: Resource submission error: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 1160, in addresource
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 661, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 219, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2025-02-06 11:02:23,018 [ERROR] discord_bot: Resource submission error: 404 Not Found (error code: 10062): Unknown interaction
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 1160, in addresource
+    await interaction.response.defer(thinking=True)
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/interactions.py", line 661, in defer
+    await adapter.create_interaction_response(
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/webhook/async_.py", line 219, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2025-02-06 11:03:33,436 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 11:03:33,436 [INFO] discord.client: logging in using static token
+2025-02-06 11:03:34,710 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 196d64eacd57624a241db7b081294a7d).
+2025-02-06 11:03:36,725 [INFO] discord_bot: Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-02-06 11:03:36,725 [INFO] discord_bot: Connected to 2 guilds
+2025-02-06 11:03:37,020 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 11:03:37,021 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 11:03:37,021 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 11:03:40,811 [INFO] discord_bot: Processing resource submission from elohiminty: https://www.semanticscholar.org/paper/The-TAO-of-The-DAO%3A-One-Small-Step-for-Blockchain-A-Kashyap/7111a669fdf17de06b4a6032159f7f1c9cf51912
+2025-02-06 11:03:40,811 [INFO] discord_bot: Starting AI analysis of link...
+2025-02-06 11:03:40,811 [INFO] discord_bot: Starting categorization for link: https://www.semanticscholar.org/paper/The-TAO-of-The-DAO%3A-One-Small-Step-for-Blockchain-A-Kashyap/7111a669fdf17de06b4a6032159f7f1c9cf51912
+2025-02-06 11:03:40,811 [INFO] discord_bot: Fetching webpage content...
+2025-02-06 11:03:41,144 [INFO] discord_bot: Webpage response status: 200
+2025-02-06 11:03:41,163 [INFO] discord_bot: Attempting to extract content from main tags...
+2025-02-06 11:03:41,167 [INFO] discord_bot: Found content using selector: [role="main"]
+2025-02-06 11:03:41,167 [INFO] discord_bot: Final extracted content length: 1065 characters
+2025-02-06 11:03:41,167 [INFO] discord_bot: Content preview: DOI:10.2139/ssrn.4124892Corpus ID: 249939526The TAO of The DAO: One Small Step for Blockchain Systems, But A Giant Leap for Mankind@article{Kashyap2022TheTO, title={The TAO of The DAO: One Small Step ...
+2025-02-06 11:03:41,167 [INFO] discord_bot: Making DeepSeek API call...
+2025-02-06 11:03:41,869 [INFO] discord_bot: DeepSeek API response status: 402
+2025-02-06 11:03:41,869 [INFO] discord_bot: DeepSeek API response: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-06 11:03:41,869 [ERROR] discord_bot: DeepSeek API error: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-06 11:03:41,875 [INFO] discord_bot: AI analysis complete - Title: Untitled Resource, Tags: ['GENERAL']
+2025-02-06 11:03:41,875 [INFO] discord_bot: Attempting to save resource to MongoDB: {'title': 'Untitled Resource', 'link': 'https://www.semanticscholar.org/paper/The-TAO-of-The-DAO%3A-One-Small-Step-for-Blockchain-A-Kashyap/7111a669fdf17de06b4a6032159f7f1c9cf51912', 'submitted_by': {'user_id': '852749494541221890', 'username': 'elohiminty'}, 'timestamp': datetime.datetime(2025, 2, 6, 11, 3, 41, 875489), 'upvotes': 0, 'tags': ['GENERAL'], 'auto_generated': True}
+2025-02-06 11:03:41,897 [INFO] discord_bot: Resource saved successfully with ID: 67a4dd5dc6c74f9656158331
+2025-02-06 11:04:54,614 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 11:04:54,614 [INFO] discord.client: logging in using static token
+2025-02-06 11:04:55,409 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: e60d747a9a8d0740b1d4f17697c4bc42).
+2025-02-06 11:04:57,417 [INFO] discord_bot: Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-02-06 11:04:57,417 [INFO] discord_bot: Connected to 2 guilds
+2025-02-06 11:04:57,618 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 11:04:57,618 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 11:04:57,618 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 11:05:04,983 [INFO] discord_bot: Processing resource submission from elohiminty: https://www.semanticscholar.org/paper/The-TAO-of-The-DAO%3A-One-Small-Step-for-Blockchain-A-Kashyap/7111a669fdf17de06b4a6032159f7f1c9cf51912
+2025-02-06 11:05:04,983 [INFO] discord_bot: Starting AI analysis of link...
+2025-02-06 11:05:04,984 [INFO] discord_bot: Starting categorization for link: https://www.semanticscholar.org/paper/The-TAO-of-The-DAO%3A-One-Small-Step-for-Blockchain-A-Kashyap/7111a669fdf17de06b4a6032159f7f1c9cf51912
+2025-02-06 11:05:04,984 [INFO] discord_bot: Fetching webpage content...
+2025-02-06 11:05:05,364 [INFO] discord_bot: Webpage response status: 200
+2025-02-06 11:05:05,387 [INFO] discord_bot: Attempting to extract content from main tags...
+2025-02-06 11:05:05,391 [INFO] discord_bot: Found content using selector: [role="main"]
+2025-02-06 11:05:05,391 [INFO] discord_bot: Final extracted content length: 1065 characters
+2025-02-06 11:05:05,391 [INFO] discord_bot: Content preview: DOI:10.2139/ssrn.4124892Corpus ID: 249939526The TAO of The DAO: One Small Step for Blockchain Systems, But A Giant Leap for Mankind@article{Kashyap2022TheTO, title={The TAO of The DAO: One Small Step ...
+2025-02-06 11:05:05,391 [INFO] discord_bot: Making DeepSeek API call...
+2025-02-06 11:05:06,143 [INFO] discord_bot: DeepSeek API response status: 402
+2025-02-06 11:05:06,144 [INFO] discord_bot: DeepSeek API response: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-06 11:05:06,144 [WARNING] discord_bot: DeepSeek API failed, falling back to OpenAI: DeepSeek API error: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-06 11:05:06,908 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-06 11:05:06,916 [INFO] discord_bot: OpenAI analysis result: TITLE: The TAO of The DAO: Blockchain Systems Evolution
+TAGS: DAO, CRYPTO, CRYPTO_NEWS
+2025-02-06 11:05:06,916 [INFO] discord_bot: Extracted title: The TAO of The DAO: Blockchain Systems Evolution
+2025-02-06 11:05:06,916 [INFO] discord_bot: Extracted tags: ['DAO', 'CRYPTO', 'CRYPTO_NEWS']
+2025-02-06 11:05:06,916 [INFO] discord_bot: Final title: The TAO of The DAO: Blockchain Systems Evolution, tags: ['DAO', 'CRYPTO', 'CRYPTO_NEWS']
+2025-02-06 11:05:06,923 [INFO] discord_bot: AI analysis complete - Title: The TAO of The DAO: Blockchain Systems Evolution, Tags: ['DAO', 'CRYPTO', 'CRYPTO_NEWS']
+2025-02-06 11:05:06,923 [INFO] discord_bot: Attempting to save resource to MongoDB: {'title': 'The TAO of The DAO: Blockchain Systems Evolution', 'link': 'https://www.semanticscholar.org/paper/The-TAO-of-The-DAO%3A-One-Small-Step-for-Blockchain-A-Kashyap/7111a669fdf17de06b4a6032159f7f1c9cf51912', 'submitted_by': {'user_id': '852749494541221890', 'username': 'elohiminty'}, 'timestamp': datetime.datetime(2025, 2, 6, 11, 5, 6, 923425), 'upvotes': 0, 'tags': ['DAO', 'CRYPTO', 'CRYPTO_NEWS'], 'auto_generated': True}
+2025-02-06 11:05:06,951 [INFO] discord_bot: Resource saved successfully with ID: 67a4ddb2ef3c8051dec7b746
