@@ -120,7 +120,7 @@ resources_collection.create_index([("workspace", 1), ("link", 1)])
 RESOURCE_CATEGORIES = {
     "DAO", "CRYPTO", "MEMES", "AI", 
     "CRYPTO_NEWS", "QUANTUM", "SPIRITUALITY",
-    "TECHNOLOGY", "GENERAL"
+    "TECHNOLOGY", "GENERAL", "YOUTUBE"
 }
 
 @bot.event
@@ -399,6 +399,10 @@ class CryptoTools:
         try:
             logger.info(f"Starting categorization for link: {link}")
             
+            # Check if it's a YouTube link first
+            youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|live\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
+            is_youtube = bool(re.search(youtube_regex, link))
+            
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
@@ -463,7 +467,21 @@ class CryptoTools:
                 
                 system_prompt = """Analyze this content and provide:
                 1. A clear, descriptive title (max 10 words)
-                2. 2-4 relevant tags from: DAO, CRYPTO, MEMES, AI, CRYPTO_NEWS, QUANTUM, SPIRITUALITY, TECHNOLOGY, GENERAL
+                2. 2-4 relevant tags from this list, following these strict guidelines:
+                   - DAO: Only for content about Decentralized Autonomous Organizations
+                   - CRYPTO: For general cryptocurrency and blockchain content
+                   - CRYPTO_NEWS: ONLY for current news/updates about cryptocurrency markets, regulations, or major crypto events
+                   - MEMES: For meme culture and viral content
+                   - AI: For artificial intelligence, machine learning, and related tech
+                   - QUANTUM: For quantum computing and quantum mechanics
+                   - SPIRITUALITY: For spiritual, philosophical, or religious content
+                   - TECHNOLOGY: For general technology content not fitting other categories
+                   - YOUTUBE: For video content, especially from YouTube
+                   - GENERAL: For content not fitting any other category
+                   
+                   BE VERY SELECTIVE with specialized tags. If in doubt, use GENERAL.
+                   For CRYPTO_NEWS, content MUST be specifically about current cryptocurrency events or news.
+                   For YOUTUBE, content must be a video, but can also have additional relevant tags.
                 
                 Format response EXACTLY as:
                 TITLE: [Your Title]
@@ -516,6 +534,10 @@ class CryptoTools:
             title = initial_title or "Untitled Resource"  # Use the HTML/meta title as fallback
             tags = ["GENERAL"]
             
+            # If it's a YouTube link, ensure YOUTUBE tag is included
+            if is_youtube:
+                tags = ["YOUTUBE"]
+            
             for line in result.split('\n'):
                 if line.startswith('TITLE:'):
                     ai_title = line.split(':', 1)[1].strip()
@@ -526,6 +548,9 @@ class CryptoTools:
                     potential_tags = [tag.strip().upper() for tag in line.split(':', 1)[1].split(',')]
                     valid_tags = [tag for tag in potential_tags if tag in RESOURCE_CATEGORIES]
                     if valid_tags:
+                        if is_youtube:
+                            # For YouTube links, ensure YOUTUBE tag is first and include other relevant tags
+                            valid_tags = ["YOUTUBE"] + [tag for tag in valid_tags if tag != "YOUTUBE"]
                         tags = valid_tags
                     logger.info(f"Extracted tags: {tags}")
             

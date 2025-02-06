@@ -6054,3 +6054,26 @@ TAGS: DAO, CRYPTO, CRYPTO_NEWS
 2025-02-06 11:05:06,923 [INFO] discord_bot: AI analysis complete - Title: The TAO of The DAO: Blockchain Systems Evolution, Tags: ['DAO', 'CRYPTO', 'CRYPTO_NEWS']
 2025-02-06 11:05:06,923 [INFO] discord_bot: Attempting to save resource to MongoDB: {'title': 'The TAO of The DAO: Blockchain Systems Evolution', 'link': 'https://www.semanticscholar.org/paper/The-TAO-of-The-DAO%3A-One-Small-Step-for-Blockchain-A-Kashyap/7111a669fdf17de06b4a6032159f7f1c9cf51912', 'submitted_by': {'user_id': '852749494541221890', 'username': 'elohiminty'}, 'timestamp': datetime.datetime(2025, 2, 6, 11, 5, 6, 923425), 'upvotes': 0, 'tags': ['DAO', 'CRYPTO', 'CRYPTO_NEWS'], 'auto_generated': True}
 2025-02-06 11:05:06,951 [INFO] discord_bot: Resource saved successfully with ID: 67a4ddb2ef3c8051dec7b746
+2025-02-06 11:11:24,483 [INFO] discord_bot: Interaction expired, falling back to channel messages
+2025-02-06 11:11:24,758 [INFO] discord_bot: Processing resource submission from elohiminty: https://en.m.wikipedia.org/wiki/The_Heritage_Foundation
+2025-02-06 11:11:24,758 [INFO] discord_bot: Starting AI analysis of link...
+2025-02-06 11:11:24,758 [INFO] discord_bot: Starting categorization for link: https://en.m.wikipedia.org/wiki/The_Heritage_Foundation
+2025-02-06 11:11:24,758 [INFO] discord_bot: Fetching webpage content...
+2025-02-06 11:11:24,976 [INFO] discord_bot: Webpage response status: 200
+2025-02-06 11:11:25,074 [INFO] discord_bot: Attempting to extract content from main tags...
+2025-02-06 11:11:25,081 [INFO] discord_bot: Found content using selector: main
+2025-02-06 11:11:25,082 [INFO] discord_bot: Final extracted content length: 4000 characters
+2025-02-06 11:11:25,082 [INFO] discord_bot: Content preview: The Heritage FoundationArticleTalkLanguageWatchView sourceThe Heritage Foundation(sometimes referred to simply as "Heritage"[1][2]) is an Americanconservativethink tankbased inWashington, D.C.Founded ...
+2025-02-06 11:11:25,082 [INFO] discord_bot: Making DeepSeek API call...
+2025-02-06 11:11:25,819 [INFO] discord_bot: DeepSeek API response status: 402
+2025-02-06 11:11:25,819 [INFO] discord_bot: DeepSeek API response: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-06 11:11:25,819 [WARNING] discord_bot: DeepSeek API failed, falling back to OpenAI: DeepSeek API error: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-06 11:11:26,383 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-06 11:11:26,425 [INFO] discord_bot: OpenAI analysis result: TITLE: The Heritage Foundation: An Influential Conservative Think Tank
+TAGS: GENERAL, CRYPTO_NEWS
+2025-02-06 11:11:26,425 [INFO] discord_bot: Extracted title: The Heritage Foundation: An Influential Conservative Think Tank
+2025-02-06 11:11:26,426 [INFO] discord_bot: Extracted tags: ['GENERAL', 'CRYPTO_NEWS']
+2025-02-06 11:11:26,426 [INFO] discord_bot: Final title: The Heritage Foundation: An Influential Conservative Think Tank, tags: ['GENERAL', 'CRYPTO_NEWS']
+2025-02-06 11:11:26,431 [INFO] discord_bot: AI analysis complete - Title: The Heritage Foundation: An Influential Conservative Think Tank, Tags: ['GENERAL', 'CRYPTO_NEWS']
+2025-02-06 11:11:26,431 [INFO] discord_bot: Attempting to save resource to MongoDB: {'title': 'The Heritage Foundation: An Influential Conservative Think Tank', 'link': 'https://en.m.wikipedia.org/wiki/The_Heritage_Foundation', 'submitted_by': {'user_id': '852749494541221890', 'username': 'elohiminty'}, 'timestamp': datetime.datetime(2025, 2, 6, 11, 11, 26, 431502), 'upvotes': 0, 'tags': ['GENERAL', 'CRYPTO_NEWS'], 'auto_generated': True}
+2025-02-06 11:11:26,501 [INFO] discord_bot: Resource saved successfully with ID: 67a4df2eef3c8051dec7b747
