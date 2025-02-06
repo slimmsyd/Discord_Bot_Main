@@ -6077,3 +6077,259 @@ TAGS: GENERAL, CRYPTO_NEWS
 2025-02-06 11:11:26,431 [INFO] discord_bot: AI analysis complete - Title: The Heritage Foundation: An Influential Conservative Think Tank, Tags: ['GENERAL', 'CRYPTO_NEWS']
 2025-02-06 11:11:26,431 [INFO] discord_bot: Attempting to save resource to MongoDB: {'title': 'The Heritage Foundation: An Influential Conservative Think Tank', 'link': 'https://en.m.wikipedia.org/wiki/The_Heritage_Foundation', 'submitted_by': {'user_id': '852749494541221890', 'username': 'elohiminty'}, 'timestamp': datetime.datetime(2025, 2, 6, 11, 11, 26, 431502), 'upvotes': 0, 'tags': ['GENERAL', 'CRYPTO_NEWS'], 'auto_generated': True}
 2025-02-06 11:11:26,501 [INFO] discord_bot: Resource saved successfully with ID: 67a4df2eef3c8051dec7b747
+2025-02-06 17:24:03,824 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 17:24:03,826 [INFO] discord.client: logging in using static token
+2025-02-06 17:24:04,961 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 34a3585398bab23d3d11118e927b1a1f).
+2025-02-06 17:24:06,968 [INFO] discord_bot: Bot logged in as Street Oracle (ID: 1311783916516020324)
+2025-02-06 17:24:06,968 [INFO] discord_bot: Connected to 2 guilds
+2025-02-06 17:24:07,319 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 17:24:07,319 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 17:24:07,319 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 17:24:31,421 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 17:24:31,421 [INFO] discord.client: logging in using static token
+2025-02-06 17:24:32,202 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 206e7aa2bb00bd30326c31678b992651).
+2025-02-06 17:24:34,231 [INFO] discord_bot: 
+=== Bot Started ===
+Name: Street Oracle
+ID: 1311783916516020324
+Servers Connected: 2
+Server List:
+- Street Economics HQ (ID: 1084613691967815740)
+- He's (ID: 1311794114198503444)
+=================
+2025-02-06 17:24:46,093 [ERROR] discord.client: Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/discord/client.py", line 441, in _run_event
+    await coro(*args, **kwargs)
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 1125, in on_message
+    await track_user_interaction(
+          ^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'track_user_interaction' is not defined
+2025-02-06 17:25:07,314 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 17:25:07,315 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 17:25:07,315 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 17:25:21,081 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 17:25:21,082 [INFO] discord.client: logging in using static token
+2025-02-06 17:25:21,734 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 4ea16db25a9c60215233ebd447c71369).
+2025-02-06 17:25:23,741 [INFO] discord_bot: 
+=== Bot Started ===
+Name: Street Oracle
+ID: 1311783916516020324
+Servers Connected: 2
+Server List:
+- Street Economics HQ (ID: 1084613691967815740)
+- He's (ID: 1311794114198503444)
+=================
+2025-02-06 17:25:23,934 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 17:25:23,935 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 17:25:23,935 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 17:25:30,046 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:25:30.046540
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:25:30,072 [INFO] discord_bot: Successfully tracked interaction (MongoDB ID: 67a536da573379a5cee0502f)
+2025-02-06 17:27:26,148 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:27:26.147984
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:27:26,189 [INFO] discord_bot: Successfully tracked interaction (MongoDB ID: 67a5374e573379a5cee05030)
+2025-02-06 17:27:44,350 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:27:44.350291
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:27:44,386 [INFO] discord_bot: Successfully tracked interaction (MongoDB ID: 67a53760573379a5cee05031)
+2025-02-06 17:28:02,883 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 17:28:02,883 [INFO] discord.client: logging in using static token
+2025-02-06 17:28:03,894 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 16593ffee6d085904c5ccb87fecb5808).
+2025-02-06 17:28:05,911 [INFO] discord_bot: 
+=== Bot Started ===
+Name: Street Oracle
+ID: 1311783916516020324
+Servers Connected: 2
+Server List:
+- Street Economics HQ (ID: 1084613691967815740)
+- He's (ID: 1311794114198503444)
+=================
+2025-02-06 17:28:06,147 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 17:28:06,148 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 17:28:06,148 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 17:28:11,175 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:28:11.175423
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:28:11,399 [INFO] discord_bot: Updated stats for user elohiminty (ID: 852749494541221890)
+2025-02-06 17:28:11,445 [INFO] discord_bot: 
+=== User Statistics ===
+User: elohiminty
+Total Interactions: 1
+First Seen: 2025-02-06 17:28:11.176000
+Last Seen: 2025-02-06 17:28:11.176000
+Interaction Types: {
+  "message": 1
+}
+===================
+2025-02-06 17:28:42,919 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:28:42.919157
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:28:42,950 [INFO] discord_bot: Updated stats for user elohiminty (ID: 852749494541221890)
+2025-02-06 17:28:43,030 [INFO] discord_bot: 
+=== User Statistics ===
+User: elohiminty
+Total Interactions: 2
+First Seen: 2025-02-06 17:28:11.176000
+Last Seen: 2025-02-06 17:28:42.921000
+Interaction Types: {
+  "message": 2
+}
+===================
+2025-02-06 17:29:51,024 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 17:29:51,025 [INFO] discord.client: logging in using static token
+2025-02-06 17:29:51,717 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: ba220a022ad0c5faa1b31dc6f47b026a).
+2025-02-06 17:29:53,727 [INFO] discord_bot: 
+=== Bot Started ===
+Name: Street Oracle
+ID: 1311783916516020324
+Servers Connected: 2
+Server List:
+- Street Economics HQ (ID: 1084613691967815740)
+- He's (ID: 1311794114198503444)
+=================
+2025-02-06 17:29:53,898 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 17:29:53,899 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 17:29:53,899 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 17:29:53,900 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:29:53.861034
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:30:29,759 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:30:29.730992
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:30:48,392 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:30:48.365761
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Details: {
+  "content_length": 5,
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:32:37,917 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-06 17:32:37,918 [INFO] discord.client: logging in using static token
+2025-02-06 17:32:38,955 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: d5ade82e6e524e86f44bf354d319ef56).
+2025-02-06 17:32:40,960 [INFO] discord_bot: 
+=== Bot Started ===
+Name: Street Oracle
+ID: 1311783916516020324
+Servers Connected: 2
+Server List:
+- Street Economics HQ (ID: 1084613691967815740)
+- He's (ID: 1311794114198503444)
+=================
+2025-02-06 17:32:41,155 [INFO] discord_bot: Slash commands synced successfully
+2025-02-06 17:32:41,156 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-06 17:32:41,156 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-06 17:32:58,979 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:32:58.951437
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Message: Helloo
+Details: {
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================
+2025-02-06 17:33:19,063 [INFO] discord_bot: 
+=== New Interaction Tracked ===
+Time: 2025-02-06 17:33:19.025205
+User: elohiminty (ID: 852749494541221890)
+Type: message
+Channel: general (ID: 1311794114198503450)
+Server: He's (ID: 1311794114198503444)
+Command: N/A
+Message: Sometimes
+Details: {
+  "has_attachments": false,
+  "is_bot_mention": false
+}
+=========================

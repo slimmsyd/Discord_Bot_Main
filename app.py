@@ -20,6 +20,7 @@ import httpx
 from pymongo import MongoClient
 from PyPDF2 import PdfReader
 from urllib.parse import urlparse
+import json
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -116,17 +117,247 @@ resources_collection = db['resources']
 # Create index for faster queries
 resources_collection.create_index([("workspace", 1), ("link", 1)])
 
-# Add this near your other constants
-RESOURCE_CATEGORIES = {
-    "DAO", "CRYPTO", "MEMES", "AI", 
-    "CRYPTO_NEWS", "QUANTUM", "SPIRITUALITY",
-    "TECHNOLOGY", "GENERAL", "YOUTUBE"
-}
+# Add after MongoDB setup
+interaction_collection = db['user_interactions']
+# Create compound index for efficient querying
+interaction_collection.create_index([
+    ("user_id", 1),
+    ("timestamp", -1)
+])
+
+# Add after MongoDB setup, before track_user_interaction
+user_stats_collection = db['user_stats']
+# Create indexes for efficient querying
+user_stats_collection.create_index([("user_id", 1)], unique=True)
+user_stats_collection.create_index([("interactions.timestamp", -1)])  # Index for recent interactions
+
+async def update_user_stats(user_id: str, username: str, interaction_type: str):
+    """Update user statistics with new interaction"""
+    try:
+        # Update or create user stats document
+        result = await asyncio.to_thread(
+            user_stats_collection.update_one,
+            {"user_id": user_id},
+            {
+                "$inc": {
+                    "total_interactions": 1,
+                    f"interactions_by_type.{interaction_type}": 1
+                },
+                "$set": {
+                    "username": username,
+                    "last_interaction": datetime.now()
+                },
+                "$min": {"first_interaction": datetime.now()},
+            },
+            upsert=True
+        )
+        
+        if result.modified_count > 0 or result.upserted_id:
+            logger.info(f"Updated stats for user {username} (ID: {user_id})")
+            
+            # Get updated stats
+            stats = await asyncio.to_thread(
+                user_stats_collection.find_one,
+                {"user_id": user_id}
+            )
+            
+            if stats and stats.get('total_interactions') % 100 == 0:  # Log milestone
+                logger.info(f"""
+=== User Milestone Reached ===
+User: {username}
+Total Interactions: {stats.get('total_interactions')}
+First Interaction: {stats.get('first_interaction')}
+Interaction Types: {stats.get('interactions_by_type', {})}
+=========================""")
+                
+    except Exception as e:
+        logger.error(f"Failed to update user stats: {str(e)}", exc_info=True)
+
+# Modify track_user_interaction to include message content
+async def track_user_interaction(
+    user_id: str,
+    username: str,
+    interaction_type: str,
+    channel_id: str = None,
+    channel_name: str = None,
+    guild_id: str = None,
+    guild_name: str = None,
+    command: str = None,
+    details: dict = None,
+    message_content: str = None  # New parameter
+):
+    try:
+        timestamp = datetime.now()
+        
+        # Create interaction data with message content
+        interaction_data = {
+            "type": interaction_type,
+            "timestamp": timestamp,
+            "channel_id": str(channel_id) if channel_id else None,
+            "channel_name": channel_name,
+            "guild_id": str(guild_id) if guild_id else None,
+            "guild_name": guild_name,
+            "command": command,
+            "message": message_content,  # Add message content
+            "details": details or {}
+        }
+        
+        # Update or create user document with new interaction
+        result = await asyncio.to_thread(
+            user_stats_collection.update_one,
+            {"user_id": str(user_id)},
+            {
+                "$push": {
+                    "interactions": {
+                        "$each": [interaction_data],
+                        "$position": 0,  # Add at start of array
+                        "$slice": 1000  # Keep only last 1000 interactions
+                    }
+                },
+                "$inc": {
+                    "total_interactions": 1,
+                    f"interactions_by_type.{interaction_type}": 1
+                },
+                "$set": {
+                    "username": username,
+                    "last_interaction": timestamp,
+                    "last_message": message_content,  # Track last message
+                    "last_channel": channel_name,
+                    "last_guild": guild_name
+                },
+                "$min": {"first_interaction": timestamp},
+            },
+            upsert=True
+        )
+        
+        # Log the interaction with message content
+        logger.info(f"""
+=== New Interaction Tracked ===
+Time: {timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')}
+User: {username} (ID: {user_id})
+Type: {interaction_type}
+Channel: {channel_name} (ID: {channel_id})
+Server: {guild_name} (ID: {guild_id})
+Command: {command if command else 'N/A'}
+Message: {message_content if message_content else 'N/A'}
+Details: {json.dumps(details, indent=2) if details else 'None'}
+=========================""")
+        
+        # Get updated user stats
+        if result.modified_count > 0 or result.upserted_id:
+            stats = await asyncio.to_thread(
+                user_stats_collection.find_one,
+                {"user_id": str(user_id)}
+            )
+            
+            if stats:
+                total_interactions = stats.get('total_interactions', 0)
+                if total_interactions % 100 == 0:  # Log milestone
+                    logger.info(f"""
+=== User Milestone Reached ===
+User: {username}
+Total Interactions: {total_interactions}
+First Interaction: {stats.get('first_interaction')}
+Last Message: {stats.get('last_message', 'N/A')}
+Recent Activity: Last {len(stats.get('interactions', []))} interactions
+Interaction Types: {json.dumps(stats.get('interactions_by_type', {}), indent=2)}
+=========================""")
+                
+    except Exception as e:
+        logger.error(f"""
+!!! Interaction Tracking Error !!!
+Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}
+Error: {str(e)}
+User: {username} (ID: {user_id})
+Type: {interaction_type}
+Stack Trace:""", exc_info=True)
+
+# Add helper functions to get user statistics
+async def get_user_stats(user_id: str, limit: int = 10) -> dict:
+    """Get statistics and recent interactions for a specific user"""
+    try:
+        stats = await asyncio.to_thread(
+            user_stats_collection.find_one,
+            {"user_id": str(user_id)},
+            {
+                "interactions": {"$slice": limit},  # Get only recent interactions
+                "total_interactions": 1,
+                "first_interaction": 1,
+                "last_interaction": 1,
+                "interactions_by_type": 1,
+                "username": 1
+            }
+        )
+        return stats or {}
+    except Exception as e:
+        logger.error(f"Failed to get user stats: {str(e)}", exc_info=True)
+        return {}
+
+async def get_top_users(limit: int = 10) -> list:
+    """Get top users by total interactions"""
+    try:
+        cursor = user_stats_collection.find().sort("total_interactions", -1).limit(limit)
+        return await asyncio.to_thread(list, cursor)
+    except Exception as e:
+        logger.error(f"Failed to get top users: {str(e)}", exc_info=True)
+        return []
+
+# Add a command to view user stats
+@bot.tree.command(name="userstats", description="View interaction statistics for a user")
+async def userstats(interaction: discord.Interaction, user: discord.Member = None):
+    try:
+        await interaction.response.defer()
+        
+        # Use mentioned user or command user
+        target_user = user or interaction.user
+        
+        # Get user stats with last 5 interactions
+        stats = await get_user_stats(str(target_user.id), 5)
+        
+        if not stats:
+            await interaction.followup.send(f"No statistics found for {target_user.name}")
+            return
+        
+        # Format stats message with recent messages
+        stats_message = f"""
+📊 **User Statistics for {target_user.name}**
+Total Interactions: {stats.get('total_interactions', 0)}
+First Interaction: {stats.get('first_interaction').strftime('%Y-%m-%d %H:%M:%S')}
+Last Interaction: {stats.get('last_interaction').strftime('%Y-%m-%d %H:%M:%S')}
+
+**Interaction Types:**
+{chr(10).join([f"- {k}: {v}" for k, v in stats.get('interactions_by_type', {}).items()])}
+
+**Recent Activity:**"""
+
+        # Add recent interactions with proper message formatting
+        for interaction_data in stats.get('interactions', [])[:5]:
+            message_content = interaction_data.get('message', '')
+            timestamp = interaction_data['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+            channel = interaction_data['channel_name']
+            interaction_type = interaction_data['type']
+            
+            stats_message += f"\n- {interaction_type} in {channel} at {timestamp}"
+            if message_content:
+                stats_message += f"\n  Message: {message_content}"
+        
+        await interaction.followup.send(stats_message)
+        
+    except Exception as e:
+        logger.error(f"Error in userstats command: {str(e)}", exc_info=True)
+        await interaction.followup.send(f"Error retrieving statistics: {str(e)}")
 
 @bot.event
 async def on_ready():
-    logger.info(f'Bot logged in as {bot.user.name} (ID: {bot.user.id})')
-    logger.info(f'Connected to {len(bot.guilds)} guilds')
+    logger.info(f"""
+=== Bot Started ===
+Name: {bot.user.name}
+ID: {bot.user.id}
+Servers Connected: {len(bot.guilds)}
+Server List:
+{chr(10).join([f'- {guild.name} (ID: {guild.id})' for guild in bot.guilds])}
+=================""")
+    
     try:
         # Force sync all commands
         await bot.tree.sync()
@@ -576,6 +807,20 @@ class CryptoTools:
 
 @bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
 async def dearoracle(interaction: discord.Interaction, question: str):
+    # Track command interaction
+    await track_user_interaction(
+        user_id=interaction.user.id,
+        username=interaction.user.name,
+        interaction_type="command",
+        channel_id=interaction.channel_id,
+        channel_name=interaction.channel.name if interaction.channel else None,
+        guild_id=interaction.guild_id,
+        guild_name=interaction.guild.name if interaction.guild else None,
+        command="dearoracle",
+        details={"question": question},
+        message_content=question
+    )
+    
     logger.info(f'Oracle question received from {interaction.user}: {question}')
     
     try:
@@ -1089,119 +1334,25 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
-    # Ignore messages from the bot itself
     if message.author == bot.user:
         return
         
-    # Check if bot is mentioned and message contains price-related keywords
-    if bot.user.mentioned_in(message) and any(word in message.content.lower() for word in ["price", "value", "how much"]):
-        timestamp = datetime.now().strftime("%H:%M:%S")  # Get current time in HH:MM:SS format
-        logger.info(f'[{timestamp}] Price check requested by {message.author}: {message.content}')
-        
-        try:
-            # Use GPT to identify the cryptocurrency from the message
-            crypto_context_response = openai_client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": """You are a cryptocurrency identifier. 
-                    Given a message, identify the cryptocurrency being referenced. 
-                    If a Solana address is mentioned (base58 string, 32-44 chars), return that exact address.
-                    If an Ethereum-style address is mentioned (0x...), return that exact address.
-                    Otherwise, return the cryptocurrency name or symbol mentioned in the message, exactly as written.
-                    Do not try to map or convert it to any standard format.
-                    If multiple cryptocurrencies are mentioned, return the most prominently discussed one.
-                    If no cryptocurrency is clearly referenced, return 'bitcoin'.
-                    
-                    Examples:
-                    "what's the price of GALA" -> "GALA"
-                    "how much is matic worth" -> "matic"
-                    "check 0x1234...5678" -> "0x1234...5678"
-                    "check solana token AKJ82..." -> "AKJ82..."
-                    "tell me about ADA" -> "ADA"
-                    "what's going on with crypto" -> "bitcoin"
-                    """},
-                    {"role": "user", "content": f"Identify the cryptocurrency in this message: {message.content}"}
-                ],
-                max_tokens=50,
-                temperature=0
-            )
-            
-            coin_name = crypto_context_response.choices[0].message.content.strip()
-            logger.info(f'[{timestamp}] AI identified cryptocurrency as: {coin_name}')
-            
-            # Create CryptoTools instance and get price
-            crypto_tools = CryptoTools()
-            price_info = await crypto_tools.get_crypto_price(coin_name)
-            
-            # Check if we got a valid price response
-            if "current price" in price_info.lower():
-                logger.info(f'[{timestamp}] Retrieved price info: {price_info}')
-                
-                # Extract just the price value for the analysis
-                price_match = re.search(r'(\d+(?:,\d+)*(?:\.\d+)?)', price_info)
-                if price_match:
-                    price = float(price_match.group(1).replace(',', ''))
-                    analysis = generate_analysis(coin_name, price)
-                    await message.reply(
-                        f"**[{timestamp}] Crypto Price Update** 📊\n"
-                        f" {price_info}\n\n"
-                        f"*Analysis*:\n{analysis}"
-                    )
-                else:
-                    await message.reply(price_info)
-            else:
-                logger.error(f'[{timestamp}] Failed to get price: {price_info}')
-                await message.reply(price_info)
-        
-        except Exception as e:
-            logger.error(f'[{timestamp}] Error in price check: {str(e)}', exc_info=True)
-            await message.reply(
-                f"[{timestamp}] Yo, something went wrong with that price check. My bad! 😅\n"
-                f"Error: {str(e)}"
-            )
+    # Track message interaction with content
+    await track_user_interaction(
+        user_id=message.author.id,
+        username=message.author.name,
+        interaction_type="message",
+        channel_id=message.channel.id,
+        channel_name=message.channel.name,
+        guild_id=message.guild.id if message.guild else None,
+        guild_name=message.guild.name if message.guild else None,
+        message_content=message.content,  # Include message content
+        details={
+            "has_attachments": bool(message.attachments),
+            "is_bot_mention": bot.user.mentioned_in(message)
+        }
+    )
     
-    # Check if this is a reply to our bot
-    if message.reference and message.reference.resolved:
-        referenced_message = message.reference.resolved
-        # Only respond if it's replying to a fryemup command
-        if (referenced_message.author == bot.user and 
-            "🔥 **Street Oracle Roast**" in referenced_message.content):
-            logger.info(f'Roast was replied to by {message.author} saying: {message.content}')
-            
-            try:
-                response = openai_client.chat.completions.create(
-                    model="gpt-4",
-                    messages=[
-                        {"role": "system", "content": """You are the Street Oracle in comeback mode. Your job is to 
-                        create a comeback roast that specifically references what the person said in their reply.
-                        Use their own words against them in a clever way. Format must be EXACTLY:
-                        "im on ya ass boi, you look like a [FIRST_ROAST based on their reply] like shit boi, like a mf [SECOND_ROAST based on their reply]"
-                        
-                        Example:
-                        If they say "your roasts are weak", you might respond:
-                        "im on ya ass boi, you look like a dictionary reading roast critic like shit boi, like a mf comedy show heckler from the dollar seats"
-                        
-                        Make it:
-                        - Directly reference their reply
-                        - Use street slang
-                        - Be creative and funny
-                        - Keep it playful not mean"""},
-                        {"role": "user", "content": f"Create a comeback roast based on their reply: {message.content}"}
-                    ],
-                    max_tokens=150,
-                    temperature=0.9
-                )
-                
-                comeback = response.choices[0].message.content.strip()
-                await message.reply(f"🔥 {comeback}")
-                
-            except Exception as e:
-                logger.error(f'Error in roast comeback: {str(e)}', exc_info=True)
-                await message.channel.send(
-                    f"Ay yo, my comeback game ain't working right now, but you still look suspect {message.author.mention} 😤"
-                )
-    
-    # Process commands after handling the reply
     await bot.process_commands(message)
 
 @bot.tree.command(name="addresource", description="Add a resource to the resources table")
@@ -1321,3 +1472,80 @@ else:
 # For Gunicorn compatibility
 app.bot = bot  # Store bot instance on app
 app.token = token  # Store token on app
+
+# Add more event listeners for different types of interactions
+@bot.event
+async def on_reaction_add(reaction, user):
+    if user == bot.user:
+        return
+        
+    await track_user_interaction(
+        user_id=user.id,
+        username=user.name,
+        interaction_type="reaction_add",
+        channel_id=reaction.message.channel.id,
+        channel_name=reaction.message.channel.name,
+        guild_id=reaction.message.guild.id if reaction.message.guild else None,
+        guild_name=reaction.message.guild.name if reaction.message.guild else None,
+        details={
+            "emoji": str(reaction.emoji),
+            "message_id": str(reaction.message.id)
+        }
+    )
+
+@bot.event
+async def on_voice_state_update(member, before, after):
+    # Track voice channel joins/leaves/moves
+    if before.channel != after.channel:
+        action = "join" if after.channel else "leave" if before.channel else "move"
+        await track_user_interaction(
+            user_id=member.id,
+            username=member.name,
+            interaction_type="voice_" + action,
+            channel_id=str(after.channel.id if after.channel else before.channel.id),
+            channel_name=after.channel.name if after.channel else before.channel.name,
+            guild_id=member.guild.id,
+            guild_name=member.guild.name,
+            details={
+                "from_channel": before.channel.name if before.channel else None,
+                "to_channel": after.channel.name if after.channel else None
+            }
+        )
+
+@bot.event
+async def on_member_update(before, after):
+    # Track member updates (nickname changes, role changes, etc.)
+    if before.nick != after.nick or before.roles != after.roles:
+        await track_user_interaction(
+            user_id=after.id,
+            username=after.name,
+            interaction_type="member_update",
+            guild_id=after.guild.id,
+            guild_name=after.guild.name,
+            details={
+                "nickname_changed": before.nick != after.nick,
+                "old_nick": before.nick,
+                "new_nick": after.nick,
+                "roles_changed": [r.name for r in after.roles if r not in before.roles],
+                "roles_removed": [r.name for r in before.roles if r not in after.roles]
+            }
+        )
+
+@bot.event
+async def on_member_join(member):
+    await track_user_interaction(
+        user_id=member.id,
+        username=member.name,
+        interaction_type="server_join",
+        guild_id=member.guild.id,
+        guild_name=member.guild.name,
+        details={
+            "account_created": member.created_at.isoformat(),
+            "joined_at": member.joined_at.isoformat() if member.joined_at else None
+        }
+    )
+
+# MongoDB query to check recent interactions
+recent = interaction_collection.find().sort("timestamp", -1).limit(5)
+for interaction in recent:
+    print(json.dumps(interaction, default=str, indent=2))
