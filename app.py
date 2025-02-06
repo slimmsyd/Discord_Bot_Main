@@ -4,7 +4,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import azure.functions as func
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
@@ -184,56 +184,91 @@ async def track_user_interaction(
     guild_name: str = None,
     command: str = None,
     details: dict = None,
-    message_content: str = None  # New parameter
+    message_content: str = None
 ):
     try:
-        timestamp = datetime.now()
+        # Create timestamp in UTC
+        timestamp = datetime.utcnow()
         
-        # Create interaction data with message content
+        # Check for duplicate messages within a 1-second window
+        existing_interaction = await asyncio.to_thread(
+            user_stats_collection.find_one,
+            {
+                "user_id": str(user_id),
+                "interactions": {
+                    "$elemMatch": {
+                        "message": message_content,
+                        "channel_id": str(channel_id) if channel_id else None,
+                        "timestamp": {
+                            "$gte": timestamp - timedelta(seconds=1),
+                            "$lte": timestamp + timedelta(seconds=1)
+                        }
+                    }
+                }
+            }
+        )
+        
+        if existing_interaction:
+            logger.info(f"""
+=== Duplicate Interaction Detected ===
+User: {username}
+Message: {message_content}
+Time: {timestamp}
+Existing Entry Found - Skipping
+=========================""")
+            return
+        
+        # Create interaction data
         interaction_data = {
             "type": interaction_type,
-            "timestamp": timestamp,
+            "timestamp": timestamp,  # UTC timestamp
             "channel_id": str(channel_id) if channel_id else None,
             "channel_name": channel_name,
             "guild_id": str(guild_id) if guild_id else None,
             "guild_name": guild_name,
             "command": command,
-            "message": message_content,  # Add message content
+            "message": message_content,
             "details": details or {}
         }
         
-        # Update or create user document with new interaction
+        # Single MongoDB operation to update user document
         result = await asyncio.to_thread(
             user_stats_collection.update_one,
-            {"user_id": str(user_id)},
+            {
+                "user_id": str(user_id),
+                # Additional check to prevent race conditions
+                "interactions.0.timestamp": {
+                    "$not": {
+                        "$gte": timestamp - timedelta(seconds=1),
+                        "$lte": timestamp + timedelta(seconds=1)
+                    }
+                }
+            },
             {
                 "$push": {
                     "interactions": {
                         "$each": [interaction_data],
-                        "$position": 0,  # Add at start of array
-                        "$slice": 1000  # Keep only last 1000 interactions
+                        "$position": 0,
+                        "$slice": 1000
                     }
                 },
-                "$inc": {
-                    "total_interactions": 1,
-                    f"interactions_by_type.{interaction_type}": 1
-                },
+                "$inc": {"total_interactions": 1},
+                "$setOnInsert": {"first_interaction": timestamp},
                 "$set": {
                     "username": username,
                     "last_interaction": timestamp,
-                    "last_message": message_content,  # Track last message
+                    "last_message": message_content if message_content else None,
                     "last_channel": channel_name,
-                    "last_guild": guild_name
-                },
-                "$min": {"first_interaction": timestamp},
+                    "last_guild": guild_name,
+                }
             },
             upsert=True
         )
         
-        # Log the interaction with message content
-        logger.info(f"""
+        if result.modified_count > 0 or result.upserted_id:
+            logger.info(f"""
 === New Interaction Tracked ===
-Time: {timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')}
+Time: {timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')} UTC
 User: {username} (ID: {user_id})
 Type: {interaction_type}
 Channel: {channel_name} (ID: {channel_id})
@@ -242,31 +277,18 @@ Command: {command if command else 'N/A'}
 Message: {message_content if message_content else 'N/A'}
 Details: {json.dumps(details, indent=2) if details else 'None'}
 =========================""")
-        
-        # Get updated user stats
-        if result.modified_count > 0 or result.upserted_id:
-            stats = await asyncio.to_thread(
-                user_stats_collection.find_one,
-                {"user_id": str(user_id)}
-            )
-            
-            if stats:
-                total_interactions = stats.get('total_interactions', 0)
-                if total_interactions % 100 == 0:  # Log milestone
-                    logger.info(f"""
-=== User Milestone Reached ===
+        else:
+            logger.info(f"""
+=== Duplicate Prevention Caught ===
 User: {username}
-Total Interactions: {total_interactions}
-First Interaction: {stats.get('first_interaction')}
-Last Message: {stats.get('last_message', 'N/A')}
-Recent Activity: Last {len(stats.get('interactions', []))} interactions
-Interaction Types: {json.dumps(stats.get('interactions_by_type', {}), indent=2)}
+Message: {message_content}
+Time: {timestamp}
 =========================""")
-                
+        
     except Exception as e:
         logger.error(f"""
 !!! Interaction Tracking Error !!!
-Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}
+Time: {timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')} UTC
 Error: {str(e)}
 User: {username} (ID: {user_id})
 Type: {interaction_type}
@@ -307,6 +329,19 @@ async def get_top_users(limit: int = 10) -> list:
 async def userstats(interaction: discord.Interaction, user: discord.Member = None):
     try:
         await interaction.response.defer()
+        
+        # Track command usage
+        await track_user_interaction(
+            user_id=interaction.user.id,
+            username=interaction.user.name,
+            interaction_type="command",
+            channel_id=interaction.channel_id,
+            channel_name=interaction.channel.name if interaction.channel else None,
+            guild_id=interaction.guild_id,
+            guild_name=interaction.guild.name if interaction.guild else None,
+            command="userstats",
+            details={"target_user": user.name if user else "self"}
+        )
         
         # Use mentioned user or command user
         target_user = user or interaction.user
@@ -1334,26 +1369,35 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
+    # Ignore bot's own messages
     if message.author == bot.user:
         return
         
-    # Track message interaction with content
-    await track_user_interaction(
-        user_id=message.author.id,
-        username=message.author.name,
-        interaction_type="message",
-        channel_id=message.channel.id,
-        channel_name=message.channel.name,
-        guild_id=message.guild.id if message.guild else None,
-        guild_name=message.guild.name if message.guild else None,
-        message_content=message.content,  # Include message content
-        details={
-            "has_attachments": bool(message.attachments),
-            "is_bot_mention": bot.user.mentioned_in(message)
-        }
-    )
-    
-    await bot.process_commands(message)
+    try:
+        # Track the message only once
+        await track_user_interaction(
+            user_id=message.author.id,
+            username=message.author.name,
+            interaction_type="message",
+            channel_id=message.channel.id,
+            channel_name=message.channel.name,
+            guild_id=message.guild.id if message.guild else None,
+            guild_name=message.guild.name if message.guild else None,
+            message_content=message.content,
+            details={
+                "has_attachments": bool(message.attachments),
+                "is_bot_mention": bot.user.mentioned_in(message)
+            }
+        )
+        
+        # Only process as command if it starts with prefix
+        if message.content.startswith(bot.command_prefix):
+            ctx = await bot.get_context(message)
+            if ctx.valid:
+                await bot.invoke(ctx)
+                
+    except Exception as e:
+        logger.error(f"Error in on_message: {str(e)}", exc_info=True)
 
 @bot.tree.command(name="addresource", description="Add a resource to the resources table")
 async def addresource(interaction: discord.Interaction, link: str):
