@@ -12,3 +12,6 @@ azure-functions==1.17.0
 gunicorn==21.2.0
 aiohttp-wsgi==0.10.0
 PyPDF2==3.0.1
+tweepy
+discord.py
+asyncio

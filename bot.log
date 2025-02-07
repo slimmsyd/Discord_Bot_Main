@@ -14075,3 +14075,31 @@ Traceback (most recent call last):
   File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 102, in request
     raise NotFound(response)
 tweepy.errors.NotFound: 404 Not Found
+2025-02-07 18:15:32,106 [ERROR] discord_bot: Error checking tweets: 404 Not Found
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 1523, in check_new_tweets
+    user = self.client.get_user(username=twitter_username)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 2359, in get_user
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 102, in request
+    raise NotFound(response)
+tweepy.errors.NotFound: 404 Not Found
+2025-02-07 18:17:32,154 [ERROR] discord_bot: Error checking tweets: 404 Not Found
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 1523, in check_new_tweets
+    user = self.client.get_user(username=twitter_username)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 2359, in get_user
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 102, in request
+    raise NotFound(response)
+tweepy.errors.NotFound: 404 Not Found
