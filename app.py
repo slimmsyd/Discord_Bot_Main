@@ -4,7 +4,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import azure.functions as func
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
@@ -21,6 +21,7 @@ from pymongo import MongoClient
 from PyPDF2 import PdfReader
 from urllib.parse import urlparse
 import json
+import tweepy
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -1499,7 +1500,119 @@ async def addresource(interaction: discord.Interaction, link: str):
             if channel:
                 await channel.send(f"{user.mention} 🔥 Error processing your request. Please try again.")
 
-# Choose initialization based on context
+# Move this BEFORE if __name__ == "__main__":
+# Add after MongoDB setup
+tweet_tracking_collection = db['tweet_tracking']
+tweet_tracking_collection.create_index([("twitter_id", 1)], unique=True)
+
+class TwitterMonitor:
+    def __init__(self, bot):
+        self.bot = bot
+        # Initialize Twitter API client
+        self.client = tweepy.Client(
+            bearer_token=os.getenv('TWITTER_BEARER_TOKEN'),
+            wait_on_rate_limit=True
+        )
+        # Dictionary to store last tweet IDs
+        self.last_tweet_ids = {}
+        
+    async def check_new_tweets(self, twitter_username: str):
+        """Check for new tweets from specified user"""
+        try:
+            # Get user ID first
+            user = self.client.get_user(username=twitter_username)
+            if not user.data:
+                logger.error(f"Could not find Twitter user: {twitter_username}")
+                return
+                
+            user_id = user.data.id
+            
+            # Get recent tweets
+            tweets = self.client.get_users_tweets(
+                user_id,
+                max_results=5,
+                exclude=['retweets', 'replies']
+            )
+            
+            if not tweets.data:
+                return
+                
+            # Get latest stored tweet ID
+            last_stored = tweet_tracking_collection.find_one(
+                {"twitter_username": twitter_username},
+                sort=[("tweet_id", -1)]
+            )
+            
+            last_tweet_id = last_stored['tweet_id'] if last_stored else None
+            
+            new_tweets = []
+            for tweet in reversed(tweets.data):
+                # Check if tweet is new
+                if not last_tweet_id or str(tweet.id) > last_tweet_id:
+                    new_tweets.append(tweet)
+                    # Store new tweet ID
+                    tweet_tracking_collection.insert_one({
+                        "twitter_username": twitter_username,
+                        "tweet_id": str(tweet.id),
+                        "timestamp": datetime.now(timezone.utc)
+                    })
+            
+            return new_tweets
+            
+        except Exception as e:
+            logger.error(f"Error checking tweets: {str(e)}", exc_info=True)
+            return []
+
+    async def start_monitoring(self, channel_id: int, twitter_username: str):
+        """Start monitoring tweets for a user"""
+        channel = self.bot.get_channel(channel_id)
+        if not channel:
+            logger.error(f"Could not find channel: {channel_id}")
+            return
+            
+        while True:
+            try:
+                new_tweets = await self.check_new_tweets(twitter_username)
+                
+                for tweet in new_tweets:
+                    tweet_url = f"https://twitter.com/{twitter_username}/status/{tweet.id}"
+                    await channel.send(
+                        f"🐦 New tweet from @{twitter_username}:\n"
+                        f"{tweet.text}\n"
+                        f"Link: {tweet_url}"
+                    )
+                    
+                # Wait 2 minutes before checking again
+                await asyncio.sleep(120)
+                
+            except Exception as e:
+                logger.error(f"Error in tweet monitor: {str(e)}", exc_info=True)
+                await asyncio.sleep(60)  # Wait a minute before retrying
+
+@bot.tree.command(name="monitor_tweets", description="Start monitoring tweets from a Twitter user")
+async def monitor_tweets(interaction: discord.Interaction, twitter_username: str):
+    try:
+        await interaction.response.defer()
+        
+        # Create TwitterMonitor instance
+        monitor = TwitterMonitor(bot)
+        
+        # Start monitoring in background task
+        task = asyncio.create_task(
+            monitor.start_monitoring(interaction.channel_id, twitter_username)
+        )
+        
+        await interaction.followup.send(
+            f"✅ Now monitoring tweets from @{twitter_username} in this channel!"
+        )
+        
+    except Exception as e:
+        logger.error(f"Error setting up tweet monitor: {str(e)}", exc_info=True)
+        await interaction.followup.send(
+            f"❌ Error setting up tweet monitor: {str(e)}"
+        )
+
+# Then the main function
 if __name__ == "__main__":
     # Development mode
     loop = asyncio.get_event_loop()
@@ -1509,87 +1622,3 @@ if __name__ == "__main__":
         loop.run_until_complete(bot.close())
     finally:
         loop.close()
-else:
-    # Production mode (Gunicorn)
-    app.on_startup.append(lambda app: asyncio.create_task(init_app()))
-
-# For Gunicorn compatibility
-app.bot = bot  # Store bot instance on app
-app.token = token  # Store token on app
-
-# Add more event listeners for different types of interactions
-@bot.event
-async def on_reaction_add(reaction, user):
-    if user == bot.user:
-        return
-        
-    await track_user_interaction(
-        user_id=user.id,
-        username=user.name,
-        interaction_type="reaction_add",
-        channel_id=reaction.message.channel.id,
-        channel_name=reaction.message.channel.name,
-        guild_id=reaction.message.guild.id if reaction.message.guild else None,
-        guild_name=reaction.message.guild.name if reaction.message.guild else None,
-        details={
-            "emoji": str(reaction.emoji),
-            "message_id": str(reaction.message.id)
-        }
-    )
-
-@bot.event
-async def on_voice_state_update(member, before, after):
-    # Track voice channel joins/leaves/moves
-    if before.channel != after.channel:
-        action = "join" if after.channel else "leave" if before.channel else "move"
-        await track_user_interaction(
-            user_id=member.id,
-            username=member.name,
-            interaction_type="voice_" + action,
-            channel_id=str(after.channel.id if after.channel else before.channel.id),
-            channel_name=after.channel.name if after.channel else before.channel.name,
-            guild_id=member.guild.id,
-            guild_name=member.guild.name,
-            details={
-                "from_channel": before.channel.name if before.channel else None,
-                "to_channel": after.channel.name if after.channel else None
-            }
-        )
-
-@bot.event
-async def on_member_update(before, after):
-    # Track member updates (nickname changes, role changes, etc.)
-    if before.nick != after.nick or before.roles != after.roles:
-        await track_user_interaction(
-            user_id=after.id,
-            username=after.name,
-            interaction_type="member_update",
-            guild_id=after.guild.id,
-            guild_name=after.guild.name,
-            details={
-                "nickname_changed": before.nick != after.nick,
-                "old_nick": before.nick,
-                "new_nick": after.nick,
-                "roles_changed": [r.name for r in after.roles if r not in before.roles],
-                "roles_removed": [r.name for r in before.roles if r not in after.roles]
-            }
-        )
-
-@bot.event
-async def on_member_join(member):
-    await track_user_interaction(
-        user_id=member.id,
-        username=member.name,
-        interaction_type="server_join",
-        guild_id=member.guild.id,
-        guild_name=member.guild.name,
-        details={
-            "account_created": member.created_at.isoformat(),
-            "joined_at": member.joined_at.isoformat() if member.joined_at else None
-        }
-    )
-
-# MongoDB query to check recent interactions
-recent = interaction_collection.find().sort("timestamp", -1).limit(5)
-for interaction in recent:
-    print(json.dumps(interaction, default=str, indent=2))
