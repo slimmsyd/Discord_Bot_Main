@@ -34123,3 +34123,47 @@ Traceback (most recent call last):
   File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/venv/lib/python3.11/site-packages/tweepy/client.py", line 102, in request
     raise NotFound(response)
 tweepy.errors.NotFound: 404 Not Found
+2025-02-09 11:39:51,326 [INFO] discord_bot: Web server started successfully on port 8000
+2025-02-09 11:39:51,328 [INFO] discord.client: logging in using static token
+2025-02-09 11:39:52,340 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 100b73f8e0af6460bebd6fca33c2fd02).
+2025-02-09 11:39:54,354 [INFO] discord_bot: 
+=== Bot Started ===
+Name: Street Oracle
+ID: 1311783916516020324
+Servers Connected: 2
+Server List:
+- Street Economics HQ (ID: 1084613691967815740)
+- He's (ID: 1311794114198503444)
+=================
+2025-02-09 11:39:54,649 [INFO] discord_bot: Slash commands synced successfully
+2025-02-09 11:39:54,649 [INFO] discord_bot: Connected to guild: Street Economics HQ (ID: 1084613691967815740)
+2025-02-09 11:39:54,649 [INFO] discord_bot: Connected to guild: He's (ID: 1311794114198503444)
+2025-02-09 11:39:56,242 [INFO] discord_bot: Processing resource submission from elohiminty: https://finance.yahoo.com/news/big-tech-set-to-invest-325-billion-this-year-as-hefty-ai-bills-come-under-scrutiny-182329236.html
+2025-02-09 11:39:56,242 [INFO] discord_bot: Starting AI analysis of link...
+2025-02-09 11:39:56,242 [INFO] discord_bot: Starting categorization for link: https://finance.yahoo.com/news/big-tech-set-to-invest-325-billion-this-year-as-hefty-ai-bills-come-under-scrutiny-182329236.html
+2025-02-09 11:39:56,243 [INFO] discord_bot: Fetching webpage content...
+2025-02-09 11:39:57,184 [INFO] discord_bot: Webpage response status: 200
+2025-02-09 11:39:57,265 [INFO] discord_bot: Attempting to extract content from main tags...
+2025-02-09 11:39:57,268 [INFO] discord_bot: Found content using selector: article
+2025-02-09 11:39:57,268 [INFO] discord_bot: Final extracted content length: 4000 characters
+2025-02-09 11:39:57,268 [INFO] discord_bot: Content preview: Big Tech set to invest $325 billion this year as hefty AI bills come under scrutinyLaura BrattonUpdatedSat, Feb 8, 2025, 2:47 PM5 min readIn This Article:GOOG-3.19%MSFT-1.46%META+0.36%AMZN-4.05%Meta (...
+2025-02-09 11:39:57,268 [INFO] discord_bot: Making DeepSeek API call...
+2025-02-09 11:39:58,647 [INFO] discord_bot: DeepSeek API response status: 402
+2025-02-09 11:39:58,647 [INFO] discord_bot: DeepSeek API response: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-09 11:39:58,647 [WARNING] discord_bot: DeepSeek API failed, falling back to OpenAI: DeepSeek API error: {"error":{"message":"Insufficient Balance","type":"unknown_error","param":null,"code":"invalid_request_error"}}
+2025-02-09 11:40:00,049 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-09 11:40:00,056 [INFO] discord_bot: OpenAI analysis result: TITLE: Big Tech to Invest $325 Billion in AI Infrastructure in 2025
+TAGS: CRYPTO, TECHNOLOGY
+2025-02-09 11:40:00,056 [INFO] discord_bot: Extracted title: Big Tech to Invest $325 Billion in AI Infrastructure in 2025
+2025-02-09 11:40:00,056 [ERROR] discord_bot: Content analysis failed: name 'RESOURCE_CATEGORIES' is not defined
+Traceback (most recent call last):
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 815, in categorize_link
+    valid_tags = [tag for tag in potential_tags if tag in RESOURCE_CATEGORIES]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sydneysanders/Desktop/NewProjects/EconomicsBot/app.py", line 815, in <listcomp>
+    valid_tags = [tag for tag in potential_tags if tag in RESOURCE_CATEGORIES]
+                                                          ^^^^^^^^^^^^^^^^^^^
+NameError: name 'RESOURCE_CATEGORIES' is not defined
+2025-02-09 11:40:00,062 [INFO] discord_bot: AI analysis complete - Title: finance.yahoo.com/news/big-tech-set-to-invest-325-, Tags: ['GENERAL']
+2025-02-09 11:40:00,063 [INFO] discord_bot: Attempting to save resource to MongoDB: {'title': 'finance.yahoo.com/news/big-tech-set-to-invest-325-', 'link': 'https://finance.yahoo.com/news/big-tech-set-to-invest-325-billion-this-year-as-hefty-ai-bills-come-under-scrutiny-182329236.html', 'submitted_by': {'user_id': '852749494541221890', 'username': 'elohiminty'}, 'timestamp': datetime.datetime(2025, 2, 9, 11, 40, 0, 63010), 'upvotes': 0, 'tags': ['GENERAL'], 'auto_generated': True}
+2025-02-09 11:40:00,148 [INFO] discord_bot: Resource saved successfully with ID: 67a8da60da1b40e5098d18cb
