@@ -18,7 +18,6 @@ import http.client
 import socket
 import httpx
 from pymongo import MongoClient
-from PyPDF2 import PdfReader
 from urllib.parse import urlparse
 import json
 import tweepy
