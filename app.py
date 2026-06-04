@@ -4,28 +4,25 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import logging
-from datetime import datetime, timedelta, timezone
-import azure.functions as func
+from datetime import datetime
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
 import re
 from aiohttp import web
 import asyncio
-from io import BytesIO
 import requests
 from bs4 import BeautifulSoup
 import http.client
 import socket
 import httpx
-from pymongo import MongoClient
-from urllib.parse import urlparse
-import json
-import tweepy
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
 
-# Add health check routes
+# Model used for all AI calls (DeepSeek's OpenAI-compatible chat model)
+AI_MODEL = "deepseek-chat"
+
+# Add health check routes (keeps the host's healthcheck happy; not required by Discord)
 async def health_check(request):
     return web.Response(text="Healthy", status=200)
 
@@ -34,15 +31,16 @@ app = web.Application()
 app.router.add_get('/health', health_check)
 app.router.add_get('/', health_check)
 
-# Modified run function for development
+# Run the health server + the Discord gateway bot together
 async def run_bot_and_server():
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', 8000)
+    port = int(os.getenv('PORT', '8000'))
+    site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
-    
-    logger.info("Web server started successfully on port 8000")
-    
+
+    logger.info(f"Web server started successfully on port {port}")
+
     try:
         await bot.start(token)
     except Exception as e:
@@ -50,18 +48,6 @@ async def run_bot_and_server():
         raise
     finally:
         await runner.cleanup()
-
-# For Gunicorn compatibility
-async def init_app():
-    """Initialize the application for Gunicorn"""
-    app['bot'] = bot
-    app['token'] = token
-    
-    # Start the Discord bot in the background
-    asyncio.create_task(bot.start(token))
-    
-    logger.info("Application initialized with Discord bot")
-    return app
 
 # Set up logging with more detailed format
 logging.basicConfig(
@@ -76,8 +62,6 @@ logger = logging.getLogger('discord_bot')
 
 # Load .env file
 load_dotenv()
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Token validation
 token = os.getenv('DISCORD_BOT_TOKEN')
@@ -85,18 +69,20 @@ if token is None:
     logger.error("No Discord token found. Make sure DISCORD_BOT_TOKEN is set in your .env file")
     raise ValueError("No Discord token found")
 
-# OpenAI setup
-openai_client = OpenAI(
-    api_key=os.getenv('OPENAI_API_KEY'),
-    http_client=httpx.Client(  # Add explicit HTTP client configuration
+# DeepSeek setup (OpenAI-compatible API)
+DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
+if not DEEPSEEK_API_KEY:
+    logger.error("No DeepSeek API key found. Make sure DEEPSEEK_API_KEY is set in your .env file")
+    raise ValueError("No DeepSeek API key found")
+
+deepseek_client = OpenAI(
+    api_key=DEEPSEEK_API_KEY,
+    base_url="https://api.deepseek.com",
+    http_client=httpx.Client(
         timeout=60,
         follow_redirects=True
     )
 )
-
-if not openai_client.api_key:
-    logger.error("No OpenAI API key found. Make sure OPENAI_API_KEY is set in your .env file")
-    raise ValueError("No OpenAI API key found")
 
 # Discord bot setup
 intents = discord.Intents.default()
@@ -104,283 +90,10 @@ intents.message_content = True
 intents.guilds = True
 bot = commands.Bot(command_prefix='/', intents=intents)
 
-# Add these configurations after your imports
 # Increase timeout for HTTP operations
 socket.setdefaulttimeout(30)
 http.client._MAXHEADERS = 1000
 
-# MongoDB setup
-mongo_client = MongoClient(os.getenv('MONGODB_URI'))
-db = mongo_client['test']
-resources_collection = db['resources']
-
-# Create index for faster queries
-resources_collection.create_index([("workspace", 1), ("link", 1)])
-
-# Add after MongoDB setup
-interaction_collection = db['user_interactions']
-# Create compound index for efficient querying
-interaction_collection.create_index([
-    ("user_id", 1),
-    ("timestamp", -1)
-])
-
-# Add after MongoDB setup, before track_user_interaction
-user_stats_collection = db['user_stats']
-# Create indexes for efficient querying
-user_stats_collection.create_index([("user_id", 1)], unique=True)
-user_stats_collection.create_index([("interactions.timestamp", -1)])  # Index for recent interactions
-
-async def update_user_stats(user_id: str, username: str, interaction_type: str):
-    """Update user statistics with new interaction"""
-    try:
-        # Update or create user stats document
-        result = await asyncio.to_thread(
-            user_stats_collection.update_one,
-            {"user_id": user_id},
-            {
-                "$inc": {
-                    "total_interactions": 1,
-                    f"interactions_by_type.{interaction_type}": 1
-                },
-                "$set": {
-                    "username": username,
-                    "last_interaction": datetime.now()
-                },
-                "$min": {"first_interaction": datetime.now()},
-            },
-            upsert=True
-        )
-        
-        if result.modified_count > 0 or result.upserted_id:
-            logger.info(f"Updated stats for user {username} (ID: {user_id})")
-            
-            # Get updated stats
-            stats = await asyncio.to_thread(
-                user_stats_collection.find_one,
-                {"user_id": user_id}
-            )
-            
-            if stats and stats.get('total_interactions') % 100 == 0:  # Log milestone
-                logger.info(f"""
-=== User Milestone Reached ===
-User: {username}
-Total Interactions: {stats.get('total_interactions')}
-First Interaction: {stats.get('first_interaction')}
-Interaction Types: {stats.get('interactions_by_type', {})}
-=========================""")
-                
-    except Exception as e:
-        logger.error(f"Failed to update user stats: {str(e)}", exc_info=True)
-
-# Modify track_user_interaction to include message content
-async def track_user_interaction(
-    user_id: str,
-    username: str,
-    interaction_type: str,
-    channel_id: str = None,
-    channel_name: str = None,
-    guild_id: str = None,
-    guild_name: str = None,
-    command: str = None,
-    details: dict = None,
-    message_content: str = None
-):
-    try:
-        # Create timestamp in UTC
-        timestamp = datetime.utcnow()
-        
-        # Check for duplicate messages within a 1-second window
-        existing_interaction = await asyncio.to_thread(
-            user_stats_collection.find_one,
-            {
-                "user_id": str(user_id),
-                "interactions": {
-                    "$elemMatch": {
-                        "message": message_content,
-                        "channel_id": str(channel_id) if channel_id else None,
-                        "timestamp": {
-                            "$gte": timestamp - timedelta(seconds=1),
-                            "$lte": timestamp + timedelta(seconds=1)
-                        }
-                    }
-                }
-            }
-        )
-        
-        if existing_interaction:
-            logger.info(f"""
-=== Duplicate Interaction Detected ===
-User: {username}
-Message: {message_content}
-Time: {timestamp}
-Existing Entry Found - Skipping
-=========================""")
-            return
-        
-        # Create interaction data
-        interaction_data = {
-            "type": interaction_type,
-            "timestamp": timestamp,  # UTC timestamp
-            "channel_id": str(channel_id) if channel_id else None,
-            "channel_name": channel_name,
-            "guild_id": str(guild_id) if guild_id else None,
-            "guild_name": guild_name,
-            "command": command,
-            "message": message_content,
-            "details": details or {}
-        }
-        
-        # Single MongoDB operation to update user document
-        result = await asyncio.to_thread(
-            user_stats_collection.update_one,
-            {
-                "user_id": str(user_id),
-                # Additional check to prevent race conditions
-                "interactions.0.timestamp": {
-                    "$not": {
-                        "$gte": timestamp - timedelta(seconds=1),
-                        "$lte": timestamp + timedelta(seconds=1)
-                    }
-                }
-            },
-            {
-                "$push": {
-                    "interactions": {
-                        "$each": [interaction_data],
-                        "$position": 0,
-                        "$slice": 1000
-                    }
-                },
-                "$inc": {"total_interactions": 1},
-                "$setOnInsert": {"first_interaction": timestamp},
-                "$set": {
-                    "username": username,
-                    "last_interaction": timestamp,
-                    "last_message": message_content if message_content else None,
-                    "last_channel": channel_name,
-                    "last_guild": guild_name,
-                }
-            },
-            upsert=True
-        )
-        
-        if result.modified_count > 0 or result.upserted_id:
-            logger.info(f"""
-=== New Interaction Tracked ===
-Time: {timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')} UTC
-User: {username} (ID: {user_id})
-Type: {interaction_type}
-Channel: {channel_name} (ID: {channel_id})
-Server: {guild_name} (ID: {guild_id})
-Command: {command if command else 'N/A'}
-Message: {message_content if message_content else 'N/A'}
-Details: {json.dumps(details, indent=2) if details else 'None'}
-=========================""")
-        else:
-            logger.info(f"""
-=== Duplicate Prevention Caught ===
-User: {username}
-Message: {message_content}
-Time: {timestamp}
-=========================""")
-        
-    except Exception as e:
-        logger.error(f"""
-!!! Interaction Tracking Error !!!
-Time: {timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')} UTC
-Error: {str(e)}
-User: {username} (ID: {user_id})
-Type: {interaction_type}
-Stack Trace:""", exc_info=True)
-
-# Add helper functions to get user statistics
-async def get_user_stats(user_id: str, limit: int = 10) -> dict:
-    """Get statistics and recent interactions for a specific user"""
-    try:
-        stats = await asyncio.to_thread(
-            user_stats_collection.find_one,
-            {"user_id": str(user_id)},
-            {
-                "interactions": {"$slice": limit},  # Get only recent interactions
-                "total_interactions": 1,
-                "first_interaction": 1,
-                "last_interaction": 1,
-                "interactions_by_type": 1,
-                "username": 1
-            }
-        )
-        return stats or {}
-    except Exception as e:
-        logger.error(f"Failed to get user stats: {str(e)}", exc_info=True)
-        return {}
-
-async def get_top_users(limit: int = 10) -> list:
-    """Get top users by total interactions"""
-    try:
-        cursor = user_stats_collection.find().sort("total_interactions", -1).limit(limit)
-        return await asyncio.to_thread(list, cursor)
-    except Exception as e:
-        logger.error(f"Failed to get top users: {str(e)}", exc_info=True)
-        return []
-
-# Add a command to view user stats
-@bot.tree.command(name="userstats", description="View interaction statistics for a user")
-async def userstats(interaction: discord.Interaction, user: discord.Member = None):
-    try:
-        await interaction.response.defer()
-        
-        # Track command usage
-        await track_user_interaction(
-            user_id=interaction.user.id,
-            username=interaction.user.name,
-            interaction_type="command",
-            channel_id=interaction.channel_id,
-            channel_name=interaction.channel.name if interaction.channel else None,
-            guild_id=interaction.guild_id,
-            guild_name=interaction.guild.name if interaction.guild else None,
-            command="userstats",
-            details={"target_user": user.name if user else "self"}
-        )
-        
-        # Use mentioned user or command user
-        target_user = user or interaction.user
-        
-        # Get user stats with last 5 interactions
-        stats = await get_user_stats(str(target_user.id), 5)
-        
-        if not stats:
-            await interaction.followup.send(f"No statistics found for {target_user.name}")
-            return
-        
-        # Format stats message with recent messages
-        stats_message = f"""
-📊 **User Statistics for {target_user.name}**
-Total Interactions: {stats.get('total_interactions', 0)}
-First Interaction: {stats.get('first_interaction').strftime('%Y-%m-%d %H:%M:%S')}
-Last Interaction: {stats.get('last_interaction').strftime('%Y-%m-%d %H:%M:%S')}
-
-**Interaction Types:**
-{chr(10).join([f"- {k}: {v}" for k, v in stats.get('interactions_by_type', {}).items()])}
-
-**Recent Activity:**"""
-
-        # Add recent interactions with proper message formatting
-        for interaction_data in stats.get('interactions', [])[:5]:
-            message_content = interaction_data.get('message', '')
-            timestamp = interaction_data['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
-            channel = interaction_data['channel_name']
-            interaction_type = interaction_data['type']
-            
-            stats_message += f"\n- {interaction_type} in {channel} at {timestamp}"
-            if message_content:
-                stats_message += f"\n  Message: {message_content}"
-        
-        await interaction.followup.send(stats_message)
-        
-    except Exception as e:
-        logger.error(f"Error in userstats command: {str(e)}", exc_info=True)
-        await interaction.followup.send(f"Error retrieving statistics: {str(e)}")
 
 @bot.event
 async def on_ready():
@@ -392,7 +105,7 @@ Servers Connected: {len(bot.guilds)}
 Server List:
 {chr(10).join([f'- {guild.name} (ID: {guild.id})' for guild in bot.guilds])}
 =================""")
-    
+
     try:
         # Force sync all commands
         await bot.tree.sync()
@@ -401,30 +114,7 @@ Server List:
         logger.error(f'Failed to sync slash commands: {e}')
     for guild in bot.guilds:
         logger.info(f'Connected to guild: {guild.name} (ID: {guild.id})')
-        
-        
-def get_crypto_price(coin_id="bitcoin"):
-    url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()[coin_id]["usd"]
-    else:
-        return None
 
-# Generate analysis with OpenAI
-def generate_analysis(coin_name, price):
-    prompt = f"""
-    The current {coin_name} price is ${price}. 
-    Provide a concise summary (1-2 sentences) of its recent performance and a brief analysis.
-    """
-    response = openai_client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
-
-        
-        
 
 class CryptoTools:
     @staticmethod
@@ -438,10 +128,10 @@ class CryptoTools:
                 "polygon": "https://api.1inch.io/v5.0/137",
                 "base": "https://api.1inch.io/v5.0/8453"  # Added Base chain
             }
-            
+
             if network.lower() not in dex_apis:
                 return f"Unsupported network: {network}"
-                
+
             # Standard stable pairs for price checking
             base_tokens = {
                 "ethereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",  # USDT
@@ -449,9 +139,7 @@ class CryptoTools:
                 "polygon": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",   # USDT
                 "base": "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb"      # USDbC
             }
-            
-            
-            
+
             # Get quote from 1inch API
             quote_url = f"{dex_apis[network.lower()]}/quote"
             params = {
@@ -459,9 +147,9 @@ class CryptoTools:
                 "toTokenAddress": base_tokens[network.lower()],
                 "amount": "1000000000000000000"  # 1 token in wei
             }
-            
+
             response = requests.get(quote_url, params=params, timeout=10)
-            
+
             if response.status_code == 200:
                 data = response.json()
                 # Calculate price in USD
@@ -469,13 +157,10 @@ class CryptoTools:
                 return f"The current DEX price is ${price:.8f} USD"
             else:
                 return "Could not fetch DEX price. Token might not have enough liquidity."
-                
+
         except Exception as e:
             logger.error(f"DEX price fetch error: {str(e)}")
             return f"Error fetching DEX price: {str(e)}"
-        
-        
-        
 
     @staticmethod
     async def get_solana_price(address: str) -> str:
@@ -484,7 +169,7 @@ class CryptoTools:
             # Try multiple sources for token metadata
             token_name = "Unknown Token"
             token_symbol = ""
-            
+
             # 1. Try Birdeye API for both price and metadata
             birdeye_price_url = "https://public-api.birdeye.so/defi/price"
             birdeye_token_url = "https://public-api.birdeye.so/public/token"
@@ -493,23 +178,23 @@ class CryptoTools:
                 "x-chain": "solana",
                 "accept": "application/json"
             }
-            
+
             # Get token metadata from Birdeye
             token_params = {"address": address}
             token_response = requests.get(birdeye_token_url, headers=headers, params=token_params, timeout=10)
-            
+
             if token_response.status_code == 200:
                 token_data = token_response.json()
                 if token_data.get("success") and token_data.get("data"):
                     metadata = token_data["data"]
                     token_name = metadata.get("name", "Unknown Token")
                     token_symbol = metadata.get("symbol", "")
-            
+
             # If still unknown, try Jupiter's token list
             if token_name == "Unknown Token":
                 metadata_url = "https://token.jup.ag/all"
                 metadata_response = requests.get(metadata_url, timeout=10)
-                
+
                 if metadata_response.status_code == 200:
                     tokens = metadata_response.json()
                     for token in tokens:
@@ -517,40 +202,40 @@ class CryptoTools:
                             token_name = token.get("name", "Unknown Token")
                             token_symbol = token.get("symbol", "")
                             break
-            
+
             # Get price from Birdeye
             price_params = {"address": address}
             price_response = requests.get(birdeye_price_url, headers=headers, params=price_params, timeout=10)
             logger.info(f"Birdeye API Response: {price_response.status_code} - {price_response.text[:200]}")
-            
+
             if price_response.status_code == 200:
                 price_data = price_response.json()
                 if price_data.get("success") and price_data.get("data"):
                     price = float(price_data["data"].get("value", 0))
                     price_change = price_data["data"].get("priceChange24h", 0)
                     volume_24h = price_data["data"].get("volume24h", 0)
-                    
+
                     # Format token info
                     token_info = f"{token_name}"
                     if token_symbol:
                         token_info += f" ({token_symbol})"
-                    
+
                     # Add address for unknown tokens
                     if token_name == "Unknown Token":
                         token_info += f"\nAddress: {address}"
-                    
+
                     # Build response with additional info
                     response = f"Token: {token_info}\n"
                     response += f"Current Price: ${price:.8f} USD\n"
                     response += f"24h Change: {price_change:.2f}%\n"
                     response += f"24h Volume: ${volume_24h:,.2f}"
-                    
+
                     return response
-                    
+
                 return "Could not find price data for this Solana token"
             else:
                 return f"Birdeye API returned status code {price_response.status_code}"
-                
+
         except requests.exceptions.RequestException as e:
             logger.error(f"API request failed: {str(e)}")
             return f"Failed to connect to API: {str(e)}"
@@ -562,11 +247,11 @@ class CryptoTools:
     async def get_crypto_price(crypto: str, currency: str = "usd") -> str:
         """Fetches the current price of a cryptocurrency."""
         logger.info(f"Fetching crypto price for {crypto} in {currency}")
-        
+
         # Check for Solana address first
         if re.match(SOLANA_ADDRESS_REGEX, crypto):
             return await CryptoTools.get_solana_price(crypto)
-            
+
         # Check for Base address
         if re.match(BASE_ADDRESS_REGEX, crypto):
             # Try Base network first
@@ -592,7 +277,7 @@ class CryptoTools:
                 params={"ids": crypto.lower(), "vs_currencies": currency.lower()},
                 timeout=10
             )
-            
+
             if direct_response.status_code == 200 and crypto.lower() in direct_response.json():
                 price = direct_response.json()[crypto.lower()][currency.lower()]
                 return f"The current price of {crypto.capitalize()} is {price:,.2f} {currency.upper()}"
@@ -607,9 +292,9 @@ class CryptoTools:
                 "polygon": "polygon"
                 # Add more mappings as needed
             }
-            
+
             crypto_id = crypto_mapping.get(crypto.lower())
-            
+
             if crypto_id:
                 response = requests.get(
                     f"https://api.coingecko.com/api/v3/simple/price",
@@ -617,7 +302,7 @@ class CryptoTools:
                     timeout=10
                 )
                 response.raise_for_status()
-                
+
                 price_data = response.json()
                 if crypto_id in price_data:
                     price = price_data[crypto_id][currency.lower()]
@@ -629,29 +314,29 @@ class CryptoTools:
                 params={"query": crypto},
                 timeout=10
             )
-            
+
             if search_response.status_code == 200:
                 search_data = search_response.json()
                 if search_data.get("coins"):
                     # Get the first (most relevant) result
                     coin = search_data["coins"][0]
                     coin_id = coin["id"]
-                    
+
                     # Fetch price for found coin
                     final_response = requests.get(
                         f"https://api.coingecko.com/api/v3/simple/price",
                         params={"ids": coin_id, "vs_currencies": currency.lower()},
                         timeout=10
                     )
-                    
+
                     if final_response.status_code == 200:
                         price_data = final_response.json()
                         if coin_id in price_data:
                             price = price_data[coin_id][currency.lower()]
                             return f"The current price of {coin['name']} ({coin['symbol'].upper()}) is {price:,.2f} {currency.upper()}"
-            
+
             return f"Sorry, couldn't find price data for {crypto}"
-            
+
         except requests.exceptions.RequestException as e:
             logger.error(f"API request failed: {str(e)}")
             return f"Failed to fetch price data: {str(e)}"
@@ -659,219 +344,25 @@ class CryptoTools:
             logger.error(f"Unexpected error: {str(e)}")
             return f"An unexpected error occurred: {str(e)}"
 
-    @staticmethod
-    async def categorize_link(link: str) -> tuple[str, list[str]]:
-        """Uses DeepSeek AI to generate title and categorize a link"""
-        try:
-            logger.info(f"Starting categorization for link: {link}")
-            
-            # Check if it's a YouTube link first
-            youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|live\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
-            is_youtube = bool(re.search(youtube_regex, link))
-            
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-            }
-            
-            logger.info("Fetching webpage content...")
-            response = requests.get(link, headers=headers, timeout=15)
-            logger.info(f"Webpage response status: {response.status_code}")
-            
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Extract content with logging
-            text_content = ""
-            main_content_tags = [
-                'article', 'main', '[role="main"]', '.content', '#content',
-                '.post', '.article', '.paper', '.document'
-            ]
-            
-            # First try to get title from meta tags or title tag
-            meta_title = soup.find("meta", {"property": "og:title"}) or soup.find("meta", {"name": "title"})
-            html_title = soup.find('title')
-            initial_title = None
-            
-            if meta_title:
-                initial_title = meta_title.get("content", "").strip()
-            elif html_title:
-                initial_title = html_title.get_text(strip=True)
-            
-            logger.info("Attempting to extract content from main tags...")
-            for selector in main_content_tags:
-                content = soup.select_one(selector)
-                if content:
-                    text_content = content.get_text(strip=True)
-                    logger.info(f"Found content using selector: {selector}")
-                    break
-            
-            if not text_content:
-                logger.info("No main content found, trying meta tags...")
-                meta_desc = soup.find("meta", {"property": "og:description"}) or soup.find("meta", {"name": "description"})
-                
-                if meta_desc:
-                    text_content += meta_desc.get("content", "") + "\n"
-                    logger.info(f"Found meta description: {meta_desc.get('content', '')}")
-            
-            if not text_content:
-                logger.info("No meta content found, falling back to paragraphs...")
-                paragraphs = soup.find_all('p')[:5]
-                paragraph_text = " ".join(p.get_text(strip=True) for p in paragraphs)
-                text_content += paragraph_text
-                logger.info(f"Found {len(paragraphs)} paragraphs")
-            
-            text_content = re.sub(r'\s+', ' ', text_content)[:4000]
-            logger.info(f"Final extracted content length: {len(text_content)} characters")
-            logger.info(f"Content preview: {text_content[:200]}...")
-            
-            # Try DeepSeek first
-            try:
-                deepseek_headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {os.getenv('DEEPSEEK_API_KEY')}"
-                }
-                
-                system_prompt = """Analyze this content and provide:
-                1. A clear, descriptive title (max 10 words)
-                2. 2-4 relevant tags from this list, following these strict guidelines:
-                   - DAO: Only for content about Decentralized Autonomous Organizations
-                   - CRYPTO: For general cryptocurrency and blockchain content
-                   - CRYPTO_NEWS: ONLY for current news/updates about cryptocurrency markets, regulations, or major crypto events
-                   - MEMES: For meme culture and viral content
-                   - AI: For artificial intelligence, machine learning, and related tech
-                   - QUANTUM: For quantum computing and quantum mechanics
-                   - SPIRITUALITY: For spiritual, philosophical, or religious content
-                   - TECHNOLOGY: For general technology content not fitting other categories
-                   - YOUTUBE: For video content, especially from YouTube
-                   - GENERAL: For content not fitting any other category
-                   
-                   BE VERY SELECTIVE with specialized tags. If in doubt, use GENERAL.
-                   For CRYPTO_NEWS, content MUST be specifically about current cryptocurrency events or news.
-                   For YOUTUBE, content must be a video, but can also have additional relevant tags.
-                
-                Format response EXACTLY as:
-                TITLE: [Your Title]
-                TAGS: [Tag1], [Tag2], [Tag3]"""
-                
-                payload = {
-                    "model": "deepseek-chat",
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": f"URL: {link}\n\nContent:\n{text_content}"}
-                    ],
-                    "stream": False
-                }
-                
-                logger.info("Making DeepSeek API call...")
-                deepseek_response = requests.post(
-                    "https://api.deepseek.com/chat/completions",
-                    headers=deepseek_headers,
-                    json=payload,
-                    timeout=30
-                )
-                
-                logger.info(f"DeepSeek API response status: {deepseek_response.status_code}")
-                logger.info(f"DeepSeek API response: {deepseek_response.text[:500]}")
-                
-                if deepseek_response.status_code != 200:
-                    raise Exception(f"DeepSeek API error: {deepseek_response.text}")
-                
-                result = deepseek_response.json()["choices"][0]["message"]["content"]
-                logger.info(f"DeepSeek analysis result: {result}")
-                
-            except Exception as e:
-                logger.warning(f"DeepSeek API failed, falling back to OpenAI: {str(e)}")
-                
-                # Fallback to OpenAI
-                openai_response = openai_client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": f"URL: {link}\n\nContent:\n{text_content}"}
-                    ],
-                    max_tokens=150,
-                    temperature=0.7
-                )
-                
-                result = openai_response.choices[0].message.content
-                logger.info(f"OpenAI analysis result: {result}")
-            
-            # Parse response
-            title = initial_title or "Untitled Resource"  # Use the HTML/meta title as fallback
-            tags = ["GENERAL"]
-            
-            # If it's a YouTube link, ensure YOUTUBE tag is included
-            if is_youtube:
-                tags = ["YOUTUBE"]
-            
-            for line in result.split('\n'):
-                if line.startswith('TITLE:'):
-                    ai_title = line.split(':', 1)[1].strip()
-                    if len(ai_title) >= 3:  # Only use AI title if it's meaningful
-                        title = ai_title
-                    logger.info(f"Extracted title: {title}")
-                elif line.startswith('TAGS:'):
-                    potential_tags = [tag.strip().upper() for tag in line.split(':', 1)[1].split(',')]
-                    valid_tags = [tag for tag in potential_tags if tag in RESOURCE_CATEGORIES]
-                    if valid_tags:
-                        if is_youtube:
-                            # For YouTube links, ensure YOUTUBE tag is first and include other relevant tags
-                            valid_tags = ["YOUTUBE"] + [tag for tag in valid_tags if tag != "YOUTUBE"]
-                        tags = valid_tags
-                    logger.info(f"Extracted tags: {tags}")
-            
-            # Final validation
-            if len(title) < 3:
-                # Use domain/path as last resort
-                parsed_url = urlparse(link)
-                domain = parsed_url.netloc.replace('www.', '')
-                path = parsed_url.path.strip('/')
-                title = f"{domain}/{path}"[:50] if path else domain
-            
-            logger.info(f"Final title: {title}, tags: {tags[:5]}")
-            return title, tags[:5]
-            
-        except Exception as e:
-            logger.error(f"Content analysis failed: {str(e)}", exc_info=True)
-            # Use URL components for title as absolute fallback
-            parsed_url = urlparse(link)
-            domain = parsed_url.netloc.replace('www.', '')
-            path = parsed_url.path.strip('/')
-            title = f"{domain}/{path}"[:50] if path else domain
-            return title, ["GENERAL"]
 
 @bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
 async def dearoracle(interaction: discord.Interaction, question: str):
-    # Track command interaction
-    await track_user_interaction(
-        user_id=interaction.user.id,
-        username=interaction.user.name,
-        interaction_type="command",
-        channel_id=interaction.channel_id,
-        channel_name=interaction.channel.name if interaction.channel else None,
-        guild_id=interaction.guild_id,
-        guild_name=interaction.guild.name if interaction.guild else None,
-        command="dearoracle",
-        details={"question": question},
-        message_content=question
-    )
-    
     logger.info(f'Oracle question received from {interaction.user}: {question}')
-    
+
     try:
         await interaction.response.defer()
-        
+
         # Get crypto price if it's a crypto question
         if any(keyword in question.lower() for keyword in ['price', 'crypto', 'bitcoin', 'ethereum', 'btc', 'eth']):
             crypto_tools = CryptoTools()
             # Extract crypto name from question
             crypto_names = ['bitcoin', 'btc', 'ethereum', 'eth']
             found_crypto = next((name for name in crypto_names if name in question.lower()), None)
-            
+
             if found_crypto:
                 price_info = await crypto_tools.get_crypto_price(found_crypto)
-                response = openai_client.chat.completions.create(
-                    model="gpt-4",
+                response = deepseek_client.chat.completions.create(
+                    model=AI_MODEL,
                     messages=[
                         {"role": "system", "content": "You are a crypto-savvy oracle. Provide insights about the cryptocurrency along with its price."},
                         {"role": "user", "content": f"Give me insights about {found_crypto}. Here's the current price info: {price_info}"}
@@ -882,48 +373,48 @@ async def dearoracle(interaction: discord.Interaction, question: str):
                 oracle_response = response.choices[0].message.content.strip()
                 await interaction.followup.send(f"🔮 {oracle_response}")
                 return
-        
+
         # For non-crypto questions
-        response = openai_client.chat.completions.create(
-            model="gpt-4",
+        response = deepseek_client.chat.completions.create(
+            model=AI_MODEL,
             messages=[
-                {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well. 
-                Most of your thoughts are based on the early stoics and Greek philosophers. Be diverse in your thoughts and ideas. 
+                {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well.
+                Most of your thoughts are based on the early stoics and Greek philosophers. Be diverse in your thoughts and ideas.
                 Always start your response with "Young God," and maintain a friendly, street-smart tone."""},
                 {"role": "user", "content": question}
             ],
             max_tokens=150,
             temperature=0.7
         )
-        
+
         oracle_wisdom = response.choices[0].message.content.strip()
         await interaction.followup.send(f"🔮 {oracle_wisdom}")
-        
+
     except Exception as e:
         logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
         await interaction.followup.send(
             f"Yo {interaction.user.mention}, my crystal ball's acting up right now. Try again later! Error: {str(e)}"
         )
 
+
 @bot.tree.command(name="summarize", description="Summarizes the last 20 messages in the channel")
 async def summarize(interaction: discord.Interaction):
     logger.info(f'Summarize command received from {interaction.user} in {interaction.guild.name}/{interaction.channel.name}')
-    
+
     try:
         # Defer the response since summarization might take time
         await interaction.response.defer()
-        
+
         # Fetch messages
         messages = [message async for message in interaction.channel.history(limit=20)]
         logger.info(f'Fetched {len(messages)} messages for summarization')
-        
+
         # Format messages
         thread_content = "\n".join([f"{msg.author.name}: {msg.content}" for msg in reversed(messages)])
-        
-        # OpenAI API call
-        start_time = datetime.now()
-        response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",
+
+        # AI call
+        response = deepseek_client.chat.completions.create(
+            model=AI_MODEL,
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that summarizes conversations."},
                 {"role": "user", "content": f"Please summarize this conversation:\n{thread_content}"}
@@ -931,21 +422,22 @@ async def summarize(interaction: discord.Interaction):
             max_tokens=150,
             temperature=0.7
         )
-        
+
         # Send summary
         summary = response.choices[0].message.content.strip()
         await interaction.followup.send(f"{interaction.user.mention}, here's a summary of the last 20 messages:\n{summary}")
-        
+
     except Exception as e:
         logger.error(f'Error in summarize command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, I couldn't summarize the messages. Error: {str(e)}")
+
 
 @bot.tree.command(name="sumvideo", description="Summarizes a YouTube video")
 async def sumvideo(interaction: discord.Interaction, url: str):
     # Store references early
     channel = interaction.channel
     user = interaction.user
-    
+
     try:
         try:
             # Try to acknowledge the interaction immediately
@@ -956,17 +448,17 @@ async def sumvideo(interaction: discord.Interaction, url: str):
             logger.info("Interaction expired, falling back to channel messages")
             await channel.send(f"{user.mention} Processing your request...")
             response_method = channel.send
-        
+
         # Rest of your existing code, but replace all interaction.followup.send with response_method
         youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|live\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
         match = re.search(youtube_regex, url)
-        
+
         if not match:
             await response_method("Please provide a valid YouTube URL.")
             return
-            
+
         video_id = match.group(1)
-        
+
         try:
             # Validate video ID exists before attempting transcript
             try:
@@ -975,10 +467,10 @@ async def sumvideo(interaction: discord.Interaction, url: str):
                 if validation_response.status_code != 200:
                     await response_method("❌ This video appears to be unavailable or private.")
                     return
-                    
+
                 video_info = validation_response.json()
                 logger.info(f"Processing video: {video_info.get('title', 'Unknown Title')}")
-                
+
             except Exception as e:
                 logger.error(f"Error validating video: {str(e)}")
                 await response_method("❌ Error validating video URL.")
@@ -986,7 +478,7 @@ async def sumvideo(interaction: discord.Interaction, url: str):
 
             # Initialize transcript variable
             transcript = None
-            
+
             # Method 1: Direct fetch with multiple languages and proxy handling
             if not transcript:
                 languages = ['en', 'en-US', 'en-GB', 'auto']
@@ -1003,7 +495,7 @@ async def sumvideo(interaction: discord.Interaction, url: str):
                         try:
                             # Try with proxies disabled
                             transcript = YouTubeTranscriptApi.get_transcript(
-                                video_id, 
+                                video_id,
                                 languages=[lang],
                                 proxies=proxies
                             )
@@ -1016,7 +508,7 @@ async def sumvideo(interaction: discord.Interaction, url: str):
             if not transcript:
                 try:
                     transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-                    
+
                     # Try different methods in sequence
                     methods = [
                         lambda: transcript_list.find_generated_transcript(['en']),
@@ -1025,7 +517,7 @@ async def sumvideo(interaction: discord.Interaction, url: str):
                         lambda: next((t for t in transcript_list.manual_transcripts), None),
                         lambda: next((t for t in transcript_list.generated_transcripts), None),
                     ]
-                    
+
                     for method_num, method in enumerate(methods, 1):
                         try:
                             logger.info(f"Trying transcript method {method_num}")
@@ -1058,15 +550,15 @@ async def sumvideo(interaction: discord.Interaction, url: str):
                 # Convert to list format if it's not already
                 if not isinstance(transcript, list):
                     transcript = transcript.fetch()
-                
+
                 full_text = " ".join([entry['text'] for entry in transcript])
-                
+
                 if len(full_text) > 4000:
                     full_text = full_text[:4000] + "..."
-                
+
                 # Create the analysis
-                response = openai_client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                response = deepseek_client.chat.completions.create(
+                    model=AI_MODEL,
                     messages=[
                         {"role": "system", "content": """Analyze the content in this structured format:
                         1. CORE CONCEPT (2-3 sentences)
@@ -1074,14 +566,14 @@ async def sumvideo(interaction: discord.Interaction, url: str):
                         3. IMPLICATIONS
                         4. CRITICAL ANALYSIS
                         5. FUTURE OUTLOOK
-                        
+
                         Keep each section brief and concise."""},
                         {"role": "user", "content": f"Analyze this video transcript:\n{full_text}"}
                     ],
                     max_tokens=300,
                     temperature=0.7
                 )
-                
+
                 analysis = response.choices[0].message.content.strip()
                 await response_method(analysis)
             else:
@@ -1094,42 +586,43 @@ async def sumvideo(interaction: discord.Interaction, url: str):
         except Exception as e:
             logger.error(f'Transcript processing error: {str(e)}')
             await response_method(f"❌ Error processing video transcript: {str(e)}")
-            
+
     except Exception as e:
         logger.error(f'Error in sumvideo command: {str(e)}', exc_info=True)
         try:
             await response_method(f"Sorry, an error occurred: {str(e)}")
-        except:
+        except Exception:
             await channel.send(f"Sorry, an error occurred: {str(e)}")
+
 
 @bot.tree.command(name="detailvideo", description="Provides an in-depth analysis with personalized impact assessment")
 async def detailvideo(interaction: discord.Interaction, url: str):
     logger.info(f'DetailVideo command received from {interaction.user}')
-    
+
     try:
         await interaction.response.defer()
-        
+
         youtube_regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)'
         match = re.search(youtube_regex, url)
-        
+
         if not match:
             await interaction.followup.send("Please provide a valid YouTube URL.")
             return
-            
+
         video_id = match.group(1)
-        
+
         try:
             transcript = YouTubeTranscriptApi.get_transcript(video_id)
             full_text = " ".join([entry['text'] for entry in transcript])
-            
+
             if len(full_text) > 4000:
                 full_text = full_text[:4000] + "..."
-            
+
             # Detailed analysis prompt
-            response = openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+            response = deepseek_client.chat.completions.create(
+                model=AI_MODEL,
                 messages=[
-                    {"role": "system", "content": """You are an expert content analyzer with deep understanding of American society in 2024. 
+                    {"role": "system", "content": """You are an expert content analyzer with deep understanding of American society.
                     Provide a comprehensive analysis with these sections:
                     1. Executive Summary (2-3 sentences)
                     2. Main Topics Covered (bullet points)
@@ -1137,28 +630,27 @@ async def detailvideo(interaction: discord.Interaction, url: str):
                     4. Notable Quotes or Statistics
                     5. Potential Counterarguments or Limitations
                     6. Practical Applications
-                    7. How This Affects You (2024 American Context):
+                    7. How This Affects You:
                        - Personal Impact
                        - Community Impact
                        - Action Steps
                        Consider current factors like:
-                       - Post-election climate
                        - Economic conditions
                        - Social dynamics
                        - Technology trends
                        - Policy implications
                     8. Related Topics for Further Research
-                    
-                    Make the "How This Affects You" section particularly engaging and actionable, 
+
+                    Make the "How This Affects You" section particularly engaging and actionable,
                     considering the current political, economic, and social climate in America."""},
                     {"role": "user", "content": f"Provide a detailed analysis of this video transcript:\n{full_text}"}
                 ],
                 max_tokens=1000,
                 temperature=0.7
             )
-            
+
             analysis = response.choices[0].message.content.strip()
-            
+
             # Split message if it's too long for Discord
             if len(analysis) > 1900:  # Discord has a 2000 character limit
                 parts = [analysis[i:i+1900] for i in range(0, len(analysis), 1900)]
@@ -1169,139 +661,69 @@ async def detailvideo(interaction: discord.Interaction, url: str):
                         await interaction.followup.send(f"(Part {i+1}/{len(parts)}):\n\n{part}")
             else:
                 await interaction.followup.send(f"{interaction.user.mention}, here's a detailed analysis of the video:\n\n{analysis}")
-            
+
         except Exception as e:
             logger.error(f'Error processing transcript: {str(e)}')
             await interaction.followup.send(f"Sorry, I couldn't process the video transcript. Error: {str(e)}")
-            
+
     except Exception as e:
         logger.error(f'Error in detailvideo command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Sorry {interaction.user.mention}, an error occurred: {str(e)}")
 
-@bot.tree.command(name="meme", description="Generates a meme based on recent conversation")
-async def meme(interaction: discord.Interaction):
-    logger.info(f'Meme command received from {interaction.user} in {interaction.guild.name}/{interaction.channel.name}')
-    
-    try:
-        # Defer the response since this will take time
-        await interaction.response.defer()
-        
-        # Fetch last 3 messages
-        messages = [message async for message in interaction.channel.history(limit=3)]
-        messages.reverse()  # Put in chronological order
-        
-        # Format messages for context
-        conversation = "\n".join([f"{msg.author.name}: {msg.content}" for msg in messages])
-        
-        # First, get a meme concept from GPT
-        concept_response = openai_client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": """You are a meme expert. Based on the conversation, 
-                create a funny meme concept. Create a detailed but concise image description that 
-                DALL-E can use to generate a humorous meme-style image. Add a short, witty caption.
-                
-                Format your response exactly like this:
-                IMAGE: [detailed image description]
-                CAPTION: [short witty text]"""},
-                {"role": "user", "content": f"Create a meme based on this conversation:\n{conversation}"}
-            ],
-            max_tokens=150,
-            temperature=0.9
-        )
-        
-        meme_concept = concept_response.choices[0].message.content.strip()
-        image_desc = ""
-        caption = ""
-        
-        # Parse the response
-        for line in meme_concept.split('\n'):
-            if line.startswith('IMAGE:'):
-                image_desc = line.replace('IMAGE:', '').strip()
-            elif line.startswith('CAPTION:'):
-                caption = line.replace('CAPTION:', '').strip()
-        
-        # Generate image using DALL-E
-        image_response = openai_client.images.generate(
-            model="dall-e-3",
-            prompt=f"Create a meme-style image: {image_desc}. Make it funny and suitable for a meme. Use bold, clear visuals typical of internet memes.",
-            n=1,
-            size="1024x1024",
-            quality="standard"
-        )
-        
-        # Get the image URL
-        image_url = image_response.data[0].url
-        
-        # Download the image
-        image_response = requests.get(image_url)
-        image_data = BytesIO(image_response.content)
-        
-        # Send the meme
-        await interaction.followup.send(
-            content=f"**{caption}**\n*Generated based on your conversation*",
-            file=discord.File(fp=image_data, filename='meme.png')
-        )
-        
-    except Exception as e:
-        logger.error(f'Error in meme command: {str(e)}', exc_info=True)
-        await interaction.followup.send(
-            f"Sorry {interaction.user.mention}, I couldn't generate the meme. Error: {str(e)}"
-        )
 
 @bot.tree.command(name="finnasumthisup", description="Street Oracle breaks down an article for you")
 async def finnasumthisup(interaction: discord.Interaction, url: str):
     logger.info(f'Article summary requested by {interaction.user}: {url}')
-    
+
     try:
         await interaction.response.defer()
-        
+
         # Fetch the article content
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
-        
+
         # Extract text from the article
         article_text = ""
-        
+
         # Look for common article containers
         article_containers = soup.find_all(['article', 'div'], class_=re.compile(r'article|content|story|post'))
         for container in article_containers:
             paragraphs = container.find_all('p')
             article_text += ' '.join([p.get_text().strip() for p in paragraphs])
-        
+
         if not article_text:
             # Fallback to all paragraphs if no article container found
             paragraphs = soup.find_all('p')
             article_text = ' '.join([p.get_text().strip() for p in paragraphs])
-        
+
         # Get Street Oracle to summarize
-        response = openai_client.chat.completions.create(
-            model="gpt-4",
+        response = deepseek_client.chat.completions.create(
+            model=AI_MODEL,
             messages=[
-                {"role": "system", "content": """You are the Street Oracle, breaking down complex articles in 
+                {"role": "system", "content": """You are the Street Oracle, breaking down complex articles in
                 street-smart language with New York slang and urban wisdom. Structure your response like this:
-                
+
                 "Ay yo lil homie, peep game on this article right quick:
-                
+
                 [Break down main points using street slang and urban metaphors]
-                
+
                 Bottom line: [key takeaway with street flavor]"
-                
+
                 Keep it real, informative, and entertaining. Use authentic street/urban language."""},
                 {"role": "user", "content": f"Break down this article in your style:\n\n{article_text}"}
             ],
             max_tokens=400,
             temperature=0.7
         )
-        
+
         summary = response.choices[0].message.content.strip()
-        
+
         # Send the summary with some style
         await interaction.followup.send(
             f"🗞️ **Street Oracle Article Breakdown** 🔮\n\n{summary}\n\n*Original article: {url}*"
         )
-        
+
     except Exception as e:
         logger.error(f'Error in finnasumthisup command: {str(e)}', exc_info=True)
         await interaction.followup.send(
@@ -1309,25 +731,26 @@ async def finnasumthisup(interaction: discord.Interaction, url: str):
             f"Make sure that link is straight and try again later! Error: {str(e)}"
         )
 
+
 @bot.tree.command(name="fryemup", description="Street Oracle roasts based on recent messages")
 async def fryemup(interaction: discord.Interaction):
     logger.info(f'Roast command received from {interaction.user} in {interaction.guild.name}/{interaction.channel.name}')
-    
+
     try:
         await interaction.response.defer()
-        
+
         # Fetch last 5 messages for context
         messages = [message async for message in interaction.channel.history(limit=5)]
         messages.reverse()  # Put in chronological order
-        
+
         # Format messages for context
         conversation = "\n".join([f"{msg.author.name}: {msg.content}" for msg in messages])
-        
+
         # Get the Street Oracle to deliver a roast
-        response = openai_client.chat.completions.create(
-            model="gpt-4",
+        response = deepseek_client.chat.completions.create(
+            model=AI_MODEL,
             messages=[
-                {"role": "system", "content": """You are the Street Oracle, now in roast mode. You're delivering 
+                {"role": "system", "content": """You are the Street Oracle, now in roast mode. You're delivering
                 a humorous, witty roast using New York street slang and urban wisdom. Your roasts should be:
                 - Funny but not truly mean-spirited
                 - Creative with street metaphors
@@ -1336,25 +759,25 @@ async def fryemup(interaction: discord.Interaction):
                 - Always end with "lil homie"
                 - Reference specific things from the conversation
                 - Keep it playful and entertaining
-                
+
                 Example style:
-                "I finna fry ya ass up, if you dont getcho ol' pokemon card collecting, 
+                "I finna fry ya ass up, if you dont getcho ol' pokemon card collecting,
                 hot cheeto fingers, calculator watching, math class failing self somewhere else lil homie"
-                
+
                 Make it funny and creative, but keep it relatively clean and not actually hurtful."""},
                 {"role": "user", "content": f"Create a roast based on this conversation:\n{conversation}"}
             ],
             max_tokens=200,
             temperature=0.9
         )
-        
+
         roast = response.choices[0].message.content.strip()
-        
+
         # Send the roast with some style
         await interaction.followup.send(
             f"🔥 **Street Oracle Roast** 🔥\n\n{roast}"
         )
-        
+
     except Exception as e:
         logger.error(f'Error in fryemup command: {str(e)}', exc_info=True)
         await interaction.followup.send(
@@ -1362,258 +785,32 @@ async def fryemup(interaction: discord.Interaction):
             f"Try again later when the heat back on! Error: {str(e)}"
         )
 
+
 @bot.event
 async def on_command_error(ctx, error):
     logger.error(f'Command error: {str(error)}', exc_info=True)
     await ctx.send(f"An error occurred: {str(error)}")
+
 
 @bot.event
 async def on_message(message):
     # Ignore bot's own messages
     if message.author == bot.user:
         return
-        
+
     try:
-        # Track the message only once
-        await track_user_interaction(
-            user_id=message.author.id,
-            username=message.author.name,
-            interaction_type="message",
-            channel_id=message.channel.id,
-            channel_name=message.channel.name,
-            guild_id=message.guild.id if message.guild else None,
-            guild_name=message.guild.name if message.guild else None,
-            message_content=message.content,
-            details={
-                "has_attachments": bool(message.attachments),
-                "is_bot_mention": bot.user.mentioned_in(message)
-            }
-        )
-        
         # Only process as command if it starts with prefix
         if message.content.startswith(bot.command_prefix):
             ctx = await bot.get_context(message)
             if ctx.valid:
                 await bot.invoke(ctx)
-                
+
     except Exception as e:
         logger.error(f"Error in on_message: {str(e)}", exc_info=True)
 
-@bot.tree.command(name="addresource", description="Add a resource to the resources table")
-async def addresource(interaction: discord.Interaction, link: str):
-    """Stores a resource link in MongoDB with metadata"""
-    # Store references early
-    channel = interaction.channel
-    user = interaction.user
-    
-    try:
-        try:
-            # Try to acknowledge the interaction immediately
-            await interaction.response.defer(thinking=True)
-            response_method = interaction.followup.send
-        except discord.NotFound:
-            # If interaction expired, fall back to regular channel messages
-            logger.info("Interaction expired, falling back to channel messages")
-            await channel.send(f"{user.mention} Processing your request...")
-            response_method = channel.send
-            
-        logger.info(f"Processing resource submission from {user.name}: {link}")
-        
-        if not link.startswith(("http://", "https://")):
-            logger.warning(f"Invalid URL format: {link}")
-            return await response_method("❌ Please provide a valid HTTP/HTTPS URL")
-            
-        try:
-            # Get AI-generated title and tags with timeout handling
-            logger.info("Starting AI analysis of link...")
-            
-            # Create task for categorization with timeout
-            async def categorize_with_timeout():
-                return await asyncio.wait_for(
-                    CryptoTools.categorize_link(link),
-                    timeout=25  # 25 second timeout
-                )
-            
-            try:
-                title, tags = await categorize_with_timeout()
-                logger.info(f"AI analysis complete - Title: {title}, Tags: {tags}")
-            except asyncio.TimeoutError:
-                logger.warning("AI analysis timed out, using default values")
-                # Parse title from URL as fallback
-                parsed_url = urlparse(link)
-                domain = parsed_url.netloc.replace('www.', '')
-                path = parsed_url.path.strip('/')
-                title = f"{domain}/{path}"[:50] if path else domain
-                tags = ["GENERAL"]
-            
-        except Exception as e:
-            logger.error(f"AI analysis failed: {str(e)}", exc_info=True)
-            # Use URL components for title as fallback
-            parsed_url = urlparse(link)
-            domain = parsed_url.netloc.replace('www.', '')
-            path = parsed_url.path.strip('/')
-            title = f"{domain}/{path}"[:50] if path else domain
-            tags = ["GENERAL"]
-            
-        # Create document
-        resource_data = {
-            "title": title,
-            "link": link,
-            "submitted_by": {
-                "user_id": str(user.id),
-                "username": user.name
-            },
-            "timestamp": datetime.now(),
-            "upvotes": 0,
-            "tags": tags,
-            "auto_generated": True
-        }
-        
-        logger.info(f"Attempting to save resource to MongoDB: {resource_data}")
-        
-        # Insert into MongoDB
-        result = resources_collection.insert_one(resource_data)
-        
-        if result.inserted_id:
-            logger.info(f"Resource saved successfully with ID: {result.inserted_id}")
-            await response_method(
-                f"✅ Resource added:\n**{title}**\n"
-                f"Tags: {', '.join(tags)}\n"
-                f"{link}\n"
-                f"View all resources: [Street Network Resources](https://street-network.vercel.app/app/resources)"
-            )
-        else:
-            logger.error("MongoDB insert failed - no inserted_id returned")
-            await response_method("❌ Failed to save resource")
-            
-    except Exception as e:
-        logger.error(f'Resource submission error: {str(e)}', exc_info=True)
-        error_msg = "🔥 Yo, something burned up in the process! Try again later."
-        try:
-            if isinstance(response_method, type(interaction.followup.send)):
-                await response_method(error_msg)
-            else:
-                await channel.send(f"{user.mention} {error_msg}")
-        except Exception as e2:
-            logger.error(f"Failed to send error message: {str(e2)}")
-            if channel:
-                await channel.send(f"{user.mention} 🔥 Error processing your request. Please try again.")
 
-# Move this BEFORE if __name__ == "__main__":
-# Add after MongoDB setup
-tweet_tracking_collection = db['tweet_tracking']
-tweet_tracking_collection.create_index([("twitter_id", 1)], unique=True)
-
-class TwitterMonitor:
-    def __init__(self, bot):
-        self.bot = bot
-        # Initialize Twitter API client
-        self.client = tweepy.Client(
-            bearer_token=os.getenv('TWITTER_BEARER_TOKEN'),
-            wait_on_rate_limit=True
-        )
-        # Dictionary to store last tweet IDs
-        self.last_tweet_ids = {}
-        
-    async def check_new_tweets(self, twitter_username: str):
-        """Check for new tweets from specified user"""
-        try:
-            # Get user ID first
-            user = self.client.get_user(username=twitter_username)
-            if not user.data:
-                logger.error(f"Could not find Twitter user: {twitter_username}")
-                return
-                
-            user_id = user.data.id
-            
-            # Get recent tweets
-            tweets = self.client.get_users_tweets(
-                user_id,
-                max_results=5,
-                exclude=['retweets', 'replies']
-            )
-            
-            if not tweets.data:
-                return
-                
-            # Get latest stored tweet ID
-            last_stored = tweet_tracking_collection.find_one(
-                {"twitter_username": twitter_username},
-                sort=[("tweet_id", -1)]
-            )
-            
-            last_tweet_id = last_stored['tweet_id'] if last_stored else None
-            
-            new_tweets = []
-            for tweet in reversed(tweets.data):
-                # Check if tweet is new
-                if not last_tweet_id or str(tweet.id) > last_tweet_id:
-                    new_tweets.append(tweet)
-                    # Store new tweet ID
-                    tweet_tracking_collection.insert_one({
-                        "twitter_username": twitter_username,
-                        "tweet_id": str(tweet.id),
-                        "timestamp": datetime.now(timezone.utc)
-                    })
-            
-            return new_tweets
-            
-        except Exception as e:
-            logger.error(f"Error checking tweets: {str(e)}", exc_info=True)
-            return []
-
-    async def start_monitoring(self, channel_id: int, twitter_username: str):
-        """Start monitoring tweets for a user"""
-        channel = self.bot.get_channel(channel_id)
-        if not channel:
-            logger.error(f"Could not find channel: {channel_id}")
-            return
-            
-        while True:
-            try:
-                new_tweets = await self.check_new_tweets(twitter_username)
-                
-                for tweet in new_tweets:
-                    tweet_url = f"https://twitter.com/{twitter_username}/status/{tweet.id}"
-                    await channel.send(
-                        f"🐦 New tweet from @{twitter_username}:\n"
-                        f"{tweet.text}\n"
-                        f"Link: {tweet_url}"
-                    )
-                    
-                # Wait 2 minutes before checking again
-                await asyncio.sleep(120)
-                
-            except Exception as e:
-                logger.error(f"Error in tweet monitor: {str(e)}", exc_info=True)
-                await asyncio.sleep(60)  # Wait a minute before retrying
-
-@bot.tree.command(name="monitor_tweets", description="Start monitoring tweets from a Twitter user")
-async def monitor_tweets(interaction: discord.Interaction, twitter_username: str):
-    try:
-        await interaction.response.defer()
-        
-        # Create TwitterMonitor instance
-        monitor = TwitterMonitor(bot)
-        
-        # Start monitoring in background task
-        task = asyncio.create_task(
-            monitor.start_monitoring(interaction.channel_id, twitter_username)
-        )
-        
-        await interaction.followup.send(
-            f"✅ Now monitoring tweets from @{twitter_username} in this channel!"
-        )
-        
-    except Exception as e:
-        logger.error(f"Error setting up tweet monitor: {str(e)}", exc_info=True)
-        await interaction.followup.send(
-            f"❌ Error setting up tweet monitor: {str(e)}"
-        )
-
-# Then the main function
+# Main entry point
 if __name__ == "__main__":
-    # Development mode
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(run_bot_and_server())
