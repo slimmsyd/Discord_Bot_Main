@@ -1,0 +1,16 @@
+[Unit]
+Description=Street Oracle Discord Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/Discord_Bot_Main
+ExecStart=/home/ubuntu/Discord_Bot_Main/venv/bin/python /home/ubuntu/Discord_Bot_Main/app.py
+# app.py calls load_dotenv(), so it reads secrets from /home/ubuntu/Discord_Bot_Main/.env
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
