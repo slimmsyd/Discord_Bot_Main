@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Install required system dependencies
 RUN apt-get update && \
@@ -14,12 +14,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
-# Make startup script executable
-RUN chmod +x startup.sh
-
-# Azure-specific configurations
-ENV WEBSITES_PORT=8000
+# Health server inside app.py binds 8000 (optional; not required for a gateway bot)
 EXPOSE 8000
 
-# Use startup script
-CMD ["./startup.sh"] 
+# Run the bot directly. NOTE: do NOT use gunicorn/startup.sh here — that path
+# serves the web app but never calls bot.start(), so the bot never connects.
+CMD ["python", "app.py"]
