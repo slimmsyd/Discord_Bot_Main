@@ -104,3 +104,11 @@ def rank_channels(name, channels, client, model, limit=2):
         if len(results) >= limit:
             break
     return results
+
+
+def find_channels(name, channels, client, model, limit=2):
+    """Try AI ranking; fall back to fuzzy matching if it yields nothing."""
+    results = rank_channels(name, channels, client, model, limit=limit)
+    if results:
+        return results
+    return fuzzy_match(name, channels, limit=limit)

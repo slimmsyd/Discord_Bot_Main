@@ -4,7 +4,7 @@ from pathlib import Path
 # Allow importing channel_finder.py from the repo root.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from channel_finder import fuzzy_match, rank_channels
+from channel_finder import fuzzy_match, rank_channels, find_channels
 
 CHANNELS = [
     {"id": 111, "name": "announcements", "topic": "official updates"},
@@ -117,3 +117,22 @@ def test_rank_channels_respects_limit():
     results = rank_channels("anything", CHANNELS, client, "deepseek-chat", limit=1)
     assert len(results) == 1
     assert results[0]["id"] == 111
+
+
+def test_find_channels_uses_ai_when_available():
+    client = StubClient(content='{"matches": [{"id": 333, "reason": "ai pick"}]}')
+    results = find_channels("anything", CHANNELS, client, "deepseek-chat")
+    assert results == [{"id": 333, "reason": "ai pick"}]
+
+
+def test_find_channels_falls_back_to_fuzzy_on_ai_failure():
+    client = StubClient(error=RuntimeError("api down"))
+    # AI returns [] -> fuzzy finds "Substack" in #newsletter's topic.
+    results = find_channels("Substack", CHANNELS, client, "deepseek-chat")
+    assert results[0]["id"] == 333
+
+
+def test_find_channels_returns_empty_when_nothing_matches():
+    client = StubClient(content='{"matches": []}')
+    # AI empty, fuzzy empty (no literal "crypto") -> overall empty.
+    assert find_channels("Crypto", CHANNELS, client, "deepseek-chat") == []
