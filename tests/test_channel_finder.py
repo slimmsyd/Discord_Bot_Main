@@ -101,3 +101,19 @@ def test_rank_channels_returns_empty_on_client_error():
 def test_rank_channels_returns_empty_on_bad_json():
     client = StubClient(content="this is not json")
     assert rank_channels("Crypto", CHANNELS, client, "deepseek-chat") == []
+
+
+def test_rank_channels_returns_empty_on_non_list_matches():
+    # Valid JSON, but "matches" is not a list -> must not raise, returns [].
+    client = StubClient(content='{"matches": 42}')
+    assert rank_channels("Crypto", CHANNELS, client, "deepseek-chat") == []
+
+
+def test_rank_channels_respects_limit():
+    client = StubClient(
+        content='{"matches": [{"id": 111, "reason": "a"}, '
+                '{"id": 222, "reason": "b"}, {"id": 333, "reason": "c"}]}'
+    )
+    results = rank_channels("anything", CHANNELS, client, "deepseek-chat", limit=1)
+    assert len(results) == 1
+    assert results[0]["id"] == 111

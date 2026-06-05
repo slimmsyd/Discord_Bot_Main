@@ -86,9 +86,13 @@ def rank_channels(name, channels, client, model, limit=2):
         logger.error(f"rank_channels AI call failed: {e}", exc_info=True)
         return []
 
+    matches = data.get("matches", [])
+    if not isinstance(matches, list):
+        return []
+
     results = []
     seen = set()
-    for match in data.get("matches", []):
+    for match in matches:
         try:
             cid = int(match["id"])
         except (KeyError, TypeError, ValueError):
