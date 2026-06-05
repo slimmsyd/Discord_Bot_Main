@@ -39,6 +39,8 @@ def fuzzy_match(name, channels, limit=2):
             score += 1.0
         # Catch typos / partial overlap on the name.
         score += SequenceMatcher(None, query, ch_name).ratio()
+        # Discard low-confidence hits: a SequenceMatcher-only match must clear
+        # 0.5 to count, while any literal substring match (>= 1.0) always passes.
         if score > 0.5:
             scored.append((score, ch))
     scored.sort(key=lambda pair: pair[0], reverse=True)

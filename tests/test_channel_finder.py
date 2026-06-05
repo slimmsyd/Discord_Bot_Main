@@ -32,4 +32,4 @@ def test_fuzzy_match_returns_empty_for_conceptual_query():
 
 def test_fuzzy_match_respects_limit():
     results = fuzzy_match("general", CHANNELS, limit=1)
-    assert len(results) <= 1
+    assert len(results) == 1
