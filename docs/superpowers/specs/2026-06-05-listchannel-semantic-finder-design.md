@@ -20,11 +20,15 @@ channels** as clickable links that jump the user to the channel, matching by
 
 ## User Experience
 
+The command has a single text option named `name`. The user types
+`/listchannel` and fills one box — the term they're looking for:
+
 ```
-/listchannel query:Crypto
+/listchannel name:Crypto
 ```
 
-Bot replies **publicly** in the channel (so any member can use the links too):
+**When matches are found**, the bot replies **publicly** in the channel (so any
+member can use the links too):
 
 ```
 🔎 Top matches for "Crypto":
@@ -35,17 +39,28 @@ Bot replies **publicly** in the channel (so any member can use the links too):
 `<#channel_id>` renders as a clickable `#channel-name` link in Discord that
 jumps the user straight to that channel.
 
+**When nothing matches** (the channel doesn't exist), the bot replies
+**privately (ephemeral)** so there is no public "no results" clutter:
+
+```
+Couldn't find a channel matching "Crypto" 🤷
+Try a broader term, or it may not exist yet.
+```
+
 ### Notes / constraints
 - Discord requires slash command names to be **lowercase** → command is
-  `/listchannel` (not `/listChannel`). The `query` argument is free-form.
-- Reply is **public** (not ephemeral) — posted with `interaction.followup.send()`
-  with no `ephemeral=True`.
+  `/listchannel` (not `/listChannel`). The single option is named `name`
+  (free-form text).
+- **Mixed visibility:** successful results are **public**; the not-found message
+  is **private (ephemeral)**.
 - Returns **up to 2** matches to stay concise.
 
 ## Flow
 
-1. `await interaction.response.defer()` — public defer (gives time for the AI
-   call; no `ephemeral` flag).
+1. `await interaction.response.defer(ephemeral=True)` — **private** defer, so the
+   "thinking…" indicator is visible only to the invoker and a no-match outcome
+   leaves no public trace. (Successful results are posted to the channel as a
+   separate public message in step 4.)
 2. **Gather candidate channels** from `interaction.guild.channels`:
    - Keep text-based types only: `discord.TextChannel`, `discord.ForumChannel`
      (announcement channels are `TextChannel` subclasses, so included).
@@ -58,10 +73,15 @@ jumps the user straight to that channel.
    - Prompt asks the model to return the 2 best-matching channel IDs as JSON,
      ranked best-first, plus a short reason for each.
    - Low temperature (e.g. `0.2`) for deterministic ranking. `model = AI_MODEL`.
-4. **Validate & reply**:
+4. **Validate & reply (mixed visibility)**:
    - Parse JSON; keep only IDs that exist in the candidate set (drop any the
      model invents/hallucinates).
-   - Format the public message with `<#id>` mentions + reason, best first.
+   - **If ≥1 valid match:** post the results as a **public** message in the
+     channel (`interaction.channel.send(...)`) with `<#id>` mentions + reason,
+     best first. Optionally also confirm to the invoker via an ephemeral
+     followup.
+   - **If 0 matches:** send a **private** `interaction.followup.send(...,
+     ephemeral=True)` with the not-found message — no public output.
 
 ## Architecture
 
@@ -75,20 +95,22 @@ Two units, separated so the ranking logic is testable without Discord:
 - **Pure-ish & testable:** Takes plain dicts (not Discord objects) so it can be
   unit-tested with a stubbed DeepSeek client. Does no Discord I/O.
 
-### Unit B — `@bot.tree.command listchannel(interaction, query)`
-- **Does:** The Discord wrapper. Gathers/filters channels into descriptor
-  dicts, calls `rank_channels`, maps results back to channel IDs, formats and
-  sends the public reply.
+### Unit B — `@bot.tree.command listchannel(interaction, name)`
+- **Does:** The Discord wrapper. The slash option is `name` (the search term).
+  Gathers/filters channels into descriptor dicts, calls `rank_channels`, maps
+  results back to channel IDs, then applies the mixed-visibility reply rule:
+  public channel message on a hit, ephemeral followup on no match.
 - **Depends on:** Unit A, `discord`, the bot tree.
-- Mirrors the existing command pattern (`defer → work → followup.send`,
-  try/except with a friendly error message + `logger.error(..., exc_info=True)`).
+- Mirrors the existing command pattern (`defer → work → send`, try/except with a
+  friendly error message + `logger.error(..., exc_info=True)`). Note the
+  `defer` is `ephemeral=True` here so a no-match leaves no public trace.
 
 ## Error Handling
 
 | Situation | Behavior |
 |-----------|----------|
 | DeepSeek errors / response not valid JSON / no valid IDs returned | **Fall back** to local fuzzy name matching (substring + simple ratio on `name`/`topic`); return top 2. Guarantees an answer even if the AI call fails. |
-| No channels match at all (even fallback empty) | Friendly message: `Couldn't find a channel matching "<query>" 🤷` |
+| No channels match at all (even fallback empty) | **Private (ephemeral)** message: `Couldn't find a channel matching "<name>" 🤷 — Try a broader term, or it may not exist yet.` No public output. |
 | Command raises unexpectedly | Caught by the command's try/except; logs with `exc_info=True` and sends a friendly failure message, matching other commands. |
 | Guild has many channels | Names/topics are short; full catalog of names + truncated topics fits comfortably in one prompt. No pagination needed for typical server sizes. |
 
