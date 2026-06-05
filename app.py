@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 import http.client
 import socket
 import httpx
+from channel_finder import find_channels
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -783,6 +784,55 @@ async def fryemup(interaction: discord.Interaction):
         await interaction.followup.send(
             f"Ay yo {interaction.user.mention}, my bad fam! The roast ain't cooking right now. "
             f"Try again later when the heat back on! Error: {str(e)}"
+        )
+
+
+@bot.tree.command(name="listchannel", description="Find the most relevant channel(s) by meaning")
+@discord.app_commands.describe(name="What you're looking for, e.g. Substack or Crypto")
+async def listchannel(interaction: discord.Interaction, name: str):
+    logger.info(f'listchannel search from {interaction.user} in {interaction.guild.name}: {name}')
+
+    try:
+        # Private "thinking" indicator; a no-match leaves no public trace.
+        await interaction.response.defer(ephemeral=True)
+
+        # Gather text-based channels the invoking user can actually view.
+        candidates = []
+        for ch in interaction.guild.channels:
+            if not isinstance(ch, (discord.TextChannel, discord.ForumChannel)):
+                continue
+            if not ch.permissions_for(interaction.user).view_channel:
+                continue
+            candidates.append({
+                "id": ch.id,
+                "name": ch.name,
+                "topic": getattr(ch, "topic", None),
+            })
+
+        matches = find_channels(name, candidates, deepseek_client, AI_MODEL, limit=2)
+
+        if not matches:
+            await interaction.followup.send(
+                f'Couldn\'t find a channel matching "{name}" 🤷\n'
+                "Try a broader term, or it may not exist yet.",
+                ephemeral=True,
+            )
+            return
+
+        lines = [f'🔎 Top matches for "{name}":']
+        for i, m in enumerate(matches, start=1):
+            lines.append(f"{i}. <#{m['id']}> — {m['reason']}")
+
+        # Public message so anyone in the channel can use the links.
+        await interaction.channel.send("\n".join(lines))
+        # Private confirmation closes out the ephemeral defer for the invoker.
+        await interaction.followup.send("Posted the matches above 👆", ephemeral=True)
+
+    except Exception as e:
+        logger.error(f'Error in listchannel command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Ay {interaction.user.mention}, channel search glitched out. Try again! Error: {str(e)}",
+            ephemeral=True,
         )
 
 
