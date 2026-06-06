@@ -373,7 +373,7 @@ async def dearoracle(interaction: discord.Interaction, question: str):
                 response = deepseek_client.chat.completions.create(
                     model=AI_MODEL,
                     messages=[
-                        {"role": "system", "content": "You are a crypto-savvy oracle. Provide insights about the cryptocurrency along with its price."},
+                        {"role": "system", "content": "You are a crypto-savvy oracle. Provide insights about the cryptocurrency along with its price. Keep your answer to a single focused paragraph of about 5-7 sentences. Always finish your thought; do not use numbered lists or multi-section breakdowns."},
                         {"role": "user", "content": f"Give me insights about {found_crypto}. Here's the current price info: {price_info}"}
                     ],
                     max_tokens=800,
@@ -389,7 +389,8 @@ async def dearoracle(interaction: discord.Interaction, question: str):
             messages=[
                 {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well.
                 Most of your thoughts are based on the early stoics and Greek philosophers. Be diverse in your thoughts and ideas.
-                Always start your response with "Young God," and maintain a friendly, street-smart tone."""},
+                Always start your response with "Young God," and maintain a friendly, street-smart tone.
+                Keep your answer to a single focused paragraph of about 5-7 sentences. Always finish your thought; do not use numbered lists or multi-section breakdowns."""},
                 {"role": "user", "content": question}
             ],
             max_tokens=800,
