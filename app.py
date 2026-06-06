@@ -16,6 +16,7 @@ import http.client
 import socket
 import httpx
 from channel_finder import find_channels
+from discord_utils import split_for_discord
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -346,6 +347,13 @@ class CryptoTools:
             return f"An unexpected error occurred: {str(e)}"
 
 
+async def send_oracle_reply(interaction, content):
+    """Send the Oracle's reply, splitting into multiple messages if it would
+    exceed Discord's 2000-char limit."""
+    for chunk in split_for_discord(f"🔮 {content}"):
+        await interaction.followup.send(chunk)
+
+
 @bot.tree.command(name="dearoracle", description="Ask about cryptocurrency or any other question")
 async def dearoracle(interaction: discord.Interaction, question: str):
     logger.info(f'Oracle question received from {interaction.user}: {question}')
@@ -368,11 +376,11 @@ async def dearoracle(interaction: discord.Interaction, question: str):
                         {"role": "system", "content": "You are a crypto-savvy oracle. Provide insights about the cryptocurrency along with its price."},
                         {"role": "user", "content": f"Give me insights about {found_crypto}. Here's the current price info: {price_info}"}
                     ],
-                    max_tokens=150,
+                    max_tokens=800,
                     temperature=0.7
                 )
                 oracle_response = response.choices[0].message.content.strip()
-                await interaction.followup.send(f"🔮 {oracle_response}")
+                await send_oracle_reply(interaction, oracle_response)
                 return
 
         # For non-crypto questions
@@ -384,12 +392,12 @@ async def dearoracle(interaction: discord.Interaction, question: str):
                 Always start your response with "Young God," and maintain a friendly, street-smart tone."""},
                 {"role": "user", "content": question}
             ],
-            max_tokens=150,
+            max_tokens=800,
             temperature=0.7
         )
 
         oracle_wisdom = response.choices[0].message.content.strip()
-        await interaction.followup.send(f"🔮 {oracle_wisdom}")
+        await send_oracle_reply(interaction, oracle_wisdom)
 
     except Exception as e:
         logger.error(f'Error in dearoracle command: {str(e)}', exc_info=True)
