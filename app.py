@@ -15,8 +15,11 @@ from bs4 import BeautifulSoup
 import http.client
 import socket
 import httpx
+import time
 from channel_finder import find_channels
 from discord_utils import split_for_discord
+from persona import STREET_ORACLE_SYSTEM, build_messages
+from conversation_memory import ConversationMemory, make_key
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -91,6 +94,9 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True
 bot = commands.Bot(command_prefix='/', intents=intents)
+
+# Ephemeral per-(channel, user) conversation memory for the @mention agent.
+oracle_memory = ConversationMemory()
 
 # Increase timeout for HTTP operations
 socket.setdefaulttimeout(30)
@@ -387,10 +393,7 @@ async def dearoracle(interaction: discord.Interaction, question: str):
         response = deepseek_client.chat.completions.create(
             model=AI_MODEL,
             messages=[
-                {"role": "system", "content": """You are the Street Oracle, with a love of stoicism and the art of living well.
-                Most of your thoughts are based on the early stoics and Greek philosophers. Be diverse in your thoughts and ideas.
-                Always start your response with "Young God," and maintain a friendly, street-smart tone.
-                Keep your answer to a single focused paragraph of about 5-7 sentences. Always finish your thought; do not use numbered lists or multi-section breakdowns."""},
+                {"role": "system", "content": STREET_ORACLE_SYSTEM},
                 {"role": "user", "content": question}
             ],
             max_tokens=800,
@@ -851,21 +854,75 @@ async def on_command_error(ctx, error):
     await ctx.send(f"An error occurred: {str(error)}")
 
 
-@bot.event
-async def on_message(message):
-    # Ignore bot's own messages
-    if message.author == bot.user:
+async def handle_oracle_mention(message):
+    """Answer an @mention in the Street Oracle voice, with short conversation memory."""
+    # Strip the bot mention(s) to recover the actual question.
+    question = message.content
+    for mention in (f"<@{bot.user.id}>", f"<@!{bot.user.id}>"):
+        question = question.replace(mention, "")
+    question = question.strip()
+
+    if not question:
+        await message.reply(
+            "Young God, you summoned me but spoke no question. Ask, and I will answer."
+        )
         return
 
+    key = make_key(message.channel.id, message.author.id)
+    now = time.time()
+
     try:
-        # Only process as command if it starts with prefix
-        if message.content.startswith(bot.command_prefix):
+        async with message.channel.typing():
+            oracle_memory.prune(now)
+            history = oracle_memory.get_history(key, now)
+            messages = build_messages(STREET_ORACLE_SYSTEM, history, question)
+            response = deepseek_client.chat.completions.create(
+                model=AI_MODEL,
+                messages=messages,
+                max_tokens=800,
+                temperature=0.7,
+            )
+            answer = response.choices[0].message.content.strip()
+
+        chunks = split_for_discord(answer)
+        await message.reply(chunks[0])
+        for chunk in chunks[1:]:
+            await message.channel.send(chunk)
+
+        # Record both turns only after a successful send.
+        oracle_memory.append_turn(key, "user", question, now)
+        oracle_memory.append_turn(key, "assistant", answer, now)
+
+    except Exception as e:
+        logger.error(f'Error in handle_oracle_mention: {str(e)}', exc_info=True)
+        await message.reply(
+            "Young God, my vision clouds for the moment. Ask me again shortly."
+        )
+
+
+@bot.event
+async def on_message(message):
+    # Never respond to ourselves or any other bot (prevents reply loops).
+    if message.author.bot:
+        return
+
+    # Existing prefix-command path stays first and unchanged.
+    if message.content.startswith(bot.command_prefix):
+        try:
             ctx = await bot.get_context(message)
             if ctx.valid:
                 await bot.invoke(ctx)
+        except Exception as e:
+            logger.error(f"Error in on_message (command path): {str(e)}", exc_info=True)
+        return  # a prefix command is not also a mention prompt
 
-    except Exception as e:
-        logger.error(f"Error in on_message: {str(e)}", exc_info=True)
+    # @mention path: only a genuine direct mention of the bot.
+    if bot.user is None or not bot.user.mentioned_in(message):
+        return
+    if message.mention_everyone or bot.user not in message.mentions:
+        return  # ignore @everyone/@here and role-only pings
+
+    await handle_oracle_mention(message)
 
 
 # Main entry point
