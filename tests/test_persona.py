@@ -38,4 +38,5 @@ def test_build_messages_uses_given_system():
 
 def test_street_oracle_system_has_voice_markers():
     assert "Young God," in STREET_ORACLE_SYSTEM
-    assert "5-7 sentences" in STREET_ORACLE_SYSTEM
+    assert "analogy" in STREET_ORACLE_SYSTEM  # explain-with-a-comparison recipe
+    assert "mirror back" in STREET_ORACLE_SYSTEM  # restate-the-question recipe
