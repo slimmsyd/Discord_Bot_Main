@@ -8,6 +8,8 @@ join_log.json
 join_log.json.tmp
 leave_log.json
 leave_log.json.tmp
+surveys.json
+surveys.json.tmp
 
 # Python
 __pycache__/

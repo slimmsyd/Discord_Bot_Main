@@ -23,7 +23,10 @@ from conversation_memory import ConversationMemory, make_key
 from member_export import build_member_csv, member_export_filename
 from join_tracker import diff_invite_uses, JoinLog, LeaveLog
 from growth_stats import growth_windows, join_cohorts, top_inviters, recent_leavers
+from survey_ai import generate_questions
+from survey_store import SurveyStore, build_survey_csv
 import io
+import uuid
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -117,6 +120,11 @@ join_log = JoinLog(os.getenv('JOIN_LOG_PATH', 'join_log.json'))
 leave_log = LeaveLog(os.getenv('LEAVE_LOG_PATH', 'leave_log.json'))
 guild_invite_uses = {}  # guild_id -> {invite_code: uses}
 
+# AI-generated surveys + their responses, plus a guard so we register each
+# survey's persistent "Take the survey" button view only once per process.
+survey_store = SurveyStore(os.getenv('SURVEY_STORE_PATH', 'surveys.json'))
+_registered_survey_views = set()
+
 
 def is_owner_or_admin(interaction):
     """True if the invoker is a configured owner or has server Administrator."""
@@ -165,6 +173,13 @@ Server List:
         logger.info(f'Connected to guild: {guild.name} (ID: {guild.id})')
         # Prime the invite cache so the first join after startup can be attributed.
         await cache_guild_invites(guild)
+
+    # Re-attach the persistent "Take the survey" button to surveys that are
+    # still active, so their buttons keep working after a restart.
+    for s in survey_store.list_active():
+        if s["id"] not in _registered_survey_views:
+            bot.add_view(SurveyTakeView(s["id"]))
+            _registered_survey_views.add(s["id"])
 
 
 @bot.event
@@ -1120,6 +1135,192 @@ async def growth(interaction: discord.Interaction):
     except Exception as e:
         logger.error(f'Error in growth command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Scoreboard glitched out. Error: {str(e)}", ephemeral=True)
+
+
+class SurveyModal(discord.ui.Modal):
+    """The form members fill in — one text input per question (Discord caps at 5)."""
+
+    def __init__(self, survey):
+        super().__init__(title=(survey["topic"] or "Survey")[:45])
+        self.survey_id = survey["id"]
+        self._inputs = []
+        for q in survey["questions"][:5]:
+            field = discord.ui.TextInput(
+                label=q[:45],
+                style=discord.TextStyle.paragraph,
+                required=False,
+                max_length=500,
+            )
+            self.add_item(field)
+            self._inputs.append(field)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        survey_store.add_response(self.survey_id, {
+            "user_id": str(interaction.user.id),
+            "username": str(interaction.user),
+            "answers": [f.value for f in self._inputs],
+            "submitted_at": datetime.now(timezone.utc).isoformat(),
+        })
+        await interaction.response.send_message(
+            "✅ Thanks — your response was recorded.", ephemeral=True
+        )
+
+
+class SurveyTakeView(discord.ui.View):
+    """Persistent view holding the 'Take the survey' button for one survey."""
+
+    def __init__(self, survey_id):
+        super().__init__(timeout=None)
+        self.survey_id = survey_id
+        button = discord.ui.Button(
+            label="Take the survey",
+            style=discord.ButtonStyle.primary,
+            custom_id=f"survey_take:{survey_id}",
+        )
+        button.callback = self._on_take
+        self.add_item(button)
+
+    async def _on_take(self, interaction: discord.Interaction):
+        survey = survey_store.get(self.survey_id)
+        if not survey or not survey.get("active", True):
+            await interaction.response.send_message("This survey is closed.", ephemeral=True)
+            return
+        await interaction.response.send_modal(SurveyModal(survey))
+
+
+class SurveyPreviewView(discord.ui.View):
+    """Ephemeral Post/Cancel shown to the admin before the survey goes live."""
+
+    def __init__(self, author_id, topic, questions, channel):
+        super().__init__(timeout=300)
+        self.author_id = author_id
+        self.topic = topic
+        self.questions = questions
+        self.channel = channel
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        return interaction.user.id == self.author_id
+
+    @discord.ui.button(label="Post it", style=discord.ButtonStyle.success)
+    async def post(self, interaction: discord.Interaction, button: discord.ui.Button):
+        sid = uuid.uuid4().hex[:8]
+        survey = {
+            "id": sid,
+            "topic": self.topic,
+            "questions": self.questions,
+            "channel_id": self.channel.id,
+            "message_id": None,
+            "created_by": self.author_id,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "active": True,
+        }
+        survey_store.create(survey)
+        view = SurveyTakeView(sid)
+        bot.add_view(view)
+        _registered_survey_views.add(sid)
+        msg = await self.channel.send(
+            f"📋 **Survey: {self.topic}**\nClick below to answer — {len(self.questions)} quick questions.",
+            view=view,
+        )
+        survey_store.set_message(sid, msg.id)
+        await interaction.response.edit_message(
+            content=f"✅ Posted to {self.channel.mention}. Survey ID `{sid}` — export anytime with `/surveyresults`.",
+            view=None,
+        )
+
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.edit_message(content="Cancelled — nothing posted.", view=None)
+
+
+@bot.tree.command(name="survey", description="Owner/admin only: create an AI-generated survey")
+@discord.app_commands.describe(
+    topic="What you want to learn — the AI writes the questions",
+    count="How many questions (1-5, default 4)",
+    questions="Optional: your own questions separated by | (overrides the AI)",
+)
+async def survey(interaction: discord.Interaction, topic: str = None, count: int = 4, questions: str = None):
+    logger.info(f'survey requested by {interaction.user}: topic={topic!r} count={count}')
+
+    if not is_owner_or_admin(interaction):
+        await interaction.response.send_message(
+            "⛔ This command is restricted to the server owner/admins.", ephemeral=True
+        )
+        return
+    if interaction.guild is None:
+        await interaction.response.send_message("Run this inside a server, not a DM.", ephemeral=True)
+        return
+
+    count = max(1, min(5, count))
+    try:
+        await interaction.response.defer(ephemeral=True)
+
+        if questions:
+            qs = [q.strip()[:45] for q in questions.split("|") if q.strip()][:5]
+        elif topic:
+            qs = generate_questions(topic, count, deepseek_client, AI_MODEL)
+        else:
+            await interaction.followup.send(
+                "Give me a `topic` (the AI writes the questions) or your own `questions` separated by `|`.",
+                ephemeral=True,
+            )
+            return
+
+        if not qs:
+            await interaction.followup.send(
+                "Couldn't produce any questions — try rephrasing the topic.", ephemeral=True
+            )
+            return
+
+        topic_label = topic or "Survey"
+        preview = "\n".join(f"{i + 1}. {q}" for i, q in enumerate(qs))
+        view = SurveyPreviewView(interaction.user.id, topic_label, qs, interaction.channel)
+        await interaction.followup.send(
+            f"**Preview — {topic_label}**\n{preview}\n\nPost this survey to {interaction.channel.mention}?",
+            view=view,
+            ephemeral=True,
+        )
+
+    except Exception as e:
+        logger.error(f'Error in survey command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Survey setup glitched out. Error: {str(e)}", ephemeral=True)
+
+
+@bot.tree.command(name="surveyresults", description="Owner/admin only: export survey responses as CSV")
+@discord.app_commands.describe(survey_id="Survey ID (leave blank for the most recent survey)")
+async def surveyresults(interaction: discord.Interaction, survey_id: str = None):
+    logger.info(f'surveyresults requested by {interaction.user}: id={survey_id}')
+
+    if not is_owner_or_admin(interaction):
+        await interaction.response.send_message(
+            "⛔ This command is restricted to the server owner/admins.", ephemeral=True
+        )
+        return
+
+    try:
+        await interaction.response.defer(ephemeral=True)
+        survey = survey_store.get(survey_id) if survey_id else survey_store.latest()
+        if not survey:
+            await interaction.followup.send(
+                "No survey found. Create one with `/survey` first.", ephemeral=True
+            )
+            return
+
+        responses = survey_store.responses(survey["id"])
+        csv_text = build_survey_csv(survey, responses)
+        stamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        export_file = discord.File(
+            io.BytesIO(csv_text.encode("utf-8")), filename=f"survey_{survey['id']}_{stamp}.csv"
+        )
+        await interaction.followup.send(
+            f"📁 **{len(responses)}** responses for **{survey['topic']}** (ID `{survey['id']}`).",
+            file=export_file,
+            ephemeral=True,
+        )
+
+    except Exception as e:
+        logger.error(f'Error in surveyresults command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Export glitched out. Error: {str(e)}", ephemeral=True)
 
 
 @bot.event
