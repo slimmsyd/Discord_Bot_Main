@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from join_tracker import diff_invite_uses, JoinLog
+from join_tracker import diff_invite_uses, JoinLog, LeaveLog
 
 
 def test_detects_the_incremented_invite():
@@ -48,3 +48,19 @@ def test_joinlog_survives_corrupt_file(tmp_path):
     assert log.get(1) is None
     log.record(1, {"method": "unknown"})  # and is still usable
     assert JoinLog(str(path)).get(1) == {"method": "unknown"}
+
+
+def test_joinlog_all_records_merges_user_id():
+    log = JoinLog("/nonexistent/path-not-loaded.json")
+    log._data = {"42": {"inviter_tag": "alice"}}
+    assert log.all_records() == [{"inviter_tag": "alice", "user_id": "42"}]
+
+
+def test_leavelog_appends_and_persists(tmp_path):
+    path = tmp_path / "leave_log.json"
+    log = LeaveLog(str(path))
+    log.record({"user_id": "1", "left_at": "2026-06-01T00:00:00+00:00"})
+    log.record({"user_id": "2", "left_at": "2026-06-02T00:00:00+00:00"})
+
+    reloaded = LeaveLog(str(path))
+    assert [e["user_id"] for e in reloaded.events()] == ["1", "2"]

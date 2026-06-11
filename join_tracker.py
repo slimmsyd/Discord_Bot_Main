@@ -63,3 +63,48 @@ class JoinLog:
     def get(self, user_id):
         """Return the stored join record for a user, or None."""
         return self._data.get(str(user_id))
+
+    def all_records(self):
+        """Return every join record with its user_id merged in (the dict key)."""
+        out = []
+        for uid, rec in self._data.items():
+            merged = dict(rec)
+            merged.setdefault("user_id", uid)
+            out.append(merged)
+        return out
+
+
+class LeaveLog:
+    """Append-only JSON list of leave events: ``[{user_id, username, left_at, joined_at}]``.
+
+    A list (not a dict) because the same user can leave, rejoin, and leave
+    again — each departure is its own event worth counting.
+    """
+
+    def __init__(self, path):
+        self.path = path
+        self._events = []
+        self.load()
+
+    def load(self):
+        if os.path.exists(self.path):
+            try:
+                with open(self.path, "r", encoding="utf-8") as f:
+                    self._events = json.load(f)
+            except (json.JSONDecodeError, OSError):
+                self._events = []
+
+    def save(self):
+        tmp = f"{self.path}.tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(self._events, f, indent=2)
+        os.replace(tmp, self.path)
+
+    def record(self, event):
+        """Append (and persist) one leave event."""
+        self._events.append(event)
+        self.save()
+
+    def events(self):
+        """Return all recorded leave events."""
+        return list(self._events)

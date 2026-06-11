@@ -4,7 +4,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
 import re
@@ -21,7 +21,8 @@ from discord_utils import split_for_discord
 from persona import STREET_ORACLE_SYSTEM, build_messages
 from conversation_memory import ConversationMemory, make_key
 from member_export import build_member_csv, member_export_filename
-from join_tracker import diff_invite_uses, JoinLog
+from join_tracker import diff_invite_uses, JoinLog, LeaveLog
+from growth_stats import growth_windows, join_cohorts, top_inviters, recent_leavers
 import io
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
@@ -113,6 +114,7 @@ OWNER_IDS = {
 # Join tracking: persisted record of how each member joined, plus an in-memory
 # cache of each guild's invite use-counts so on_member_join can diff them.
 join_log = JoinLog(os.getenv('JOIN_LOG_PATH', 'join_log.json'))
+leave_log = LeaveLog(os.getenv('LEAVE_LOG_PATH', 'leave_log.json'))
 guild_invite_uses = {}  # guild_id -> {invite_code: uses}
 
 
@@ -213,6 +215,23 @@ async def on_member_join(member):
         join_log.record(member.id, record)
     except Exception as e:
         logger.error(f"Failed to persist join record for {member.id}: {e}")
+
+
+@bot.event
+async def on_member_remove(member):
+    """Log a departure so /growth can compute churn and net growth."""
+    event = {
+        "user_id": str(member.id),
+        "username": str(member),
+        "left_at": datetime.now(timezone.utc).isoformat(),
+        # member.joined_at is available while the member is still cached, letting
+        # us record how long they'd been around before leaving.
+        "joined_at": member.joined_at.isoformat() if member.joined_at else "",
+    }
+    try:
+        leave_log.record(event)
+    except Exception as e:
+        logger.error(f"Failed to persist leave event for {member.id}: {e}")
 
 
 class CryptoTools:
@@ -1007,6 +1026,100 @@ async def exportmembers(interaction: discord.Interaction):
         await interaction.followup.send(
             f"Export glitched out. Error: {str(e)}", ephemeral=True
         )
+
+
+def _parse_iso(s):
+    """Parse an ISO-8601 string (optional 'Z') to a datetime, or None."""
+    if not s:
+        return None
+    try:
+        return datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except (ValueError, AttributeError):
+        return None
+
+
+@bot.tree.command(name="growth", description="Owner/admin only: server growth & churn scoreboard")
+async def growth(interaction: discord.Interaction):
+    logger.info(f'growth requested by {interaction.user} in {getattr(interaction.guild, "name", "DM")}')
+
+    if not is_owner_or_admin(interaction):
+        await interaction.response.send_message(
+            "⛔ This command is restricted to the server owner/admins.", ephemeral=True
+        )
+        return
+    if interaction.guild is None:
+        await interaction.response.send_message(
+            "Run this inside a server, not a DM.", ephemeral=True
+        )
+        return
+
+    try:
+        await interaction.response.defer(ephemeral=True)
+        guild = interaction.guild
+
+        members = guild.members
+        if guild.member_count and len(members) < guild.member_count:
+            try:
+                members = [m async for m in guild.fetch_members(limit=None)]
+            except Exception as e:
+                logger.warning(f"fetch_members fell back to cache in {guild.name}: {e}")
+
+        humans = [m for m in members if not m.bot]
+        bots = len(members) - len(humans)
+        now = datetime.now(timezone.utc)
+
+        join_dates = [m.joined_at for m in humans if m.joined_at]
+        current_ids = {m.id for m in humans}
+        leave_events = leave_log.events()
+        leave_dates = [_parse_iso(ev.get("left_at")) for ev in leave_events]
+
+        windows = growth_windows(join_dates, leave_dates, now)
+        cohorts = join_cohorts(join_dates, months=6)
+        inviters = top_inviters(join_log.all_records(), current_ids, limit=8)
+        leavers = recent_leavers(leave_events, now, days=30, limit=8)
+
+        embed = discord.Embed(
+            title=f"📈 Growth — {guild.name}",
+            description=f"**{len(humans)}** humans · **{bots}** bots · **{len(members)}** total",
+            color=0x2ecc71,
+        )
+
+        net_lines = []
+        for days in (7, 30, 90):
+            w = windows[days]
+            net_lines.append(f"**{days}d:** +{w['joins']} / −{w['leaves']} = net {w['net']:+d}")
+        embed.add_field(name="Net growth (joins − leaves)", value="\n".join(net_lines), inline=False)
+
+        if cohorts:
+            peak = max(c for _, c in cohorts) or 1
+            trend = "\n".join(f"`{m}`  {'▰' * max(1, round(c / peak * 10))} {c}" for m, c in cohorts)
+        else:
+            trend = "No join data."
+        embed.add_field(name="Join trend (per month)", value=trend, inline=False)
+
+        if inviters:
+            inv = "\n".join(f"**{tag}** — {n} kept" for tag, n in inviters)
+        else:
+            inv = "No attributed invites yet — tracking just started, so this fills in as people join."
+        embed.add_field(name="Top inviters (recruits who stayed)", value=inv, inline=False)
+
+        if leavers:
+            lv = "\n".join(
+                f"{r['username']} — left {r['left_at'].strftime('%Y-%m-%d')}"
+                + (f" (after {r['tenure_days']}d)" if r['tenure_days'] is not None else "")
+                for r in leavers
+            )
+        else:
+            lv = "No departures recorded in the last 30 days."
+        embed.add_field(name="Recent leavers (30d)", value=lv, inline=False)
+
+        embed.set_footer(text="Invite + churn data accrues from when tracking started; pre-existing joins show as historical only.")
+
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+    except Exception as e:
+        logger.error(f'Error in growth command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Scoreboard glitched out. Error: {str(e)}", ephemeral=True)
 
 
 @bot.event
