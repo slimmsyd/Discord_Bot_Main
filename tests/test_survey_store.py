@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from survey_store import SurveyStore, build_survey_csv
+from survey_store import SurveyStore, build_survey_csv, survey_message_text
 
 
 SURVEY = {"id": "abc123", "topic": "tools", "questions": ["Which tools?", "How often?"], "active": True}
@@ -55,3 +55,14 @@ def test_latest_picks_most_recent(tmp_path):
 
 def test_latest_none_when_empty(tmp_path):
     assert SurveyStore(str(tmp_path / "surveys.json")).latest() is None
+
+
+def test_message_text_open_hides_count_until_first_response():
+    assert "response(s) so far" not in survey_message_text(SURVEY, 0)
+    assert "1 response(s) so far" in survey_message_text(SURVEY, 1)
+
+
+def test_message_text_closed_shows_collected_count():
+    text = survey_message_text(SURVEY, 5, closed=True)
+    assert "closed" in text
+    assert "5 response(s) collected" in text

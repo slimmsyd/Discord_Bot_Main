@@ -17,6 +17,16 @@ import json
 import os
 
 
+def survey_message_text(survey, count, closed=False):
+    """The text of the posted survey message, including a live response count."""
+    topic = survey.get("topic", "Survey")
+    n = len(survey.get("questions", []))
+    if closed:
+        return f"📋 **Survey: {topic}** — _closed_\n💬 {count} response(s) collected."
+    tail = f"\n💬 {count} response(s) so far." if count else ""
+    return f"📋 **Survey: {topic}**\nClick below to answer — {n} quick questions.{tail}"
+
+
 def build_survey_csv(survey, responses):
     """CSV with one column per question. Answers are positional (answers[i] maps
     to questions[i]); short/long answer lists are padded/truncated to fit."""

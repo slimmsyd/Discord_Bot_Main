@@ -24,7 +24,7 @@ from member_export import build_member_csv, member_export_filename
 from join_tracker import diff_invite_uses, JoinLog, LeaveLog
 from growth_stats import growth_windows, join_cohorts, top_inviters, recent_leavers
 from survey_ai import generate_questions
-from survey_store import SurveyStore, build_survey_csv
+from survey_store import SurveyStore, build_survey_csv, survey_message_text
 import io
 import uuid
 
@@ -1164,6 +1164,34 @@ class SurveyModal(discord.ui.Modal):
         await interaction.response.send_message(
             "✅ Thanks — your response was recorded.", ephemeral=True
         )
+        await refresh_survey_message(self.survey_id)
+
+
+async def refresh_survey_message(survey_id, closed=False):
+    """Edit the posted survey message to show the current response count.
+
+    When closed, the button view is removed; otherwise the view is left
+    untouched (omitting `view` from edit() keeps the existing button).
+    """
+    survey = survey_store.get(survey_id)
+    if not survey or not survey.get("message_id"):
+        return
+    channel = bot.get_channel(survey["channel_id"])
+    if channel is None:
+        try:
+            channel = await bot.fetch_channel(survey["channel_id"])
+        except Exception:
+            return
+    count = len(survey_store.responses(survey_id))
+    content = survey_message_text(survey, count, closed=closed)
+    try:
+        msg = await channel.fetch_message(survey["message_id"])
+        if closed:
+            await msg.edit(content=content, view=None)
+        else:
+            await msg.edit(content=content)
+    except Exception as e:
+        logger.error(f"Failed to refresh survey message {survey_id}: {e}")
 
 
 class SurveyTakeView(discord.ui.View):
@@ -1218,10 +1246,7 @@ class SurveyPreviewView(discord.ui.View):
         view = SurveyTakeView(sid)
         bot.add_view(view)
         _registered_survey_views.add(sid)
-        msg = await self.channel.send(
-            f"📋 **Survey: {self.topic}**\nClick below to answer — {len(self.questions)} quick questions.",
-            view=view,
-        )
+        msg = await self.channel.send(survey_message_text(survey, 0), view=view)
         survey_store.set_message(sid, msg.id)
         await interaction.response.edit_message(
             content=f"✅ Posted to {self.channel.mention}. Survey ID `{sid}` — export anytime with `/surveyresults`.",
@@ -1321,6 +1346,45 @@ async def surveyresults(interaction: discord.Interaction, survey_id: str = None)
     except Exception as e:
         logger.error(f'Error in surveyresults command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Export glitched out. Error: {str(e)}", ephemeral=True)
+
+
+@bot.tree.command(name="closesurvey", description="Owner/admin only: stop a survey from accepting responses")
+@discord.app_commands.describe(survey_id="Survey ID (leave blank for the most recent survey)")
+async def closesurvey(interaction: discord.Interaction, survey_id: str = None):
+    logger.info(f'closesurvey requested by {interaction.user}: id={survey_id}')
+
+    if not is_owner_or_admin(interaction):
+        await interaction.response.send_message(
+            "⛔ This command is restricted to the server owner/admins.", ephemeral=True
+        )
+        return
+
+    try:
+        await interaction.response.defer(ephemeral=True)
+        survey = survey_store.get(survey_id) if survey_id else survey_store.latest()
+        if not survey:
+            await interaction.followup.send("No survey found.", ephemeral=True)
+            return
+        if not survey.get("active", True):
+            await interaction.followup.send(
+                f"Survey `{survey['id']}` is already closed.", ephemeral=True
+            )
+            return
+
+        survey_store.close(survey["id"])
+        _registered_survey_views.discard(survey["id"])
+        await refresh_survey_message(survey["id"], closed=True)
+
+        count = len(survey_store.responses(survey["id"]))
+        await interaction.followup.send(
+            f"🔒 Closed **{survey['topic']}** (`{survey['id']}`). {count} responses collected — "
+            f"export with `/surveyresults survey_id:{survey['id']}`.",
+            ephemeral=True,
+        )
+
+    except Exception as e:
+        logger.error(f'Error in closesurvey command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Close glitched out. Error: {str(e)}", ephemeral=True)
 
 
 @bot.event
