@@ -3,6 +3,10 @@
 .env.*
 !.env.example
 
+# Join-tracking log (contains member/invite data — never commit)
+join_log.json
+join_log.json.tmp
+
 # Python
 __pycache__/
 *.py[cod]

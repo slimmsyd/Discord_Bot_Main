@@ -4,7 +4,11 @@ The bot is now **Discord + DeepSeek only**. No OpenAI, no MongoDB, no Twitter, n
 You need exactly **two secrets**: a Discord bot token and a DeepSeek API key.
 
 Commands the bot ships with (all powered by DeepSeek):
-`/dearoracle` · `/summarize` · `/sumvideo` · `/detailvideo` · `/finnasumthisup` · `/fryemup`
+`/dearoracle` · `/summarize` · `/sumvideo` · `/detailvideo` · `/finnasumthisup` · `/fryemup` · `/listchannel`
+
+Owner/admin-only:
+`/exportmembers` — exports every member (ID, tag, account-created + join dates, roles, booster
+status, and how they joined) as a private CSV. See **§4** for its extra requirements.
 
 ---
 
@@ -23,9 +27,10 @@ Commands the bot ships with (all powered by DeepSeek):
 2. **Bot** tab → **Reset Token** → **Yes, do it** → **Copy**.
 3. This is your `DISCORD_BOT_TOKEN`.
 4. Same page, scroll to **Privileged Gateway Intents** → turn ON
-   **MESSAGE CONTENT INTENT** → **Save Changes**.
-   (The bot reads channel messages for `/summarize` and `/fryemup`; it will crash-loop on
-   login without this.)
+   **MESSAGE CONTENT INTENT** *and* **SERVER MEMBERS INTENT** → **Save Changes**.
+   (Message Content powers `/summarize` and `/fryemup`; Server Members powers
+   `/exportmembers` and join tracking. The bot **crash-loops on login** —
+   `PrivilegedIntentsRequired` — if Server Members is off after this update.)
 
 > You do NOT need to re-invite the bot — it's already in your server.
 
@@ -86,6 +91,29 @@ git push origin main
 
 ---
 
+## 4. `/exportmembers` (owner/admin only) — extra requirements
+
+This command dumps the full member roster + join data to a private CSV. It needs three things
+beyond the normal setup:
+
+1. **Server Members Intent** ON in the Developer Portal (see §1B). Without it the bot won't even
+   start after this update.
+2. **Bot permission "Manage Server"** in your Discord server. The bot reads the server's invite
+   list to attribute joins; without this permission, join tracking is silently skipped (members
+   still export, but every `join_method` shows `unknown`).
+3. **`OWNER_IDS`** (optional) — set this env var to your Discord user ID(s), comma/space
+   separated, to allow specific owners regardless of server roles. Anyone with the server's
+   **Administrator** permission can run it without this.
+
+**About "how they joined":** Discord does not reveal, after the fact, which invite an existing
+member used — so everyone already in the server exports as `join_method = unknown`. From the
+moment this deploys, every *new* join is attributed to its invite + inviter automatically (stored
+in `join_log.json`, which is gitignored).
+
+The CSV is sent **ephemerally** (only the admin who ran the command sees it).
+
+---
+
 ## Local testing (optional, before deploying)
 ```bash
 cd ~/Desktop/Discord_Bot_Main
@@ -105,3 +133,6 @@ Watch the terminal for the "Bot Started" banner, then test commands in Discord. 
 | Commands don't appear after `/` | Wait for sync (~1 min) or restart Discord client |
 | AI replies error out | `DEEPSEEK_API_KEY` wrong, or DeepSeek balance is $0 |
 | Crash on startup: "No DeepSeek API key found" | Add `DEEPSEEK_API_KEY` to Railway Variables |
+| Crash on startup: `PrivilegedIntentsRequired` | Turn ON **SERVER MEMBERS INTENT** (and Message Content) in the Developer Portal → Bot tab |
+| `/exportmembers` says "restricted" | You lack server Administrator and aren't in `OWNER_IDS` |
+| Export shows everyone as `join_method = unknown` | Bot lacks **Manage Server** perm, or these members joined before tracking started |

@@ -116,7 +116,8 @@ sudo systemctl restart streetoracle
 | Symptom | Fix |
 |---|---|
 | `systemctl status` shows `No Discord token found` | `.env` missing or wrong path — must be in `/home/ubuntu/Discord_Bot_Main/.env` |
-| Bot offline / `PrivilegedIntentsRequired` | Enable **Message Content Intent** in the Discord Developer Portal → Bot tab |
+| Bot offline / `PrivilegedIntentsRequired` | Enable **Message Content Intent** AND **Server Members Intent** in the Discord Developer Portal → Bot tab |
+| `/exportmembers` exports everyone as `join_method = unknown` | Give the bot the **Manage Server** permission so it can read invites (pre-existing members can't be attributed retroactively) |
 | AI replies error | `DEEPSEEK_API_KEY` wrong, or DeepSeek balance is $0 |
 | ARM shape "out of host capacity" at create | Use `VM.Standard.E2.1.Micro` (AMD) or try a different Availability Domain |
 | Can't SSH | Re-check `chmod 400` on the key and that you used user `ubuntu` |

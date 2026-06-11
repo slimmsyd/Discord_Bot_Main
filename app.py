@@ -20,6 +20,9 @@ from channel_finder import find_channels
 from discord_utils import split_for_discord
 from persona import STREET_ORACLE_SYSTEM, build_messages
 from conversation_memory import ConversationMemory, make_key
+from member_export import build_member_csv, member_export_filename
+from join_tracker import diff_invite_uses, JoinLog
+import io
 
 SOLANA_ADDRESS_REGEX = r'^[1-9A-HJ-NP-Za-km-z]{32,44}$'  # Solana addresses are base58
 BASE_ADDRESS_REGEX = r'^0x[a-fA-F0-9]{40}$'  # Base uses Ethereum-style addresses
@@ -93,10 +96,46 @@ deepseek_client = OpenAI(
 intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True
+# Server Members is a PRIVILEGED intent — required to read the full member list
+# and join dates for /exportmembers. You MUST enable "Server Members Intent" in
+# the Discord Developer Portal (Bot tab) or the bot will fail to log in.
+intents.members = True
 bot = commands.Bot(command_prefix='/', intents=intents)
 
 # Ephemeral per-(channel, user) conversation memory for the @mention agent.
 oracle_memory = ConversationMemory()
+
+# Owner IDs allowed to run restricted commands (comma/space separated in env).
+OWNER_IDS = {
+    int(x) for x in os.getenv('OWNER_IDS', '').replace(',', ' ').split() if x.strip().isdigit()
+}
+
+# Join tracking: persisted record of how each member joined, plus an in-memory
+# cache of each guild's invite use-counts so on_member_join can diff them.
+join_log = JoinLog(os.getenv('JOIN_LOG_PATH', 'join_log.json'))
+guild_invite_uses = {}  # guild_id -> {invite_code: uses}
+
+
+def is_owner_or_admin(interaction):
+    """True if the invoker is a configured owner or has server Administrator."""
+    if interaction.user.id in OWNER_IDS:
+        return True
+    perms = getattr(interaction.user, 'guild_permissions', None)
+    return bool(perms and perms.administrator)
+
+
+async def cache_guild_invites(guild):
+    """Snapshot a guild's invite use-counts. Needs 'Manage Server' permission."""
+    try:
+        invites = await guild.invites()
+        guild_invite_uses[guild.id] = {inv.code: (inv.uses or 0) for inv in invites}
+    except discord.Forbidden:
+        logger.warning(
+            f"Missing 'Manage Server' permission to read invites in {guild.name}; "
+            "join tracking disabled for this guild."
+        )
+    except Exception as e:
+        logger.error(f"Failed to cache invites for {guild.name}: {e}")
 
 # Increase timeout for HTTP operations
 socket.setdefaulttimeout(30)
@@ -122,6 +161,58 @@ Server List:
         logger.error(f'Failed to sync slash commands: {e}')
     for guild in bot.guilds:
         logger.info(f'Connected to guild: {guild.name} (ID: {guild.id})')
+        # Prime the invite cache so the first join after startup can be attributed.
+        await cache_guild_invites(guild)
+
+
+@bot.event
+async def on_invite_create(invite):
+    """Keep the invite-use cache fresh as new invites are made."""
+    guild_invite_uses.setdefault(invite.guild.id, {})[invite.code] = invite.uses or 0
+
+
+@bot.event
+async def on_invite_delete(invite):
+    """Drop deleted invites from the cache so they don't linger."""
+    cache = guild_invite_uses.get(invite.guild.id)
+    if cache is not None:
+        cache.pop(invite.code, None)
+
+
+@bot.event
+async def on_member_join(member):
+    """Attribute a join to an invite by diffing use-counts against the cache."""
+    guild = member.guild
+    before = guild_invite_uses.get(guild.id, {})
+    try:
+        invites = await guild.invites()
+    except discord.Forbidden:
+        invites = []
+    except Exception as e:
+        logger.error(f"Failed to fetch invites on join in {guild.name}: {e}")
+        invites = []
+
+    after = {inv.code: (inv.uses or 0) for inv in invites}
+    used_code = diff_invite_uses(before, after)
+    if after:  # only overwrite the cache when we actually read invites
+        guild_invite_uses[guild.id] = after
+
+    record = {
+        "method": "unknown",
+        "joined_at": member.joined_at.isoformat() if member.joined_at else "",
+    }
+    if used_code:
+        record["method"] = "invite"
+        record["invite_code"] = used_code
+        inv = next((i for i in invites if i.code == used_code), None)
+        if inv and inv.inviter:
+            record["inviter_id"] = str(inv.inviter.id)
+            record["inviter_tag"] = str(inv.inviter)
+
+    try:
+        join_log.record(member.id, record)
+    except Exception as e:
+        logger.error(f"Failed to persist join record for {member.id}: {e}")
 
 
 class CryptoTools:
@@ -845,6 +936,76 @@ async def listchannel(interaction: discord.Interaction, name: str):
         await interaction.followup.send(
             f"Ay {interaction.user.mention}, channel search glitched out. Try again! Error: {str(e)}",
             ephemeral=True,
+        )
+
+
+@bot.tree.command(name="exportmembers", description="Owner/admin only: export all members + join data as a CSV")
+async def exportmembers(interaction: discord.Interaction):
+    logger.info(f'exportmembers requested by {interaction.user} in {getattr(interaction.guild, "name", "DM")}')
+
+    # Restricted: configured owner IDs or anyone with server Administrator.
+    if not is_owner_or_admin(interaction):
+        await interaction.response.send_message(
+            "⛔ This command is restricted to the server owner/admins.", ephemeral=True
+        )
+        return
+    if interaction.guild is None:
+        await interaction.response.send_message(
+            "Run this inside a server, not a DM.", ephemeral=True
+        )
+        return
+
+    try:
+        # Ephemeral: the export is private to the invoking admin.
+        await interaction.response.defer(ephemeral=True)
+        guild = interaction.guild
+
+        # guild.members is only complete with the Server Members intent enabled.
+        # If it looks short, pull the full roster from the gateway.
+        members = guild.members
+        if guild.member_count and len(members) < guild.member_count:
+            try:
+                members = [m async for m in guild.fetch_members(limit=None)]
+            except Exception as e:
+                logger.warning(f"fetch_members fell back to cache in {guild.name}: {e}")
+
+        rows = []
+        for m in members:
+            rec = join_log.get(m.id) or {}
+            rows.append({
+                "user_id": str(m.id),
+                "username": m.name,
+                "global_name": m.global_name or "",
+                "server_nick": m.nick or "",
+                "tag": str(m),
+                "is_bot": m.bot,
+                "account_created_utc": m.created_at.isoformat() if m.created_at else "",
+                "joined_at_utc": m.joined_at.isoformat() if m.joined_at else "",
+                "premium_since_utc": m.premium_since.isoformat() if m.premium_since else "",
+                "pending": m.pending,
+                "roles": ";".join(r.name for r in m.roles if r.name != "@everyone"),
+                "join_method": rec.get("method", "unknown"),
+                "join_invite_code": rec.get("invite_code", ""),
+                "inviter_tag": rec.get("inviter_tag", ""),
+            })
+
+        csv_text = build_member_csv(rows)
+        stamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        filename = member_export_filename(guild.name, stamp)
+        export_file = discord.File(io.BytesIO(csv_text.encode("utf-8")), filename=filename)
+
+        tracked = sum(1 for r in rows if r["join_method"] != "unknown")
+        await interaction.followup.send(
+            f"📁 Exported **{len(rows)}** members from **{guild.name}**.\n"
+            f"Join source known for {tracked} (the rest joined before tracking started).",
+            file=export_file,
+            ephemeral=True,
+        )
+
+    except Exception as e:
+        logger.error(f'Error in exportmembers command: {str(e)}', exc_info=True)
+        await interaction.followup.send(
+            f"Export glitched out. Error: {str(e)}", ephemeral=True
         )
 
 
