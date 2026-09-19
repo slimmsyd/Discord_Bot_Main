@@ -1576,6 +1576,68 @@ async def pdfs(
         await interaction.followup.send(f"Index glitched out. Error: {str(e)}", ephemeral=True)
 
 
+@bot.tree.command(
+    name="pdfexport", description="Export the PDF index for a channel or category as CSV + JSON"
+)
+@discord.app_commands.describe(
+    category="Export every channel in this category",
+    channel="Export this one channel (takes precedence over category)",
+)
+@discord.app_commands.autocomplete(category=_category_autocomplete)
+async def pdfexport(
+    interaction: discord.Interaction,
+    category: str = None,
+    channel: discord.TextChannel = None,
+):
+    logger.info(f'pdfexport requested by {interaction.user}: category={category} channel={channel}')
+
+    try:
+        await interaction.response.defer(ephemeral=True, thinking=True)
+
+        if not category and channel is None:
+            await interaction.edit_original_response(
+                content="⚠️ Scanning the whole server — this may take a while…"
+            )
+
+        channels = await _resolve_scope_or_reply(interaction, category, channel)
+        if channels is None:
+            return
+
+        result = await scan_with_cache(channels, on_progress=_progress_callback(interaction))
+        label = _scope_label(category, channel)
+
+        if not result.records:
+            await interaction.edit_original_response(content=f"No PDFs found in {label}.")
+            return
+
+        token = _scope_token(category, channel)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%d")
+        files = [
+            discord.File(
+                io.BytesIO(build_pdf_csv(result.records).encode("utf-8")),
+                filename=f"pdf_index_{token}_{stamp}.csv",
+            ),
+            discord.File(
+                io.BytesIO(build_pdf_json(result.records).encode("utf-8")),
+                filename=f"pdf_index_{token}_{stamp}.json",
+            ),
+        ]
+
+        note = f" Skipped {len(result.skipped)} channel(s) I can't read." if result.skipped else ""
+        await interaction.edit_original_response(
+            content=(
+                f"📚 {len(result.records)} PDFs in {label}.{note}\n"
+                "The CSV is for reading; the JSON keeps the stable IDs "
+                "(`channel_id`, `message_id`, `attachment_id`) for re-linking later."
+            ),
+            attachments=files,
+        )
+
+    except Exception as e:
+        logger.error(f'Error in pdfexport command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Export glitched out. Error: {str(e)}", ephemeral=True)
+
+
 @bot.event
 async def on_command_error(ctx, error):
     logger.error(f'Command error: {str(error)}', exc_info=True)
