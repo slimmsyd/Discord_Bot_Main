@@ -35,7 +35,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Importing app registers all @bot.tree.command definitions. app.py has an
-# `if __name__ == "__main__"` guard, so this import does NOT start the bot.
+# `if __name__ == "__main__"` guard, so this does NOT start the bot.
+#
+# Check the secrets BEFORE importing, because a missing one makes the import
+# itself raise a bare ValueError instead of a message that says what to do.
+_missing = [name for name in ("DISCORD_BOT_TOKEN", "DEEPSEEK_API_KEY") if not os.getenv(name)]
+if _missing:
+    raise SystemExit(
+        f"Missing: {', '.join(_missing)}\n\n"
+        "These are the same secrets the bot itself uses. Copy them from your host's\n"
+        "settings (Railway: your service -> Variables tab).\n\n"
+        "To set them up locally, this repo already ships a template:\n"
+        "    cd /Users/sydneysanders/Desktop/Code_Projects/Discord_Bot_Main\n"
+        "    cp .env.example .env && open -e .env\n"
+        "Paste the two real values, save, and re-run this command.\n"
+        "(.env is gitignored, so the secrets cannot be committed.)\n\n"
+        "Already have the token? Pass both inline for one run:\n"
+        "    DISCORD_BOT_TOKEN=xxx DEEPSEEK_API_KEY=yyy \\\n"
+        "      .venv/bin/python sync_guild.py <GUILD_ID> --commands pdfs,pdfexport,pdflink"
+    )
+
 from app import bot
 
 DEFAULT_COMMANDS = ("listchannel",)
