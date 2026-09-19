@@ -4,7 +4,7 @@ The bot is now **Discord + DeepSeek only**. No OpenAI, no MongoDB, no Twitter, n
 You need exactly **two secrets**: a Discord bot token and a DeepSeek API key.
 
 Commands the bot ships with (all powered by DeepSeek):
-`/dearoracle` · `/summarize` · `/sumvideo` · `/detailvideo` · `/finnasumthisup` · `/fryemup` · `/listchannel`
+`/dearoracle` · `/summarize` · `/sumvideo` · `/detailvideo` · `/finnasumthisup` · `/fryemup` · `/listchannel` · `/pdfs` · `/pdfexport` · `/pdflink`
 
 Owner/admin-only:
 `/exportmembers` — exports every member (ID, tag, account-created + join dates, roles, booster
@@ -111,6 +111,46 @@ moment this deploys, every *new* join is attributed to its invite + inviter auto
 in `join_log.json`, which is gitignored).
 
 The CSV is sent **ephemerally** (only the admin who ran the command sees it).
+
+---
+
+## 5. `/pdfs` · `/pdfexport` · `/pdflink` — extra requirements
+
+These three commands index the PDFs members have uploaded. They **never download
+or open the files** — they read attachment metadata (name, size, uploader, date)
+and hand out download links on demand.
+
+**Permissions the bot needs, in every channel you want indexed:**
+
+- **View Channel**
+- **Read Message History**
+
+A channel missing either is skipped, and the reply lists which ones were skipped —
+so a short index usually means a permission is missing, not that the channel is
+empty.
+
+**How to grant them:** Server Settings → Roles → the bot's role → enable
+**View Channels** and **Read Message History** for the categories and channels
+you want covered. Channel-level permissions override role-level ones, so check
+the individual channels too.
+
+**Nothing else to configure:** no new secrets, no new environment variables, and
+no database. The index is rebuilt from Discord every time you run a command (a
+10-minute in-memory cache makes repeat runs instant), so it survives redeploys and
+can never go stale.
+
+**Notes**
+
+- Members only ever see channels they can already view. They cannot use these
+  commands to discover a locked channel or pull a file out of one.
+- Download links Discord gives us expire after about 24 hours. `/pdflink`
+  re-fetches the original message to mint a fresh link, so retrieval still works
+  months later — as long as the message has not been deleted.
+- `/pdfs` with no channel or category scans the whole server and warns up front
+  that it may take a while.
+- The CSV/JSON from `/pdfexport` includes stable IDs (`channel_id`,
+  `message_id`, `attachment_id`) so the community site can build working links
+  later.
 
 ---
 
