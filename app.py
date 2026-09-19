@@ -25,6 +25,8 @@ from join_tracker import diff_invite_uses, JoinLog, LeaveLog
 from growth_stats import growth_windows, join_cohorts, top_inviters, recent_leavers
 from survey_ai import generate_questions
 from survey_store import SurveyStore, build_survey_csv, survey_message_text
+from pdf_index import build_pdf_csv, build_pdf_json, chunk_records, render_page
+from pdf_scanner import resolve_scope, scan_with_cache
 import io
 import uuid
 
@@ -1385,6 +1387,192 @@ async def closesurvey(interaction: discord.Interaction, survey_id: str = None):
     except Exception as e:
         logger.error(f'Error in closesurvey command: {str(e)}', exc_info=True)
         await interaction.followup.send(f"Close glitched out. Error: {str(e)}", ephemeral=True)
+
+
+# ---------------------------------------------------------------------------
+# PDF library index — /pdfs, /pdfexport, /pdflink
+# ---------------------------------------------------------------------------
+
+class PdfPagesView(discord.ui.View):
+    """Prev/Next paging for a long PDF index. Only the invoker can page it."""
+
+    def __init__(self, author_id, pages, *, header, show_links, footer=""):
+        super().__init__(timeout=300)
+        self.author_id = author_id
+        self.pages = pages
+        self.header = header
+        self.show_links = show_links
+        self.footer = footer
+        self.index = 0
+        self._sync_buttons()
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        return interaction.user.id == self.author_id
+
+    def _sync_buttons(self):
+        self.previous.disabled = self.index == 0
+        self.next.disabled = self.index >= len(self.pages) - 1
+        self.counter.label = f"{self.index + 1}/{len(self.pages)}"
+
+    def render(self):
+        body = render_page(self.pages[self.index], show_links=self.show_links)
+        return f"{self.header}\n{body}{self.footer}"
+
+    @discord.ui.button(label="◀ Prev", style=discord.ButtonStyle.secondary)
+    async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.index -= 1
+        self._sync_buttons()
+        await interaction.response.edit_message(content=self.render(), view=self)
+
+    @discord.ui.button(label="1/1", style=discord.ButtonStyle.secondary, disabled=True)
+    async def counter(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Label-only button showing the current page."""
+
+    @discord.ui.button(label="Next ▶", style=discord.ButtonStyle.primary)
+    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.index += 1
+        self._sync_buttons()
+        await interaction.response.edit_message(content=self.render(), view=self)
+
+
+def _scope_label(category_name, channel):
+    """Human-readable description of what is being scanned."""
+    if channel is not None:
+        return f"#{channel.name}"
+    if category_name:
+        return category_name
+    return "the whole server"
+
+
+def _scope_token(category_name, channel):
+    """Filename-safe token for the export files."""
+    if channel is not None:
+        return channel.name
+    if category_name:
+        return category_name.replace(" ", "-").lower()
+    return "all"
+
+
+async def _category_autocomplete(interaction, current):
+    """Suggest the server's real category names as the user types."""
+    if interaction.guild is None:
+        return []
+    needle = (current or "").lower()
+    return [
+        discord.app_commands.Choice(name=category.name, value=category.name)
+        for category in interaction.guild.categories
+        if needle in category.name.lower()
+    ][:25]
+
+
+async def _resolve_scope_or_reply(interaction, category_name, channel):
+    """Resolve the channel list, replying with a friendly error when impossible.
+
+    Returns None when a reply was already sent, so callers just return.
+    """
+    guild = interaction.guild
+    if guild is None:
+        await interaction.edit_original_response(content="This only works inside a server.")
+        return None
+
+    category = None
+    if category_name:
+        category = discord.utils.get(guild.categories, name=category_name)
+        if category is None:
+            await interaction.edit_original_response(
+                content=f"No category named `{category_name}`."
+            )
+            return None
+
+    try:
+        channels = resolve_scope(
+            guild, category=category, channel=channel, invoker=interaction.user
+        )
+    except PermissionError as exc:
+        await interaction.edit_original_response(content=str(exc))
+        return None
+
+    if not channels:
+        await interaction.edit_original_response(content="Nothing to scan in that scope.")
+        return None
+    return channels
+
+
+def _progress_callback(interaction):
+    """Throttled scan-progress edits, at most one every 2 seconds."""
+    state = {"last": 0.0}
+
+    async def on_progress(done, total):
+        now = time.monotonic()
+        if done < total and now - state["last"] < 2.0:
+            return
+        state["last"] = now
+        try:
+            await interaction.edit_original_response(
+                content=f"⚠️ Scanning… ({done}/{total} channels)"
+            )
+        except discord.HTTPException:
+            pass  # progress is best-effort and must never break the scan
+
+    return on_progress
+
+
+@bot.tree.command(
+    name="pdfs", description="Index the PDFs in a channel, a category, or the whole server"
+)
+@discord.app_commands.describe(
+    category="Scan every channel in this category",
+    channel="Scan this one channel (takes precedence over category)",
+    show_links="Include a clickable download link for each file",
+)
+@discord.app_commands.autocomplete(category=_category_autocomplete)
+async def pdfs(
+    interaction: discord.Interaction,
+    category: str = None,
+    channel: discord.TextChannel = None,
+    show_links: bool = False,
+):
+    logger.info(f'pdfs requested by {interaction.user}: category={category} channel={channel}')
+
+    try:
+        await interaction.response.defer(ephemeral=True, thinking=True)
+
+        if not category and channel is None:
+            await interaction.edit_original_response(
+                content="⚠️ Scanning the whole server — this may take a while…"
+            )
+
+        channels = await _resolve_scope_or_reply(interaction, category, channel)
+        if channels is None:
+            return
+
+        result = await scan_with_cache(channels, on_progress=_progress_callback(interaction))
+        label = _scope_label(category, channel)
+
+        if not result.records:
+            await interaction.edit_original_response(content=f"No PDFs found in {label}.")
+            return
+
+        header = f"📚 **{len(result.records)} PDFs** — {label}"
+        footer = ""
+        if result.skipped:
+            names = ", ".join(f"#{name}" for name in result.skipped[:10])
+            footer = f"\n\n_Skipped {len(result.skipped)} channel(s) I can't read: {names}_"
+
+        pages = chunk_records(result.records, show_links=show_links)
+        if len(pages) == 1:
+            body = render_page(pages[0], show_links=show_links)
+            await interaction.edit_original_response(content=f"{header}\n{body}{footer}")
+            return
+
+        view = PdfPagesView(
+            interaction.user.id, pages, header=header, show_links=show_links, footer=footer
+        )
+        await interaction.edit_original_response(content=view.render(), view=view)
+
+    except Exception as e:
+        logger.error(f'Error in pdfs command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Index glitched out. Error: {str(e)}", ephemeral=True)
 
 
 @bot.event
