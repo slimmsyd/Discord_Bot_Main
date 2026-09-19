@@ -249,3 +249,37 @@ def test_chunk_records_splits_and_loses_nothing():
 
 def test_chunk_records_returns_one_empty_page_for_no_records():
     assert chunk_records([], max_chars=100) == [[]]
+
+
+import csv as csv_module
+import io as io_module
+import json
+
+from pdf_index import CSV_COLUMNS, build_pdf_csv, build_pdf_json
+
+
+def test_csv_header_is_the_full_column_list():
+    rows = list(csv_module.reader(io_module.StringIO(build_pdf_csv([]))))
+    assert rows[0] == CSV_COLUMNS
+
+
+def test_csv_round_trips_a_row():
+    record = make_record("a.pdf")
+    rows = list(csv_module.reader(io_module.StringIO(build_pdf_csv([record]))))
+    assert len(rows) == 2
+    row = dict(zip(rows[0], rows[1]))
+    assert row["filename"] == "a.pdf"
+    assert row["message_id"] == "333"
+    assert row["attachment_id"] == "444"
+    assert row["url"] == "https://cdn.example/x"
+
+
+def test_csv_escapes_commas_and_quotes_in_filenames():
+    record = make_record('weird, "quoted" name.pdf')
+    rows = list(csv_module.reader(io_module.StringIO(build_pdf_csv([record]))))
+    assert rows[1][CSV_COLUMNS.index("filename")] == 'weird, "quoted" name.pdf'
+
+
+def test_json_round_trips_the_records():
+    records = [make_record("a.pdf"), make_record("b.pdf")]
+    assert json.loads(build_pdf_json(records)) == records

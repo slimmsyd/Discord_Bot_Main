@@ -173,3 +173,18 @@ def chunk_records(records, max_chars=1700, *, show_links=False):
     if current or not pages:
         pages.append(current)
     return pages
+
+
+def build_pdf_csv(records):
+    """CSV text, one row per PDF, with a stable column order (CSV_COLUMNS)."""
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(CSV_COLUMNS)
+    for record in records:
+        writer.writerow([record.get(column, "") for column in CSV_COLUMNS])
+    return buffer.getvalue()
+
+
+def build_pdf_json(records):
+    """Pretty-printed JSON array of the same records, stable IDs included."""
+    return json.dumps(records, indent=2)
