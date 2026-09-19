@@ -1638,6 +1638,92 @@ async def pdfexport(
         await interaction.followup.send(f"Export glitched out. Error: {str(e)}", ephemeral=True)
 
 
+async def _fresh_url(guild, record):
+    """Re-fetch the source message so Discord signs a brand-new attachment URL.
+
+    Discord CDN links expire in roughly 24 hours, so a stored URL is useless
+    later. Re-reading the message is what makes "download it later" work.
+    Returns None when the message no longer exists.
+    """
+    target = guild.get_channel_or_thread(int(record["channel_id"]))
+    if target is None:
+        return None
+
+    try:
+        message = await target.fetch_message(int(record["message_id"]))
+    except discord.NotFound:
+        return None
+    except (discord.Forbidden, discord.HTTPException):
+        return record.get("url") or None
+
+    for attachment in message.attachments:
+        if str(attachment.id) == record.get("attachment_id"):
+            return attachment.url
+    return record.get("url") or None
+
+
+@bot.tree.command(
+    name="pdflink", description="Get a fresh download link for a PDF by filename"
+)
+@discord.app_commands.describe(
+    channel="Channel to search",
+    name="Part of the filename to look for",
+)
+async def pdflink(interaction: discord.Interaction, channel: discord.TextChannel, name: str):
+    logger.info(f'pdflink requested by {interaction.user}: #{channel.name} name={name}')
+
+    try:
+        await interaction.response.defer(ephemeral=True, thinking=True)
+
+        try:
+            channels = resolve_scope(
+                interaction.guild, channel=channel, invoker=interaction.user
+            )
+        except PermissionError as exc:
+            await interaction.edit_original_response(content=str(exc))
+            return
+
+        result = await scan_with_cache(channels)
+
+        fragment = name.strip().lower()
+        matches = [record for record in result.records if fragment in record["filename"].lower()]
+
+        if not matches:
+            await interaction.edit_original_response(
+                content=f"No PDF matching `{name}` in #{channel.name}."
+            )
+            return
+
+        matches.sort(key=lambda record: record.get("uploaded_at", ""), reverse=True)
+
+        lines = []
+        for record in matches[:10]:
+            url = await _fresh_url(interaction.guild, record)
+            if url is None:
+                lines.append(f"• {record['filename']} — _message was deleted_")
+            else:
+                lines.append(
+                    f"• {record['filename']} — {record['size']} — [download]({url})"
+                )
+
+        overflow = (
+            f"\n_…and {len(matches) - 10} more — narrow the search._"
+            if len(matches) > 10
+            else ""
+        )
+        await interaction.edit_original_response(
+            content=(
+                f"🔗 **{len(matches)} match(es) for `{name}` in #{channel.name}**\n"
+                + "\n".join(lines)
+                + overflow
+            )
+        )
+
+    except Exception as e:
+        logger.error(f'Error in pdflink command: {str(e)}', exc_info=True)
+        await interaction.followup.send(f"Link glitched out. Error: {str(e)}", ephemeral=True)
+
+
 @bot.event
 async def on_command_error(ctx, error):
     logger.error(f'Command error: {str(error)}', exc_info=True)
