@@ -1393,6 +1393,9 @@ async def closesurvey(interaction: discord.Interaction, survey_id: str = None):
 # PDF library index — /pdfs, /pdfexport, /pdflink
 # ---------------------------------------------------------------------------
 
+PDF_MESSAGE_BUDGET = 1900  # Discord's hard cap is 2000; leave headroom
+
+
 class PdfPagesView(discord.ui.View):
     """Prev/Next paging for a long PDF index. Only the invoker can page it."""
 
@@ -1452,6 +1455,23 @@ def _scope_token(category_name, channel):
         token = re.sub(r"[^a-z0-9_-]+", "-", category_name.lower()).strip("-")
         return token or "all"
     return "all"
+
+
+def _skipped_footer(result):
+    """A note naming channels the bot could not read, or "" when none were skipped.
+
+    Every PDF command appends this to its reply, including the "nothing found"
+    replies: a missing permission and an empty channel look identical otherwise,
+    and the permission case is the one an operator needs to see.
+    """
+    names = getattr(result, "skipped", None) or []
+    if not names:
+        return ""
+    listed = names[:5]
+    rendered = ", ".join(f"#{name}" for name in listed)
+    if len(names) > len(listed):
+        rendered += f", and {len(names) - len(listed)} more"
+    return f"\n\n_Skipped {len(names)} channel(s) I can't read: {rendered}_"
 
 
 async def _category_autocomplete(interaction, current):
@@ -1549,18 +1569,15 @@ async def pdfs(
 
         result = await scan_with_cache(channels, on_progress=_progress_callback(interaction))
         label = _scope_label(category, channel)
+        footer = _skipped_footer(result)
 
         if not result.records:
-            await interaction.edit_original_response(content=f"No PDFs found in {label}.")
+            await interaction.edit_original_response(content=f"No PDFs found in {label}.{footer}")
             return
 
         header = f"📚 **{len(result.records)} PDFs** — {label}"
-        footer = ""
-        if result.skipped:
-            names = ", ".join(f"#{name}" for name in result.skipped[:10])
-            footer = f"\n\n_Skipped {len(result.skipped)} channel(s) I can't read: {names}_"
-
-        pages = chunk_records(result.records, show_links=show_links)
+        body_budget = max(200, 1700 - len(header) - len(footer))
+        pages = chunk_records(result.records, max_chars=body_budget, show_links=show_links)
         if len(pages) == 1:
             body = render_page(pages[0], show_links=show_links)
             await interaction.edit_original_response(content=f"{header}\n{body}{footer}")
@@ -1607,7 +1624,9 @@ async def pdfexport(
         label = _scope_label(category, channel)
 
         if not result.records:
-            await interaction.edit_original_response(content=f"No PDFs found in {label}.")
+            await interaction.edit_original_response(
+                content=f"No PDFs found in {label}.{_skipped_footer(result)}"
+            )
             return
 
         token = _scope_token(category, channel)
@@ -1690,32 +1709,40 @@ async def pdflink(interaction: discord.Interaction, channel: discord.TextChannel
 
         if not matches:
             await interaction.edit_original_response(
-                content=f"No PDF matching `{name}` in #{channel.name}."
+                content=(
+                    f"No PDF matching `{name}` in #{channel.name}."
+                    f"{_skipped_footer(result)}"
+                )
             )
             return
 
         matches.sort(key=lambda record: record.get("uploaded_at", ""), reverse=True)
 
+        header = f"🔗 **{len(matches)} match(es) for `{name}` in #{channel.name}**"
+        footer = _skipped_footer(result)
+        budget = PDF_MESSAGE_BUDGET - len(header) - len(footer) - 120  # 120 reserves the overflow line
         lines = []
         for record in matches[:10]:
             url = await _fresh_url(interaction.guild, record)
             if url is None:
-                lines.append(f"• {record['filename']} — _message was deleted_")
+                line = f"• {record['filename']} — _message was deleted_"
             else:
-                lines.append(
-                    f"• {record['filename']} — {record['size']} — [download]({url})"
-                )
+                line = f"• {record['filename']} — {record['size']} — [download]({url})"
+            if lines and len("\n".join(lines + [line])) > budget:
+                break
+            lines.append(line)
 
         overflow = (
-            f"\n_…and {len(matches) - 10} more — narrow the search._"
-            if len(matches) > 10
+            f"\n_…and {len(matches) - len(lines)} more — narrow the search._"
+            if len(matches) > len(lines)
             else ""
         )
         await interaction.edit_original_response(
             content=(
-                f"🔗 **{len(matches)} match(es) for `{name}` in #{channel.name}**\n"
+                f"{header}\n"
                 + "\n".join(lines)
                 + overflow
+                + footer
             )
         )
 
