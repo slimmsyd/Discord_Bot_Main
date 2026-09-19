@@ -91,3 +91,34 @@ async def scan_channels(channels, *, on_progress=None):
 
     annotate_duplicates(result.records)
     return result
+
+
+CACHE_TTL = 600
+
+_CACHE = {}
+
+
+def clear_cache():
+    """Drop every cached scan. Used by tests; harmless in production."""
+    _CACHE.clear()
+
+
+def _cache_key(channels):
+    return tuple(sorted(str(channel.id) for channel in channels))
+
+
+async def scan_with_cache(channels, *, on_progress=None, ttl=CACHE_TTL, clock=time.monotonic):
+    """`scan_channels`, memoised per channel-set for `ttl` seconds.
+
+    The cache lives in memory only. Discord signed URLs stay valid for ~24h, so
+    a 10-minute cache can never hand out an expired link.
+    """
+    key = _cache_key(channels)
+    now = clock()
+    cached = _CACHE.get(key)
+    if cached is not None and now - cached[0] < ttl:
+        return cached[1]
+
+    result = await scan_channels(channels, on_progress=on_progress)
+    _CACHE[key] = (now, result)
+    return result

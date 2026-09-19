@@ -185,3 +185,50 @@ def test_scan_channels_returns_empty_result_for_no_channels():
     result = asyncio.run(scan_channels([]))
     assert result.records == []
     assert result.skipped == []
+
+
+from pdf_scanner import clear_cache, scan_with_cache
+
+
+def test_scan_with_cache_hits_within_ttl():
+    clear_cache()
+    channel = FakeChannel("books", 1, messages=[FakeMessage(1, [FakeAttachment("a.pdf")])])
+    clock = lambda: 100.0
+
+    first = asyncio.run(scan_with_cache([channel], clock=clock))
+    second = asyncio.run(scan_with_cache([channel], clock=clock))
+
+    assert channel.history_calls == 1
+    assert first.records == second.records
+
+
+def test_scan_with_cache_misses_after_ttl():
+    clear_cache()
+    channel = FakeChannel("books", 1, messages=[FakeMessage(1, [FakeAttachment("a.pdf")])])
+    now = {"t": 100.0}
+
+    asyncio.run(scan_with_cache([channel], clock=lambda: now["t"]))
+    now["t"] += 700
+    asyncio.run(scan_with_cache([channel], clock=lambda: now["t"]))
+
+    assert channel.history_calls == 2
+
+
+def test_scan_with_cache_keys_on_the_channel_set():
+    clear_cache()
+    a = FakeChannel("a", 1)
+    b = FakeChannel("b", 2)
+
+    asyncio.run(scan_with_cache([a], clock=lambda: 100.0))
+    asyncio.run(scan_with_cache([a, b], clock=lambda: 100.0))
+
+    assert a.history_calls == 2
+
+
+def test_clear_cache_forces_a_rescan():
+    clear_cache()
+    channel = FakeChannel("books", 1)
+    asyncio.run(scan_with_cache([channel], clock=lambda: 100.0))
+    clear_cache()
+    asyncio.run(scan_with_cache([channel], clock=lambda: 100.0))
+    assert channel.history_calls == 2
