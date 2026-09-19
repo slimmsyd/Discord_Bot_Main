@@ -1474,6 +1474,22 @@ def _skipped_footer(result):
     return f"\n\n_Skipped {len(names)} channel(s) I can't read: {rendered}_"
 
 
+_MAX_QUERY_DISPLAY = 80
+
+
+def _display_query(name):
+    """The user's search fragment, trimmed and capped for display.
+
+    `name` is unbounded option text, so echoing it raw can push a reply past
+    Discord's 2000-character cap. This is only what we SHOW; matching still uses
+    the full fragment, so a long or padded query still finds its files.
+    """
+    cleaned = (name or "").strip()
+    if len(cleaned) <= _MAX_QUERY_DISPLAY:
+        return cleaned
+    return cleaned[:_MAX_QUERY_DISPLAY - 1] + "…"
+
+
 async def _category_autocomplete(interaction, current):
     """Suggest the server's real category names as the user types."""
     if interaction.guild is None:
@@ -1705,12 +1721,13 @@ async def pdflink(interaction: discord.Interaction, channel: discord.TextChannel
         result = await scan_with_cache(channels)
 
         fragment = name.strip().lower()
+        display = _display_query(name)
         matches = [record for record in result.records if fragment in record["filename"].lower()]
 
         if not matches:
             await interaction.edit_original_response(
                 content=(
-                    f"No PDF matching `{name}` in #{channel.name}."
+                    f"No PDF matching `{display}` in #{channel.name}."
                     f"{_skipped_footer(result)}"
                 )
             )
@@ -1718,7 +1735,7 @@ async def pdflink(interaction: discord.Interaction, channel: discord.TextChannel
 
         matches.sort(key=lambda record: record.get("uploaded_at", ""), reverse=True)
 
-        header = f"🔗 **{len(matches)} match(es) for `{name}` in #{channel.name}**"
+        header = f"🔗 **{len(matches)} match(es) for `{display}` in #{channel.name}**"
         footer = _skipped_footer(result)
         budget = PDF_MESSAGE_BUDGET - len(header) - len(footer) - 120  # 120 reserves the overflow line
         lines = []
