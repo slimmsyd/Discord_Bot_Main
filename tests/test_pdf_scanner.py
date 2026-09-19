@@ -232,3 +232,37 @@ def test_clear_cache_forces_a_rescan():
     clear_cache()
     asyncio.run(scan_with_cache([channel], clock=lambda: 100.0))
     assert channel.history_calls == 2
+
+
+def test_resolve_scope_without_invoker_fails_closed():
+    viewable = FakeChannel("public", 1, can_view=True)
+    guild = SimpleNamespace(text_channels=[viewable])
+
+    assert resolve_scope(guild) == []
+
+
+def test_resolve_scope_excludes_channel_whose_permissions_raise():
+    def raiser(user):
+        raise RuntimeError("permissions unavailable")
+
+    broken = FakeChannel("broken", 1)
+    broken.permissions_for = raiser
+    ok = FakeChannel("books", 2, can_view=True)
+    guild = SimpleNamespace(text_channels=[broken, ok])
+
+    assert resolve_scope(guild, invoker=USER) == [ok]
+
+
+def test_scan_with_cache_returns_an_independent_result():
+    clear_cache()
+    channel = FakeChannel("books", 1, messages=[FakeMessage(1, [FakeAttachment("a.pdf")])])
+    clock = lambda: 100.0
+
+    first = asyncio.run(scan_with_cache([channel], clock=clock))
+    first.records.append({"filename": "extra.pdf"})
+    first.records[0]["filename"] = "mutated.pdf"
+
+    second = asyncio.run(scan_with_cache([channel], clock=clock))
+
+    assert [r["filename"] for r in second.records] == ["a.pdf"]
+    assert channel.history_calls == 1

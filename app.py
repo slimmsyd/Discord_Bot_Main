@@ -1449,7 +1449,8 @@ def _scope_token(category_name, channel):
     if channel is not None:
         return channel.name
     if category_name:
-        return category_name.replace(" ", "-").lower()
+        token = re.sub(r"[^a-z0-9_-]+", "-", category_name.lower()).strip("-")
+        return token or "all"
     return "all"
 
 

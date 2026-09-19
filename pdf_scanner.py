@@ -6,7 +6,7 @@ a redeploy loses the cache and nothing else.
 
 import logging
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import discord
 
@@ -16,9 +16,13 @@ logger = logging.getLogger("discord_bot")
 
 
 def _can_view(channel, invoker):
-    """True if `invoker` may view `channel`. Fails closed."""
+    """True if `invoker` may view `channel`. Fails closed.
+
+    An absent invoker cannot be proven to have access, so we refuse rather than
+    hand back an unfiltered index. Every real caller passes `invoker=interaction.user`.
+    """
     if invoker is None:
-        return True
+        return False
     try:
         return bool(channel.permissions_for(invoker).view_channel)
     except Exception:
@@ -107,6 +111,20 @@ def _cache_key(channels):
     return tuple(sorted(str(channel.id) for channel in channels))
 
 
+def _independent(result):
+    """A copy of `result` the caller may freely mutate.
+
+    The cache never shares its own object with a caller, so an in-place edit
+    here (sorting, trimming, appending) can never poison what the next caller
+    receives.
+    """
+    return replace(
+        result,
+        records=[dict(record) for record in result.records],
+        skipped=list(result.skipped),
+    )
+
+
 async def scan_with_cache(channels, *, on_progress=None, ttl=CACHE_TTL, clock=time.monotonic):
     """`scan_channels`, memoised per channel-set for `ttl` seconds.
 
@@ -117,8 +135,8 @@ async def scan_with_cache(channels, *, on_progress=None, ttl=CACHE_TTL, clock=ti
     now = clock()
     cached = _CACHE.get(key)
     if cached is not None and now - cached[0] < ttl:
-        return cached[1]
+        return _independent(cached[1])
 
     result = await scan_channels(channels, on_progress=on_progress)
-    _CACHE[key] = (now, result)
+    _CACHE[key] = (now, _independent(result))
     return result
