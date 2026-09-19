@@ -29,6 +29,24 @@ from dotenv import load_dotenv
 # DEEPSEEK_API_KEY at module level and raises if either is missing.
 load_dotenv()
 
+# Check the secrets BEFORE importing app, because a missing one makes the import
+# itself raise a bare ValueError. Checking first turns that traceback into a
+# message that says what to do.
+_missing = [name for name in ("DISCORD_BOT_TOKEN", "DEEPSEEK_API_KEY") if not os.getenv(name)]
+if _missing:
+    raise SystemExit(
+        f"Missing: {', '.join(_missing)}\n\n"
+        "Easiest fix: run this script ON the bot's server, where .env already exists:\n"
+        "    ssh -i <key> ubuntu@<PUBLIC_IP>\n"
+        "    cd Discord_Bot_Main && git pull && source venv/bin/activate\n"
+        "    python check_commands.py <GUILD_ID>\n\n"
+        "To run it locally instead, create a .env in this folder (it is gitignored):\n"
+        "    DISCORD_BOT_TOKEN=<copy from the bot's host>\n"
+        "    DEEPSEEK_API_KEY=<copy from the bot's host>\n"
+        "Or pass the token inline:\n"
+        "    DISCORD_BOT_TOKEN=xxx .venv/bin/python check_commands.py <GUILD_ID>"
+    )
+
 # app.py has an `if __name__ == "__main__"` guard, so this does NOT start the bot.
 from app import bot
 
