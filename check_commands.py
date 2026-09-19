@@ -36,15 +36,18 @@ _missing = [name for name in ("DISCORD_BOT_TOKEN", "DEEPSEEK_API_KEY") if not os
 if _missing:
     raise SystemExit(
         f"Missing: {', '.join(_missing)}\n\n"
-        "Easiest fix: run this script ON the bot's server, where .env already exists:\n"
-        "    ssh -i <key> ubuntu@<PUBLIC_IP>\n"
-        "    cd Discord_Bot_Main && git pull && source venv/bin/activate\n"
-        "    python check_commands.py <GUILD_ID>\n\n"
-        "To run it locally instead, create a .env in this folder (it is gitignored):\n"
-        "    DISCORD_BOT_TOKEN=<copy from the bot's host>\n"
-        "    DEEPSEEK_API_KEY=<copy from the bot's host>\n"
-        "Or pass the token inline:\n"
-        "    DISCORD_BOT_TOKEN=xxx .venv/bin/python check_commands.py <GUILD_ID>"
+        "These are the same secrets the bot itself uses, so copy them from wherever\n"
+        "the bot is hosted (Railway: your service -> Variables tab).\n\n"
+        "If you host on Railway, the fastest option needs no secrets at all -- just\n"
+        "read the Deploy Logs for the line 'Slash commands synced successfully'.\n\n"
+        "To run this check locally, create a .env in this folder (it is gitignored):\n"
+        "    cd /Users/sydneysanders/Desktop/Code_Projects/Discord_Bot_Main\n"
+        "    nano .env\n"
+        "and paste two lines:\n"
+        "    DISCORD_BOT_TOKEN=<copy from your host's Variables/env>\n"
+        "    DEEPSEEK_API_KEY=<copy from your host's Variables/env>\n\n"
+        "Or pass them inline for one run:\n"
+        "    DISCORD_BOT_TOKEN=xxx DEEPSEEK_API_KEY=yyy .venv/bin/python check_commands.py"
     )
 
 # app.py has an `if __name__ == "__main__"` guard, so this does NOT start the bot.
